@@ -1,6 +1,6 @@
 // Private CRM API for admin.html. Protected by the ADMIN_PASSWORD environment variable.
 import { crmStore, sendMail, OWNER, bookingEmails } from "../lib/core.mjs";
-import { googleStatus, authUrl, disconnect, createMeet, cancelMeet } from "../lib/google.mjs";
+import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
 import crypto from "node:crypto";
 
 const ok = (req) => {
@@ -40,6 +40,15 @@ export default async (req) => {
       }
       if (typeof body.notes === "string") rec.notes = body.notes.slice(0, 4000);
       if (typeof body.followUp === "string") rec.followUp = body.followUp.slice(0, 20);
+      await store.setJSON(body.key, rec);
+      return Response.json({ ok: true, rec });
+    }
+    if (body.action === "make-room") {
+      // Give an older inquiry/brief its own Google Meet room link (no time needed)
+      let m;
+      try { m = await createSpace(store); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); }
+      if (!m) return Response.json({ error: "Connect Google Calendar first (button at the top of your CRM)." }, { status: 400 });
+      rec.meetLink = m.meetLink; rec.meetRoom = true; rec.meetError = "";
       await store.setJSON(body.key, rec);
       return Response.json({ ok: true, rec });
     }
