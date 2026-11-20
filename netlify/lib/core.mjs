@@ -115,6 +115,7 @@ ${bodyHtml}
 }
 const p = (html) => `<p style="margin:0 0 12px;font-size:15px;line-height:1.6">${html}</p>`;
 const btn = (href, label) => `<a href="${href}" style="display:inline-block;background:${COLORS.accent};color:#fff;text-decoration:none;padding:12px 20px;border-radius:4px;font-size:14px;margin:4px 6px 4px 0">${esc(label)}</a>`;
+const joinBox = (url) => `<div style="background:#F7F3EE;border:1px solid ${COLORS.line};border-radius:6px;padding:16px;margin:0 0 14px;text-align:center"><a href="${esc(url)}" style="display:inline-block;background:#1A73E8;color:#fff;text-decoration:none;padding:14px 26px;border-radius:6px;font-size:16px;font-weight:bold">🎥 Join Google Meet</a><p style="margin:10px 0 0;font-size:13px;color:${COLORS.muted}">One click at call time · <a href="${esc(url)}" style="color:${COLORS.accent}">${esc(url.replace(/^https:\/\//, ""))}</a></p></div>`;
 const box = (html) => `<div style="background:${COLORS.bg};border-left:3px solid ${COLORS.accent};padding:12px 14px;margin:0 0 14px;font-size:15px;line-height:1.6">${html}</div>`;
 
 const LABELS = {
@@ -139,22 +140,26 @@ const linkNote = (checks) => checks.filter((c) => c.status !== "none").map((c) =
 
 // ---------- message builders ----------
 export function bookingEmails(rec) {
-  const d = rec.data, start = new Date(d.start_utc), tz = clientTz(rec);
+  const d = rec.data, start = new Date(rec.start || d.start_utc), tz = clientTz(rec);
   const first = (d.name || "there").split(" ")[0];
   const clientTime = fmt(start, tz), phTime = fmt(start, OWNER.tz);
   const title = `Free call: ${d.name || "Client"} × Jeselle Baril`;
   const details = `15-minute call about ${d.business || "your business"}.\nService: ${d.service || "-"}\nQuestions? Reply to the confirmation email.`;
-  const ics = buildIcs({ uid: rec.id, start, title, description: details, attendeeName: d.name, attendeeEmail: d.email });
-  const attach = [{ filename: "call-with-jeselle.ics", content: ics, contentType: "text/calendar; charset=utf-8; method=REQUEST" }];
+  const meet = rec.meetLink || "";
+  const ics = buildIcs({ uid: rec.id, start, title, description: details + (meet ? `\nJoin Google Meet: ${meet}` : ""), attendeeName: d.name, attendeeEmail: d.email });
+  // With Google connected, Google itself sends the calendar invite, so skip the .ics to avoid a double entry
+  const attach = meet ? [] : [{ filename: "call-with-jeselle.ics", content: ics, contentType: "text/calendar; charset=utf-8; method=REQUEST" }];
   const client = {
     to: d.email, replyTo: OWNER.email(),
-    subject: `Confirmed: your free call with Jeselle – ${fmt(start, tz, false)}`,
+    subject: `${rec.type === "Booking" ? "Confirmed" : "Scheduled"}: your call with Jeselle – ${fmt(start, tz, false)}`,
     html: layout(`You're booked, ${first}!`,
-      p("Thank you for booking a free 15-minute call. Here's your schedule:") +
+      p(rec.type === "Booking" ? "Thank you for booking a free 15-minute call. Here's your schedule:" : `Thank you for your ${rec.type === "Project brief" ? "project brief" : "inquiry"}! I've scheduled a ${CALL_MINUTES}-minute call so we can talk it through:`) +
       box(`<b>${esc(clientTime)}</b><br><span style="color:${COLORS.muted};font-size:13px">${esc(phTime)} in the Philippines · ${CALL_MINUTES} minutes</span>`) +
-      p(`<b>What happens next:</b> I'll send the meeting link (Google Meet or Zoom) before the call. You'll also get a reminder 24 hours and 1 hour before.`) +
-      btn(gcalLink(start, title, details), "Add to Google Calendar") +
-      p(`<span style="font-size:13px;color:${COLORS.muted}">The attached calendar file works with Apple Calendar and Outlook.</span>`) +
+      (meet
+        ? joinBox(meet) + p(`A Google Calendar invite is on its way too. You'll also get a reminder 24 hours and 1 hour before, with the same link.`)
+        : p(`<b>What happens next:</b> I'll send the meeting link before the call. You'll also get a reminder 24 hours and 1 hour before.`) +
+          btn(gcalLink(start, title, details), "Add to Google Calendar") +
+          p(`<span style="font-size:13px;color:${COLORS.muted}">The attached calendar file works with Apple Calendar and Outlook.</span>`)) +
       p(`<b>Get a head start:</b> fill in the <a href="${OWNER.site()}/brief.html" style="color:${COLORS.accent}">project brief</a> so I can prepare for our call.`) +
       p(`Need to change the time? Just reply to this email.`) +
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">Your booking details</p>` + detailsTable(d)),
@@ -164,8 +169,10 @@ export function bookingEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `📅 New booking: ${d.name} – ${fmt(start, OWNER.tz, false)}`,
     html: layout("New booking", box(`<b>${esc(phTime)}</b> (your time)<br><span style="color:${COLORS.muted};font-size:13px">${esc(clientTime)} for the client</span>`) +
-      btn(gcalLink(start, title, details + `\nClient email: ${d.email}`), "Add to my Google Calendar") +
-      btn(`mailto:${encodeURIComponent(d.email)}?subject=${encodeURIComponent("Meeting link for our call")}`, "Email client") +
+      (meet ? joinBox(meet) + p(`✅ Added to your Google Calendar and the client was invited.`)
+        : (rec.meetError ? box(`⚠️ Couldn't create the Google Meet link: ${esc(rec.meetError)}`) : "") +
+          btn(gcalLink(start, title, details + `\nClient email: ${d.email}`), "Add to my Google Calendar") +
+          btn(`mailto:${encodeURIComponent(d.email)}?subject=${encodeURIComponent("Meeting link for our call")}`, "Email client")) +
       (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
     attachments: attach,
@@ -174,7 +181,7 @@ export function bookingEmails(rec) {
 }
 
 export function reminderEmails(rec, label) {
-  const d = rec.data, start = new Date(d.start_utc), tz = clientTz(rec);
+  const d = rec.data, start = new Date(rec.start || d.start_utc), tz = clientTz(rec);
   const first = (d.name || "there").split(" ")[0];
   const when = label === "24h" ? "tomorrow" : "in 1 hour";
   const title = `Free call: ${d.name || "Client"} × Jeselle Baril`;
@@ -184,14 +191,14 @@ export function reminderEmails(rec, label) {
     html: layout(`See you ${when}, ${first}!`,
       p("This is a friendly reminder of our free 15-minute call:") +
       box(`<b>${esc(fmt(start, tz))}</b><br><span style="color:${COLORS.muted};font-size:13px">${esc(fmt(start, OWNER.tz))} in the Philippines</span>`) +
-      btn(gcalLink(start, title, "15-minute call"), "Add to Google Calendar") +
+      (rec.meetLink ? joinBox(rec.meetLink) : btn(gcalLink(start, title, "15-minute call"), "Add to Google Calendar")) +
       p("Can't make it? Just reply to this email and we'll find a new time.")),
   };
   const owner = {
     to: OWNER.email(), replyTo: d.email,
     subject: `⏰ Reminder: call with ${d.name} ${when} – ${fmt(start, OWNER.tz, false)}`,
     html: layout(`Call ${when}`, box(`<b>${esc(fmt(start, OWNER.tz))}</b> with <b>${esc(d.name)}</b> (${esc(d.business || "")})<br>Client time: ${esc(fmt(start, tz))}`) +
-      btn(`mailto:${encodeURIComponent(d.email)}`, "Email client") + detailsTable(d)),
+      (rec.meetLink ? joinBox(rec.meetLink) : "") + btn(`mailto:${encodeURIComponent(d.email)}`, "Email client") + detailsTable(d)),
   };
   return [client, owner];
 }
@@ -226,6 +233,7 @@ export function briefEmails(rec) {
       p(`Thank you for the details about <b>${esc(d.business || "your business")}</b>. I'll review everything and reply within 24 hours with a plan and quote.`) +
       (d.payment_method ? p(`<b>Payment:</b> after you accept the quote, I'll email you a private payment link for <b>${esc(d.payment_method)}</b>.`) : "") +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
+      p("Want to talk it through sooner? Pick a time and you'll get a Google Meet link right away.") + btn(`${OWNER.site()}/#book`, "Book a free call") +
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">A copy of your answers</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,
@@ -274,6 +282,13 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
+  if (type === "Booking") {
+    try {
+      const { createMeet } = await import("./google.mjs");
+      const m = await createMeet(rec, store);
+      if (m) { rec.meetLink = m.meetLink; rec.gcalEventId = m.eventId; rec.gcalEventLink = m.eventLink; }
+    } catch (e) { rec.meetError = e.message; }
+  }
   const mails = type === "Booking" ? bookingEmails(rec) : type === "Project brief" ? briefEmails(rec) : type === "Payment" ? paymentEmails(rec) : inquiryEmails(rec);
   const results = [];
   for (const m of mails) { try { await sendMail(m); results.push("sent:" + m.to); } catch (e) { results.push("failed:" + m.to + ":" + e.message); } }
@@ -284,11 +299,11 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
 
 // ---------- reminders (run every 15 min) ----------
 export async function runReminders({ store = crmStore(), now = new Date() } = {}) {
-  const { blobs } = await store.list({ prefix: "booking/" });
+  const { blobs } = await store.list();
   const out = [];
   for (const b of blobs) {
     const rec = await store.get(b.key, { type: "json" });
-    if (!rec || !rec.start || /cancel|lost/i.test(rec.status || "")) continue;
+    if (b.key.startsWith("settings/") || !rec || !rec.start || /cancel|lost/i.test(rec.status || "")) continue;
     const mins = (new Date(rec.start) - now) / 60000;
     if (mins <= 0) continue;
     let label = null;

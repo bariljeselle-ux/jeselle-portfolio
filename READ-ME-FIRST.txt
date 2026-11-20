@@ -70,7 +70,7 @@ STEP 6 — TEST
      a "New booking" email (your side), and the booking in your CRM.
 
 YOUR CRM (admin.html)
-  - Upcoming calls with both time zones + "Send meeting link" button
+  - Upcoming calls with both time zones + one-click "Join Meet" button
   - All bookings, inquiries and briefs, search and filters
   - Status: New > Contacted > Call booked > Proposal sent > Won / Lost / Cancelled
     (set "Cancelled" and reminders stop, and the time slot opens again)
@@ -103,3 +103,17 @@ IF DRAG-AND-DROP DOESN'T BUILD THE BACKEND — USE GITHUB (one time)
   1. github.com > New repository > "jeselle-portfolio" > upload all files in this folder.
   2. Netlify > your site > Site configuration > Build & deploy > Link repository > GitHub
      > choose the repository. Netlify then builds everything automatically.
+
+
+GOOGLE MEET LINKS (automatic, one time setup ~10 min)
+  1. console.cloud.google.com → create project "Jeselle Website"
+  2. APIs & Services → Library → enable "Google Calendar API"
+  3. OAuth consent screen → External → app name, your email → add scope calendar.events
+     → Test users: add bariljeselle@gmail.com → then click "PUBLISH APP" (so the link never expires)
+  4. Credentials → Create credentials → OAuth client ID → Web application
+     Authorized redirect URI: https://jeselleva.netlify.app/api/google/callback
+  5. Netlify → Environment variables: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET → redeploy
+  6. admin.html → "Connect Google Calendar" → sign in → Allow (ignore "unverified app": Advanced → Go to)
+  After this: every booking creates a Google Calendar event with a Meet link, invites the client,
+  and puts a "Join Google Meet" button in both emails, reminders and the CRM.
+  Inquiries & briefs: open the record in the CRM → pick a time → "Schedule call + Meet link".

@@ -1147,7 +1147,7 @@ $('bk-form').addEventListener('submit',async e=>{
     $('bk-ics').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
     $('bk-form').hidden=true;$('bk-done').hidden=false;$('bk-done').scrollIntoView({behavior:'smooth',block:'center'});
     showThanks({title:`Thank you, ${nm.replace(/[<>&"]/g,'')}!`,text:`Your free call is booked for <b>${fmtFull(slotUTC)}</b> (${fmtFull(slotUTC,'Asia/Manila')} in the Philippines).`,
-      steps:[['📩','A confirmation email with your schedule and a calendar invite is on its way to <b>'+f.email.value.replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['⏰','You’ll get reminders 24 hours and 1 hour before the call.'],['🔗','I’ll email you the meeting link (Google Meet or Zoom) before the call.'],['📝','Want to save time on the call? Fill in the project brief.']],
+      steps:[['📩','Your Google Meet link, schedule and calendar invite are on their way to <b>'+f.email.value.replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['⏰','You’ll get reminders 24 hours and 1 hour before the call.'],['🔗','I’ll email you the meeting link (Google Meet or Zoom) before the call.'],['📝','Want to save time on the call? Fill in the project brief.']],
       actions:[{href:$('bk-gcal').href,label:'Add to Google Calendar',solid:true,ext:true},{href:'brief.html',label:'Fill in project brief'}]});
   }else{
     const lines=[];new FormData(f).forEach((v,k)=>{if(v&&!(v instanceof File)&&!['form-name','bot-field','type'].includes(k))lines.push(k.replace(/_/g,' ')+': '+v)});
