@@ -5,10 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>CRM – Jeselle Baril</title>
+<meta name="theme-color" content="#F7F3EE">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237A4E3A'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='Georgia' font-style='italic'%3EJB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
 <style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}@supports not (overflow-x:clip){html,body{overflow-x:hidden}}
+
 /* VOICE: calm private client book. IDEA: a ledger of clients. PICTURE: the client list itself.
    COLOUR/TYPE: site palette, Cormorant + Jost. LAYOUT: stats row, upcoming calls, filterable list. */
 *{box-sizing:border-box;min-width:0}
@@ -125,17 +130,18 @@ function meetBlock(r){
   const join=r.meetLink?`<div class="row"><a class="btn meet" href="${esc(r.meetLink)}" target="_blank" rel="noopener">🎥 Join Google Meet</a><button class="f-copy" data-link="${esc(r.meetLink)}">Copy link</button></div>`:'';
   if(r.type==='Booking')return join||`<div class="sched"><small>${r.meetError?'⚠️ '+esc(r.meetError):'No Meet link yet.'}</small><button class="meet f-meet">Create Meet link &amp; email client</button></div>`;
   if(r.type==='Payment')return join;
-  return join+`<div class="sched"><small>${r.meetLink?'Move the call':'Schedule a call'} (your Philippine time). The client gets a Google Meet invite and email.</small><input type="datetime-local" class="f-when" value="${esc(phLocal(r.start))}"><button class="meet f-meet">${r.meetLink?'Reschedule call':'Schedule call + Meet link'}</button></div>`;
+  return join+`<div class="sched"><small>${r.meetLink&&r.start?'Move the call':'Schedule a call'} (your Philippine time). The client gets a Google Meet invite and email.</small><input type="datetime-local" class="f-when" value="${esc(phLocal(r.start))}"><button class="meet f-meet">${r.meetLink&&r.start?'Reschedule call':'Schedule call + Meet link'}</button></div>`;
 }
 function card(r){
   const d=r.data||{},cls=r.type==='Project brief'?'brief':r.type;
   const when=r.start?`📅 ${esc(fmt(r.start,'Asia/Manila'))}`:`Received ${esc(new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}`;
-  const rows=Object.entries(d).filter(([k,v])=>v&&!['form-name','bot-field','type','start_utc'].includes(k)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${esc(v).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')}</td></tr>`).join('');
+  const rows=Object.entries(d).filter(([k,v])=>v&&!['form-name','bot-field','type','start_utc','user_agent'].includes(k)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${esc(v).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')}</td></tr>`).join('');
   const links=(r.links||[]).filter(l=>l.status!=='none').map(l=>`<span class="chip ${l.status==='public'?'ok':'warn'}">${l.status==='public'?'✅ Public link':l.status==='private'?'⚠️ Private link (client was asked to fix)':l.status==='broken'?'❌ Broken link':'❔ Link not checked'}</span>`).join(' ');
   const rem=r.start?`<span class="chip">24h reminder: ${r.reminders?.['24h']?'sent':'pending'}</span> <span class="chip">1h reminder: ${r.reminders?.['1h']?'sent':'pending'}</span>`:'';
   const files=r.files?`<span class="chip">📎 ${r.files.length} file(s): download in Netlify → Forms</span>`:'';
+  const meetRow=r.type==='Payment'?'':`<tr><td>🎥 Google Meet</td><td>${r.meetLink?`<a href="${esc(r.meetLink)}" target="_blank" rel="noopener"><b>${esc(r.meetLink.replace(/^https:\/\//,''))}</b></a>${r.start?'':' <span style="color:#6E625A">(room, no time set)</span>'}`:`<span style="color:#6E625A">${r.meetError?'⚠️ '+esc(r.meetError):'No link yet'}</span>`}</td></tr>`;
   return `<article class="card" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${esc(r.status)}</span></div>
-  <div class="cb" hidden><div><div class="row" style="margin-bottom:8px">${links} ${rem} ${files}</div><table class="kv">${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
+  <div class="cb" hidden><div><div class="row" style="margin-bottom:8px">${links} ${rem} ${files}</div><table class="kv">${meetRow}${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
   <div class="side">${meetBlock(r)}<label>Status<select class="f-status">${STATUSES.map(s=>`<option${s===r.status?' selected':''}>${s}</option>`).join('')}</select></label>
   <label>Next follow-up<input type="date" class="f-follow" value="${esc(r.followUp||'')}"></label>
   <label>Notes<textarea class="f-notes" rows="4" placeholder="Private notes">${esc(r.notes||'')}</textarea></label>
@@ -153,8 +159,8 @@ $('list').addEventListener('click',async e=>{
 $('list').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('ch')){e.preventDefault();e.target.click()}});
 $('upcoming').addEventListener('click',async e=>{const b=e.target.closest('.f-mkup');if(!b)return;b.disabled=true;b.textContent='Creating…';try{const j=await api({body:{action:'make-meet',key:b.dataset.key}});RECS=RECS.map(r=>r.key===b.dataset.key?j.rec:r);note('Google Meet link created and client emailed ✓');draw()}catch(err){note(err.message,1);b.disabled=false;b.textContent='Try again'}});
 async function gload(){const g=$('gbar');try{const s=await api({body:{action:'google-status'}});
-  g.innerHTML=s.connected?`<p>🎥 <b>Google Meet is on.</b> Every booking gets a Meet link automatically${s.email?' on '+esc(s.email):''}.</p><button id="gdis">Disconnect</button>`
-  :s.keys?`<p>🎥 <b>Connect Google Calendar</b> so every booking gets a Google Meet link automatically.</p><button class="meet" id="gcon">Connect Google Calendar</button>`
+  g.innerHTML=s.connected?`<p>🎥 <b>Google Meet is on.</b> Every booking, inquiry and brief gets a Meet link automatically${s.email?' on '+esc(s.email):''}.</p><button id="gdis">Disconnect</button>`
+  :s.keys?`<p>🎥 <b>Connect Google Calendar</b> so every booking, inquiry and brief gets a Google Meet link automatically.</p><button class="meet" id="gcon">Connect Google Calendar</button>`
   :`<p>🎥 <b>Google Meet isn't set up yet.</b> Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Netlify, then redeploy. Redirect URI to use in Google Cloud: <code>${esc(s.redirectUri)}</code></p>`}
   catch(e){g.innerHTML=`<p>${esc(e.message)}</p>`}}
 $('gbar').addEventListener('click',async e=>{

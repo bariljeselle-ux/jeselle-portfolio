@@ -4,12 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Brief – Jeselle Baril</title>
+<meta name="theme-color" content="#F7F3EE">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
 <meta name="description" content="Project brief for websites, SEO, social media and AI automation projects with Jeselle Baril.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237A4E3A'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='Georgia' font-style='italic'%3EJB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
 <style>
+.tfo.on{background:#7A4E3A;border-color:#7A4E3A;color:#fff}.tfo.on .key{background:#fff;color:#7A4E3A;border-color:#fff}
+
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}@supports not (overflow-x:clip){html,body{overflow-x:hidden}}
+
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0;background:#F7F3EE;color:#231E1B;font:16px/1.6 Jost,system-ui,sans-serif;overflow-x:clip}
 a{color:#7A4E3A}
@@ -17,7 +24,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;pa
 .brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#231E1B;text-decoration:none}
 .back{font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:10px 0}
 .bar{height:4px;background:#EFE8DF}.bar span{display:block;height:100%;width:0;background:#7A4E3A;transition:width .4s ease}
-main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 120px;min-height:calc(100vh - 70px)}
+main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 120px;min-height:calc(100vh - 70px);min-height:calc(100dvh - 70px)}
 .intro h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,6vw,56px);line-height:1.05}
 .intro h1 i{color:#7A4E3A}
 .intro p{font-size:17px;font-weight:300;color:#4A413B;max-width:56ch}
@@ -42,7 +49,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 .tfo:has(input:focus-visible){outline:2px solid #7A4E3A;outline-offset:2px}
 .tfnav{display:flex;align-items:center;gap:16px;margin-top:8px}.tfent{font-size:13px;color:#9E9288}
 .err{margin:0;font-size:14px;color:#8A2E1E;background:#FBEDE9;padding:10px 12px}
-.foot{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px max(5vw,18px);background:#F7F3EEee;backdrop-filter:blur(6px);border-top:1px solid #E2D9CF}
+.foot{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px max(5vw,18px);background:#F7F3EEee;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-top:1px solid #E2D9CF}
 .tfarrow{background:#FFFFFF;border:1px solid #C9BAAB;border-radius:4px;font:500 13px Jost,sans-serif;color:#4A413B;cursor:pointer;padding:0 14px;min-height:44px}.tfarrow:disabled{opacity:.35;cursor:default}
 .count{font-size:13px;color:#6E625A}
 .done h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,6vw,54px)}
@@ -397,5 +404,6 @@ document.querySelectorAll('.publink').forEach(inp=>{const help=inp.parentElement
 document.getElementById('start').addEventListener('click',()=>{document.getElementById('intro').hidden=true;form.hidden=false;document.getElementById('foot').hidden=false;show(0)});
 }
 </script>
+<script>/* fallback for browsers without :has() */document.addEventListener("change",function(e){var i=e.target;if(!i.closest||!i.closest(".tfo"))return;var n=i.name,scope=i.form||document;scope.querySelectorAll(".tfo input"+(n?'[name="'+n+'"]':"")).forEach(function(x){var l=x.closest(".tfo");if(l)l.classList.toggle("on",x.checked)})});</script>
 </body>
 </html>

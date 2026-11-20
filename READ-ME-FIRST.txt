@@ -107,8 +107,8 @@ IF DRAG-AND-DROP DOESN'T BUILD THE BACKEND — USE GITHUB (one time)
 
 GOOGLE MEET LINKS (automatic, one time setup ~10 min)
   1. console.cloud.google.com → create project "Jeselle Website"
-  2. APIs & Services → Library → enable "Google Calendar API"
-  3. OAuth consent screen → External → app name, your email → add scope calendar.events
+  2. APIs & Services → Library → enable "Google Calendar API" AND "Google Meet REST API"
+  3. OAuth consent screen → External → app name, your email → add scopes calendar.events and meetings.space.created
      → Test users: add bariljeselle@gmail.com → then click "PUBLISH APP" (so the link never expires)
   4. Credentials → Create credentials → OAuth client ID → Web application
      Authorized redirect URI: https://jeselleva.netlify.app/api/google/callback
@@ -116,4 +116,5 @@ GOOGLE MEET LINKS (automatic, one time setup ~10 min)
   6. admin.html → "Connect Google Calendar" → sign in → Allow (ignore "unverified app": Advanced → Go to)
   After this: every booking creates a Google Calendar event with a Meet link, invites the client,
   and puts a "Join Google Meet" button in both emails, reminders and the CRM.
-  Inquiries & briefs: open the record in the CRM → pick a time → "Schedule call + Meet link".
+  Inquiries & briefs: get their own Google Meet room link automatically (in both emails + the CRM).
+  To set a time: open the record in the CRM → pick a time → "Schedule call + Meet link".

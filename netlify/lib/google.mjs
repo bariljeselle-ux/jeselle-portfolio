@@ -6,7 +6,7 @@ import { OWNER, CALL_MINUTES, crmStore } from "./core.mjs";
 
 const SETTINGS = "settings/google";
 const STATE = "settings/google-state";
-const SCOPE = "https://www.googleapis.com/auth/calendar.events";
+const SCOPE = "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/meetings.space.created";
 export const redirectUri = () => `${OWNER.site()}/api/google/callback`;
 const hasKeys = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
@@ -81,6 +81,19 @@ export async function createMeet(rec, store = crmStore()) {
     ev = await (await fetch(`${base}/${ev.id}`, { headers: { Authorization: `Bearer ${token}` } })).json();
   }
   return { meetLink: ev.hangoutLink || "", eventId: ev.id, eventLink: ev.htmlLink || "" };
+}
+
+// A Google Meet room with no fixed time (for inquiries and briefs). Needs the Google Meet API enabled.
+export async function createSpace(store = crmStore()) {
+  const token = await accessToken(store);
+  if (!token) return null;
+  const r = await fetch("https://meet.googleapis.com/v2/spaces", {
+    method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ config: { accessType: "TRUSTED" } }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error("Google Meet: " + (j.error?.message || r.status));
+  return { meetLink: j.meetingUri, meetCode: j.meetingCode };
 }
 
 export async function cancelMeet(rec, store = crmStore()) {
