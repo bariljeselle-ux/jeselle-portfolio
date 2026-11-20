@@ -1,0 +1,96 @@
+YOUR WEBSITE + BOOKING + CRM — SETUP GUIDE
+==========================================
+
+WHAT'S IN THIS FOLDER
+  public/            Your website pages
+    index.html       Main site (portfolio, services, rates, booking calendar, inquiry form)
+    brief.html       Project brief (25 questions + file uploads)
+    admin.html       YOUR CRM dashboard (private, password protected)
+    pay.html         Private payment page (GCash, Maya, Remitly + proof-of-payment upload)
+  netlify/           The backend that sends emails, reminders and saves the CRM
+  package.json       Tells Netlify which tools the backend needs
+  netlify.toml       Netlify settings
+
+HOW IT WORKS (CRM WORKFLOW)
+  Client books a call
+    -> Client sees a "Thank you" pop-up
+    -> Client gets a CONFIRMATION email: schedule in their time zone + Philippine time,
+       "Add to Google Calendar" button and a calendar invite file (Apple/Outlook)
+    -> You get a "New booking" email with every detail + calendar invite
+    -> Saved in your CRM (admin.html) with status "Call booked"
+    -> That time slot disappears from the calendar (no double booking)
+    -> 24 hours before: reminder email to the client AND to you
+    -> 1 hour before:   reminder email to the client AND to you
+  Client sends an inquiry or project brief
+    -> Thank-you pop-up + confirmation email to the client (copy of their answers)
+    -> Alert email to you with every answer
+    -> If their folder link is PRIVATE, the client is automatically asked to change it
+       to "Anyone with the link can view", and you see a warning in the email and CRM
+    -> Saved in your CRM with status "New"
+
+STEP 1 — ADD YOUR FILES
+  public/images/jeselle.jpg   your photo
+  public/media/tips.mp4       tips video
+  public/media/reel.mp4       reel video
+
+STEP 2 — GMAIL APP PASSWORD (so the site can send emails from your Gmail)
+  1. Go to myaccount.google.com > Security > turn on 2-Step Verification.
+  2. Go to myaccount.google.com/apppasswords
+  3. Name it "Website", click Create, copy the 16-letter password.
+
+STEP 3 — UPLOAD TO NETLIFY (while LOGGED IN to app.netlify.com)
+  Open your site (jeselleva) > Deploys > drag this WHOLE folder into the drop area.
+  (Netlify installs the backend automatically. If the deploy log shows an error about
+   functions, use the GitHub option at the bottom of this guide.)
+
+STEP 4 — ADD 3 SETTINGS IN NETLIFY
+  Site configuration > Environment variables > Add a variable:
+    GMAIL_USER          bariljeselle@gmail.com
+    GMAIL_APP_PASSWORD  (the 16-letter password from Step 2)
+    ADMIN_PASSWORD      (choose a password for your CRM page)
+  Then: Deploys > Trigger deploy > Deploy site  (so the settings take effect)
+
+STEP 5 — TURN ON FORMS
+  Netlify > Forms > Enable form detection (if asked) > redeploy once.
+
+STEP 6 — TEST
+  1. Open https://jeselleva.netlify.app/admin.html, enter your ADMIN_PASSWORD,
+     click "Send test email" — you should receive it in Gmail.
+  2. Book a test call on your site with another email address of yours.
+     You should get: the thank-you pop-up, a confirmation email (client side),
+     a "New booking" email (your side), and the booking in your CRM.
+
+YOUR CRM (admin.html)
+  - Upcoming calls with both time zones + "Send meeting link" button
+  - All bookings, inquiries and briefs, search and filters
+  - Status: New > Contacted > Call booked > Proposal sent > Won / Lost / Cancelled
+    (set "Cancelled" and reminders stop, and the time slot opens again)
+  - Next follow-up date and private notes
+  - Export CSV (opens in Excel / Google Sheets)
+  - Uploaded files: Netlify > Forms > open the submission > download
+
+THINGS YOU CAN EDIT LATER (open public/index.html, search for these words)
+  AVAIL           your available days/hours, holidays (blockedDates)
+  EDIT LATER      Facebook page link, Travel Destinacia link
+  BIG_UPLOAD_URL  Google Form link for big files & videos (also in brief.html)
+
+GOOGLE FORM FOR BIG FILES & VIDEOS (optional, up to 10 GB)
+  forms.google.com > Blank form > add Name, Email, "File upload" question
+  (any file type, max 10 GB) > Send > copy link > paste into BIG_UPLOAD_URL.
+
+PAYMENTS (pay.html) – private page, not in the menu or on Google
+  Send clients this link after they accept your quote:
+     https://jeselleva.netlify.app/pay.html
+  - Remitly QR + "Pay with Remitly" button are already set up (remit.ly/pay/jeselleb5927)
+  - GCash and Maya QR codes are already added (InstaPay QR, any bank/e-wallet can scan).
+  - To replace them later, save new images as:
+       public/images/gcash-qr.png
+       public/images/maya-qr.png
+  - Clients upload their receipt -> you get a "Payment proof" email, the client gets a
+    confirmation, and it's saved in your CRM as "Payment to verify". After you check
+    your app, set the status to "Paid".
+
+IF DRAG-AND-DROP DOESN'T BUILD THE BACKEND — USE GITHUB (one time)
+  1. github.com > New repository > "jeselle-portfolio" > upload all files in this folder.
+  2. Netlify > your site > Site configuration > Build & deploy > Link repository > GitHub
+     > choose the repository. Netlify then builds everything automatically.

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pay your deposit – Jeselle Baril</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237A4E3A'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='Georgia' font-style='italic'%3EJB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* VOICE: calm, trustworthy invoice desk. IDEA: a printed payment slip. PICTURE: the QR codes themselves.
+   COLOUR/TYPE: site palette, Cormorant + Jost. LAYOUT: title, method cards, proof-of-payment form. */
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:#F7F3EE;color:#231E1B;font:16px/1.6 Jost,system-ui,sans-serif;overflow-x:clip}
+a{color:#7A4E3A}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px max(5vw,18px);border-bottom:1px solid #E2D9CF}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#231E1B;text-decoration:none}
+.back{font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:10px 0}
+main{max-width:1000px;margin:0 auto;padding:48px max(5vw,18px) 80px;display:flex;flex-direction:column;gap:40px}
+.eyebrow{margin:0;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#7A4E3A}
+h1{margin:8px 0 10px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,6vw,54px);line-height:1.05}
+h1 i{color:#7A4E3A}
+.lead{margin:0;max-width:60ch;font-weight:300;font-size:17px;color:#4A413B}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#E2D9CF;border:1px solid #E2D9CF}
+.steps div{background:#fff;padding:16px}.steps b{font-family:'Cormorant Garamond',serif;font-size:24px;color:#7A4E3A;display:block;line-height:1}
+.steps span{font-size:14px;color:#4A413B}
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.m{background:#fff;border:1px solid #E2D9CF;border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.m.pick{border:2px solid #7A4E3A;box-shadow:0 14px 30px -16px rgba(122,78,58,.6)}.m.pick .tag::after{content:" · your choice"}.m.pick .tag{letter-spacing:.06em;white-space:nowrap}
+.m h2{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px}
+.m .who{margin:-6px 0 0;font-size:13px;color:#6E625A}
+.qr{width:220px;max-width:100%;aspect-ratio:1;object-fit:contain;border:1px solid #E2D9CF;border-radius:8px;padding:8px;background:#fff}
+.m p{margin:0;font-size:14px;color:#4A413B;line-height:1.5}
+.tag{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:#E8C9B8;color:#5C3828}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 20px;border-radius:4px;font:500 13px Jost,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:1px solid #231E1B;background:transparent;color:#231E1B}
+.btn.solid{background:#7A4E3A;border-color:#7A4E3A;color:#fff}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #7A4E3A;outline-offset:2px}
+.note{background:#F4EDE4;border-left:3px solid #7A4E3A;padding:14px 16px;font-size:15px;color:#3A322D}
+form{background:#fff;border:1px solid #E2D9CF;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:14px}
+form h2{margin:0;line-height:1.1;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500;color:#3A322D}
+label span{font-weight:300;color:#6E625A}.lt{font-style:normal}.ast{color:#B3402A}
+input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px solid #C9BAAB;border-radius:4px;background:#fff;color:#231E1B;min-height:46px;width:100%}
+.err{margin:0;font-size:14px;color:#8A2E1E;background:#FBEDE9;padding:10px 12px}
+[hidden]{display:none!important}
+.tymask{position:fixed;inset:0;z-index:100;background:rgba(35,30,27,.55);display:grid;place-items:center;padding:16px}
+.tybox{width:100%;max-width:460px;background:#F7F3EE;border-radius:10px;padding:28px 24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.tyico{width:56px;height:56px;border-radius:50%;background:#7A4E3A;color:#fff;display:grid;place-items:center;font-size:28px;margin-bottom:12px}
+.tybox h3{margin:0 0 8px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px}
+.tybox p{margin:0 0 12px;font-size:15px;color:#4A413B}
+.typrev{font-size:13px!important;background:#FFF4D6;border-left:3px solid #C99A2E;padding:8px 10px}
+@media(max-width:640px){.steps,.row{grid-template-columns:minmax(0,1fr)}form{padding:20px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">Jeselle Baril</a><a class="back" href="index.html">← Back to site</a></header>
+<main>
+<section>
+<p class="eyebrow">Payment</p>
+<h1>Pay your <i>deposit</i></h1>
+<p class="lead">Thank you for working with me! Please pay the amount on your quote using one of the options below, then send your proof of payment so I can confirm it and start your project.</p>
+</section>
+
+<div class="steps" aria-label="How it works">
+<div><b>1</b><span>Choose GCash, Maya or Remitly</span></div>
+<div><b>2</b><span>Pay the amount on your quote</span></div>
+<div><b>3</b><span>Upload your receipt below. I confirm by email within 24 hours</span></div>
+</div>
+
+<section class="methods">
+<article class="m" id="m-gcash">
+<span class="tag">Philippines</span>
+<h2>GCash</h2>
+<p class="who">InstaPay QR · JE****E B.</p>
+<img class="qr" src="images/gcash-qr.png" alt="GCash QR code for Jeselle Baril" onerror="this.closest('.m').hidden=true">
+<p>Open GCash → <b>Pay QR</b> → scan or upload this code → enter the amount. Works with any InstaPay bank or e-wallet app too.</p>
+</article>
+<article class="m" id="m-maya">
+<span class="tag">Philippines</span>
+<h2>Maya</h2>
+<p class="who">InstaPay QR · Jeselle Baril</p>
+<img class="qr" src="images/maya-qr.png" alt="Maya QR code for Jeselle Baril" onerror="this.closest('.m').hidden=true">
+<p>Open Maya → <b>Scan</b> → scan or upload this code → enter the amount. Works with any InstaPay bank or e-wallet app too.</p>
+</article>
+<article class="m" id="m-remitly">
+<span class="tag">Clients abroad</span>
+<h2>Remitly</h2>
+<p class="who">Pay in your own currency</p>
+<img class="qr" src="images/remitly-qr.png" alt="Remitly payment QR code for Jeselle Baril">
+<p>Scan with your phone camera, or tap the button. Pay by card or bank in USD, CAD or GBP.</p>
+<a class="btn solid" href="https://remit.ly/pay/jeselleb5927" target="_blank" rel="noopener">Pay with Remitly ↗</a>
+</article>
+</section>
+
+<p class="note">🔒 Only pay the amount on your official quote from me (bariljeselle@gmail.com). Keep your receipt or reference number.</p>
+
+<form id="pay-form" name="payment" method="POST" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+<input type="hidden" name="form-name" value="payment">
+<input type="hidden" name="type" value="Payment">
+<p hidden><label>Leave empty <input name="bot-field"></label></p>
+<h2>Send proof of payment</h2>
+<div class="row">
+<label><i class="lt">Your name <b class="ast">*</b></i><input name="name" required autocomplete="name"></label>
+<label><i class="lt">Your email <b class="ast">*</b></i><input name="email" type="email" required autocomplete="email"></label>
+</div>
+<div class="row">
+<label><i class="lt">Paid with <b class="ast">*</b></i><select name="payment_method" required><option value="">Choose…</option><option>GCash</option><option>Maya</option><option>Remitly</option></select></label>
+<label><i class="lt">Amount paid <b class="ast">*</b></i><input name="amount" required placeholder="e.g. ₱5,000 or $100"></label>
+</div>
+<div class="row">
+<label><i class="lt">Reference number <span>(optional)</span></i><input name="reference" placeholder="From your receipt"></label>
+<label><i class="lt">Project / business name <span>(optional)</span></i><input name="business"></label>
+</div>
+<label><i class="lt">Receipt screenshot <b class="ast">*</b></i><input type="file" name="file_1" accept="image/*,.pdf" required></label>
+<label><i class="lt">Note <span>(optional)</span></i><textarea name="message" rows="3"></textarea></label>
+<p class="err" id="err" hidden></p>
+<button type="submit" class="btn solid" id="send">Send proof of payment</button>
+</form>
+</main>
+<script>
+{
+
+// Opened from a payment link like pay.html#remitly: highlight that method and preselect it
+{const h=(location.hash||'').slice(1).toLowerCase();const map={gcash:'GCash',maya:'Maya',remitly:'Remitly'};
+ if(map[h]){const card=document.getElementById('m-'+h);if(card&&!card.hidden){card.classList.add('pick');setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'center'}),300)}
+  const sel=document.querySelector('select[name=payment_method]');if(sel)sel.value=map[h];}}
+const f=document.getElementById('pay-form'),err=document.getElementById('err'),btn=document.getElementById('send');
+const PREVIEW=/claude|anthropic|usercontent/i.test(location.hostname);
+const esc=s=>String(s||'').replace(/[<>&"]/g,'');
+function thanks(name,email){
+  const m=document.createElement('div');m.className='tymask';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');
+  m.innerHTML=`<div class="tybox"><div class="tyico">✓</div><h3>Thank you${name?', '+esc(name):''}!</h3>${PREVIEW?'<p class="typrev">Preview only: on your live site this also sends the emails.</p>':''}<p>Your proof of payment was sent. A confirmation is on its way to <b>${esc(email)}</b>, and I'll verify your payment and reply within 24 hours.</p><button class="btn solid" type="button" style="width:100%">Close</button></div>`;
+  m.addEventListener('click',e=>{if(e.target===m||e.target.closest('button'))m.remove()});document.body.appendChild(m);m.querySelector('button').focus();
+}
+f.addEventListener('submit',async e=>{
+  e.preventDefault();err.hidden=true;
+  const file=f.file_1.files[0];
+  const miss=[...f.querySelectorAll('[required]')].find(i=>i.type==='file'?!i.files.length:!i.value.trim());
+  if(miss){err.hidden=false;err.textContent='Please fill in all required fields and attach your receipt.';miss.focus();return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())){err.hidden=false;err.textContent='Please enter a valid email.';return}
+  if(file.size>8*1024*1024){err.hidden=false;err.textContent='The receipt is over 8 MB. Please send a smaller screenshot.';return}
+  btn.disabled=true;btn.textContent='Sending…';
+  let ok=false;
+  if(PREVIEW){await new Promise(r=>setTimeout(r,700));ok=true}
+  else{const c=new AbortController();const t=setTimeout(()=>c.abort(),60000);try{const r=await fetch('/',{method:'POST',body:new FormData(f),signal:c.signal});ok=r.ok}catch(x){}clearTimeout(t)}
+  btn.disabled=false;btn.textContent='Send proof of payment';
+  if(ok){thanks(f.name.value.split(' ')[0],f.email.value);f.reset()}
+  else{err.hidden=false;err.innerHTML='Sorry, it couldn’t be sent. Please email your receipt to <a href="mailto:bariljeselle@gmail.com?subject=Proof%20of%20payment">bariljeselle@gmail.com</a>.'}
+});
+}
+</script>
+</body>
+</html>

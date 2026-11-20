@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>CRM – Jeselle Baril</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237A4E3A'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='Georgia' font-style='italic'%3EJB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* VOICE: calm private client book. IDEA: a ledger of clients. PICTURE: the client list itself.
+   COLOUR/TYPE: site palette, Cormorant + Jost. LAYOUT: stats row, upcoming calls, filterable list. */
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:#F7F3EE;color:#231E1B;font:15px/1.55 Jost,system-ui,sans-serif;overflow-x:clip}
+a{color:#7A4E3A}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:14px max(4vw,16px);border-bottom:1px solid #E2D9CF;background:#F7F3EE;position:sticky;top:0;z-index:5}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;margin:0}
+.brand span{font-family:Jost,sans-serif;font-weight:400;font-size:13px;color:#6E625A}
+.hbtns{display:flex;flex-wrap:wrap;gap:8px}
+button,.btn{font:500 13px Jost,sans-serif;letter-spacing:.06em;border-radius:4px;cursor:pointer;min-height:40px;padding:0 14px;border:1px solid #C9BAAB;background:#fff;color:#231E1B;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button.pri,.btn.pri{background:#7A4E3A;border-color:#7A4E3A;color:#fff}
+button:hover{border-color:#7A4E3A}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #7A4E3A;outline-offset:2px}
+main{max-width:1180px;margin:0 auto;padding:24px max(4vw,16px) 60px;display:flex;flex-direction:column;gap:22px}
+.login{max-width:380px;margin:12vh auto;background:#fff;border:1px solid #E2D9CF;padding:28px;border-radius:8px;display:flex;flex-direction:column;gap:12px}
+.login h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px}
+input,select,textarea{font:16px Jost,sans-serif;padding:9px 11px;border:1px solid #C9BAAB;border-radius:4px;background:#fff;color:#231E1B;min-height:42px;width:100%}
+textarea{resize:vertical}
+.msg{margin:0;font-size:14px;color:#8A2E1E}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:#E2D9CF;border:1px solid #E2D9CF}
+.stat{background:#fff;padding:16px}.stat b{display:block;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1}.stat span{font-size:12px;color:#6E625A;letter-spacing:.06em}
+h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px}
+.up{display:flex;flex-direction:column;gap:8px}
+.upc{display:grid;grid-template-columns:170px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border:1px solid #E2D9CF;border-left:3px solid #7A4E3A;padding:12px 14px}
+.upc .t{font-weight:500;white-space:nowrap}.upc small{display:block;color:#6E625A;font-size:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button[aria-pressed=true]{background:#231E1B;color:#fff;border-color:#231E1B}
+.tools input{max-width:280px}
+.list{display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid #E2D9CF;border-radius:6px}
+.ch{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;cursor:pointer}
+.badge{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:99px;background:#EFE8DF;color:#7A4E3A;white-space:nowrap}
+.badge.Booking{background:#E8C9B8}.badge.Inquiry{background:#DCE3D2;color:#3E5230}.badge.Payment{background:#F2E3B3;color:#5C4A1E}.badge.brief{background:#E2D9CF;color:#231E1B}
+.who b{font-weight:500}.who small{display:block;color:#6E625A;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid #C9BAAB;white-space:nowrap}
+.cb{border-top:1px solid #EFE8DF;padding:14px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+.kv{width:100%;border-collapse:collapse;font-size:14px}.kv td{padding:6px 8px;border-bottom:1px solid #F1ECE5;vertical-align:top;overflow-wrap:anywhere}.kv td:first-child{color:#6E625A;width:36%;font-size:13px}
+.side{display:flex;flex-direction:column;gap:10px}
+.side label{font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:12px;padding:3px 8px;border-radius:4px;background:#F4EDE4}
+.ok{color:#2F6B3F}.warn{color:#8A2E1E}
+.empty{padding:30px;text-align:center;color:#6E625A;background:#fff;border:1px dashed #C9BAAB;border-radius:6px}
+[hidden]{display:none!important}
+@media(max-width:820px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.cb{grid-template-columns:minmax(0,1fr)}.upc{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){header{position:static}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ch{grid-template-columns:minmax(0,1fr) auto}.ch .badge{grid-column:1/-1;justify-self:start}.tools input{max-width:none}}
+</style>
+</head>
+<body>
+<section class="login" id="login">
+<h1>Your CRM</h1>
+<p style="margin:0;color:#6E625A">Bookings, inquiries and project briefs from your website.</p>
+<input type="password" id="pw" placeholder="Admin password" autocomplete="current-password">
+<button class="pri" id="go">Open CRM</button>
+<p class="msg" id="lmsg" hidden></p>
+</section>
+
+<div id="app" hidden>
+<header>
+<p class="brand">Client CRM <span>· Jeselle Baril</span></p>
+<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://app.netlify.com" target="_blank" rel="noopener">Netlify (files)</a><button id="out">Log out</button></div>
+</header>
+<main>
+<div class="stats" id="stats"></div>
+<section><h2>Upcoming calls</h2><div class="up" id="upcoming"></div></section>
+<section>
+<div class="tools" style="justify-content:space-between;margin-bottom:12px">
+<div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment">Payments</button></div>
+<input type="search" id="q" placeholder="Search name, email, business…">
+</div>
+<div class="list" id="list"></div>
+</section>
+<p class="msg" id="amsg" hidden></p>
+</main>
+</div>
+
+<script>
+{
+const STATUSES=['New','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','Lost','Cancelled'];
+const $=id=>document.getElementById(id);
+let KEY='',RECS=[],FILTER='all';
+try{KEY=sessionStorage.getItem('crmkey')||''}catch(e){}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(iso,tz)=>new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:tz,timeZoneName:'short'}).format(new Date(iso));
+const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:opts.body?'POST':'GET',headers:{'x-admin-key':KEY,...(opts.body?{'Content-Type':'application/json'}:{})},body:opts.body?JSON.stringify(opts.body):undefined});if(opts.raw)return r;const j=await r.json().catch(()=>({error:'Server not reachable. Is the site deployed on Netlify?'}));if(!r.ok)throw new Error(j.error||'Error');return j};
+const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
+
+async function load(){
+  try{const j=await api();RECS=j.records||[];$('login').hidden=true;$('app').hidden=false;draw()}
+  catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
+}
+function draw(){
+  const now=Date.now(),c=t=>RECS.filter(r=>r.type===t).length;
+  const up=RECS.filter(r=>r.start&&new Date(r.start)>now&&!/cancel|lost/i.test(r.status)).sort((a,b)=>a.start.localeCompare(b.start));
+  $('stats').innerHTML=[['Upcoming calls',up.length],['Bookings',c('Booking')],['Inquiries',c('Inquiry')],['Briefs',c('Project brief')],['Won',RECS.filter(r=>r.status==='Won').length]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('upcoming').innerHTML=up.length?up.slice(0,6).map(r=>`<div class="upc"><span class="t">${esc(fmt(r.start,'Asia/Manila'))}<small>Client: ${esc(fmt(r.start,r.data.client_time_zone||'UTC'))}</small></span><span><b>${esc(r.data.name)}</b> · ${esc(r.data.business||'')}<small>${esc(r.data.service||'')}</small></span><span class="row"><a class="btn" href="mailto:${esc(r.data.email)}?subject=${encodeURIComponent('Meeting link for our call')}">Send meeting link</a></span></div>`).join(''):'<div class="empty">No upcoming calls yet.</div>';
+  const q=$('q').value.trim().toLowerCase();
+  const list=RECS.filter(r=>(FILTER==='all'||r.type===FILTER)&&(!q||JSON.stringify(r.data).toLowerCase().includes(q)));
+  $('list').innerHTML=list.length?list.map(card).join(''):'<div class="empty">Nothing here yet. New bookings, inquiries and briefs appear automatically.</div>';
+}
+function payBtn(r){const d=r.data||{};if(r.type==='Payment')return '';
+  const m=String(d.payment_method||'').toLowerCase();const key=m.includes('remitly')?'remitly':m.includes('maya')?'maya':m.includes('gcash')?'gcash':'';
+  const link=location.origin+'/pay.html'+(key?'#'+key:'');const first=String(d.name||'').split(' ')[0];
+  const body=`Hi ${first},\n\nThank you for accepting the quote! Here is your private payment page${key?' ('+d.payment_method+')':''}:\n${link}\n\nAmount: [amount]\n\nAfter paying, please upload your receipt on the same page so I can confirm it and start your project.\n\nThank you!\nJeselle`;
+  return `<a class="btn pri" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Your payment link – Jeselle Baril')}&body=${encodeURIComponent(body)}">Send payment link</a>`}
+function card(r){
+  const d=r.data||{},cls=r.type==='Project brief'?'brief':r.type;
+  const when=r.start?`📅 ${esc(fmt(r.start,'Asia/Manila'))}`:`Received ${esc(new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}`;
+  const rows=Object.entries(d).filter(([k,v])=>v&&!['form-name','bot-field','type','start_utc'].includes(k)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${esc(v).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')}</td></tr>`).join('');
+  const links=(r.links||[]).filter(l=>l.status!=='none').map(l=>`<span class="chip ${l.status==='public'?'ok':'warn'}">${l.status==='public'?'✅ Public link':l.status==='private'?'⚠️ Private link (client was asked to fix)':l.status==='broken'?'❌ Broken link':'❔ Link not checked'}</span>`).join(' ');
+  const rem=r.start?`<span class="chip">24h reminder: ${r.reminders?.['24h']?'sent':'pending'}</span> <span class="chip">1h reminder: ${r.reminders?.['1h']?'sent':'pending'}</span>`:'';
+  const files=r.files?`<span class="chip">📎 ${r.files.length} file(s): download in Netlify → Forms</span>`:'';
+  return `<article class="card" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${esc(r.status)}</span></div>
+  <div class="cb" hidden><div><div class="row" style="margin-bottom:8px">${links} ${rem} ${files}</div><table class="kv">${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
+  <div class="side"><label>Status<select class="f-status">${STATUSES.map(s=>`<option${s===r.status?' selected':''}>${s}</option>`).join('')}</select></label>
+  <label>Next follow-up<input type="date" class="f-follow" value="${esc(r.followUp||'')}"></label>
+  <label>Notes<textarea class="f-notes" rows="4" placeholder="Private notes">${esc(r.notes||'')}</textarea></label>
+  <div class="row"><button class="pri f-save">Save</button><a class="btn" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Re: your '+(r.type||'inquiry').toLowerCase())}">Email</a>${d.phone?`<a class="btn" href="https://wa.me/${esc(String(d.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">WhatsApp</a>`:''}${payBtn(r)}<button class="f-del">Delete</button></div></div></div></article>`;
+}
+$('list').addEventListener('click',async e=>{
+  const c=e.target.closest('.card');if(!c)return;const key=c.dataset.key;
+  if(e.target.closest('.ch')){const b=c.querySelector('.cb');b.hidden=!b.hidden;c.querySelector('.ch').setAttribute('aria-expanded',!b.hidden);return}
+  if(e.target.closest('.f-save')){try{const j=await api({body:{action:'update',key,status:c.querySelector('.f-status').value,notes:c.querySelector('.f-notes').value,followUp:c.querySelector('.f-follow').value}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');draw()}catch(err){note(err.message,1)}}
+  if(e.target.closest('.f-del')){const yes=e.target.dataset.sure;if(!yes){e.target.dataset.sure=1;e.target.textContent='Tap again to delete';return}try{await api({body:{action:'delete',key}});RECS=RECS.filter(r=>r.key!==key);note('Deleted');draw()}catch(err){note(err.message,1)}}
+});
+$('list').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('ch')){e.preventDefault();e.target.click()}});
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;FILTER=b.dataset.f;[...$('tabs').children].forEach(x=>x.setAttribute('aria-pressed',x===b));draw()});
+$('q').addEventListener('input',draw);
+$('refresh').addEventListener('click',load);
+$('test').addEventListener('click',async()=>{try{await api({body:{action:'test-email'}});note('Test email sent. Check your inbox.')}catch(e){note(e.message,1)}});
+$('csv').addEventListener('click',async()=>{try{const r=await api({qs:'?format=csv',raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crm-'+new Date().toISOString().slice(0,10)+'.csv';a.click()}catch(e){note(e.message,1)}});
+$('out').addEventListener('click',()=>{KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
+const login=()=>{KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load()};
+$('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+if(KEY)load();
+}
+</script>
+</body>
+</html>

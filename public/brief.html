@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Brief – Jeselle Baril</title>
+<meta name="description" content="Project brief for websites, SEO, social media and AI automation projects with Jeselle Baril.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237A4E3A'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='Georgia' font-style='italic'%3EJB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:#F7F3EE;color:#231E1B;font:16px/1.6 Jost,system-ui,sans-serif;overflow-x:clip}
+a{color:#7A4E3A}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px max(5vw,18px);border-bottom:1px solid #E2D9CF;background:#F7F3EE;position:sticky;top:0;z-index:5}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#231E1B;text-decoration:none}
+.back{font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:10px 0}
+.bar{height:4px;background:#EFE8DF}.bar span{display:block;height:100%;width:0;background:#7A4E3A;transition:width .4s ease}
+main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 120px;min-height:calc(100vh - 70px)}
+.intro h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,6vw,56px);line-height:1.05}
+.intro h1 i{color:#7A4E3A}
+.intro p{font-size:17px;font-weight:300;color:#4A413B;max-width:56ch}
+.intro ul{padding-left:20px;color:#4A413B;font-weight:300}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;background:#7A4E3A;color:#fff;border:0;border-radius:3px;padding:0 26px;font:500 14px Jost,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;text-decoration:none}
+.btn:hover{background:#5C3828}.btn:focus-visible,.tfarrow:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}
+.tfq{display:flex;flex-direction:column;gap:12px;animation:tfin .4s ease}
+@keyframes tfin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.tfq.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tfsec{margin:0;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#7A4E3A}
+.tfn{margin:0;font-size:14px;font-weight:500;color:#7A4E3A}.tfn span{font-size:12px;color:#9E9288;font-weight:400}.tfn .req{color:#B3402A;font-weight:500}
+.tft{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,4.5vw,38px);line-height:1.12}
+.tfh{margin:0;font-size:15px;line-height:1.55;color:#6E625A}
+.tff input:not([type=radio]):not([type=checkbox]),.tff textarea{width:100%;font:20px Jost,sans-serif;border:0;border-bottom:2px solid #C9BAAB;background:transparent;padding:12px 2px;color:#231E1B;border-radius:0;resize:vertical}
+.tff textarea{font-size:17px;line-height:1.5}
+.tff input:focus,.tff textarea:focus{outline:none;border-bottom-color:#7A4E3A}
+.tfch{display:flex;flex-direction:column;gap:8px;max-width:520px}
+.tfo{position:relative;display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid #C9BAAB;border-radius:6px;background:#FFFFFF;cursor:pointer;font-size:16px;min-height:48px;transition:background .15s,border-color .15s}
+.tfo:hover{background:#EFE8DF}.tfo input{position:absolute;opacity:0;pointer-events:none}
+.tfo .key{flex:none;width:26px;height:26px;display:grid;place-items:center;border:1px solid #C9BAAB;border-radius:4px;font-size:12px;font-weight:500;background:#F7F3EE}
+.tfo:has(input:checked){background:#7A4E3A;border-color:#7A4E3A;color:#fff}.tfo:has(input:checked) .key{background:#fff;color:#7A4E3A;border-color:#fff}
+.tfo:has(input:focus-visible){outline:2px solid #7A4E3A;outline-offset:2px}
+.tfnav{display:flex;align-items:center;gap:16px;margin-top:8px}.tfent{font-size:13px;color:#9E9288}
+.err{margin:0;font-size:14px;color:#8A2E1E;background:#FBEDE9;padding:10px 12px}
+.foot{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px max(5vw,18px);background:#F7F3EEee;backdrop-filter:blur(6px);border-top:1px solid #E2D9CF}
+.tfarrow{background:#FFFFFF;border:1px solid #C9BAAB;border-radius:4px;font:500 13px Jost,sans-serif;color:#4A413B;cursor:pointer;padding:0 14px;min-height:44px}.tfarrow:disabled{opacity:.35;cursor:default}
+.count{font-size:13px;color:#6E625A}
+.done h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,6vw,54px)}
+[hidden]{display:none!important}
+@media(max-width:600px){.tfent{display:none}.tff input:not([type=radio]):not([type=checkbox]){font-size:18px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.up{display:flex;flex-direction:column;gap:8px}
+.updrop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:22px 16px;border:1.5px dashed #C9BAAB;border-radius:8px;background:#FBF8F4;cursor:pointer;transition:background .2s,border-color .2s;min-height:110px}
+.updrop:hover,.updrop.over{background:#F4EDE4;border-color:#7A4E3A}
+.updrop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.updrop b{font-weight:500;color:#231E1B;font-size:15px}.updrop small{color:#6E625A;font-size:13px}
+.upico{width:38px;height:38px;border-radius:50%;background:#E8C9B8;display:grid;place-items:center;color:#7A4E3A;font-size:20px}
+.uplist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.uplist li{display:flex;align-items:center;gap:10px;justify-content:space-between;font-size:14px;background:#FFFFFF;border:1px solid #E2D9CF;border-radius:6px;padding:8px 10px}
+.uplist li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uplist button{flex:none;border:0;background:none;color:#8A2E1E;font:500 13px Jost,sans-serif;cursor:pointer;min-height:32px}
+.uptot{margin:0;font-size:12px;color:#6E625A}.uptot.bad{color:#8A2E1E;font-weight:500}
+.upfiles{display:none}
+.err{display:flex;flex-direction:column;gap:10px}.fbbtns{display:flex;flex-wrap:wrap;gap:10px}.btn.ghost{background:transparent;color:#231E1B;border:1px solid #231E1B}.btn.ghost:hover{background:#231E1B;color:#fff}
+.upbig{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #7A4E3A;border-radius:8px;background:#FFFFFF;text-decoration:none;color:#231E1B;transition:background .2s}
+.upbig:hover{background:#F4EDE4}.upbig b{display:block;font-weight:500;font-size:15px}.upbig small{display:block;color:#6E625A;font-size:13px}
+.upbig>span:nth-child(2){flex:1}.upgo{font-size:13px;font-weight:500;color:#7A4E3A;white-space:nowrap}
+.pubhelp{margin-top:12px;font-size:14px;line-height:1.5;color:#4A413B;background:#F4EDE4;border-left:3px solid #7A4E3A;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.pubhelp span{color:#6E625A}.pubhelp .pubok{display:none;align-items:flex-start;gap:8px;color:#231E1B;cursor:pointer}
+.pubhelp.on .pubok{display:flex}.pubok input{width:18px;height:18px;margin-top:2px;accent-color:#7A4E3A;flex:none}
+.typrev{font-size:13px!important;background:#FFF4D6;border-left:3px solid #C99A2E;padding:8px 10px;color:#5C4A1E!important}
+.tymask{position:fixed;inset:0;z-index:100;background:rgba(35,30,27,.55);display:grid;place-items:center;padding:16px;animation:tyfade .25s ease}
+@keyframes tyfade{from{opacity:0}to{opacity:1}}
+.tybox{width:100%;max-width:480px;max-height:90vh;overflow:auto;background:#F7F3EE;border-radius:10px;padding:28px 24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:typop .35s cubic-bezier(.3,1.4,.5,1);text-align:left;font-family:Jost,sans-serif;color:#231E1B}
+@keyframes typop{from{transform:translateY(16px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.tyico{width:56px;height:56px;border-radius:50%;background:#7A4E3A;color:#fff;display:grid;place-items:center;font-size:28px;margin-bottom:12px}
+.tybox h3{margin:0 0 6px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;line-height:1.1}
+.tybox p{margin:0 0 12px;font-size:15px;line-height:1.6;color:#4A413B}
+.tysteps{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:8px}
+.tysteps li{display:flex;gap:10px;font-size:14px;line-height:1.5;background:#fff;border:1px solid #E2D9CF;border-radius:6px;padding:10px 12px}
+.tysteps li span:first-child{flex:none}.tysteps li span:last-child{flex:1;min-width:0}
+.tybtns{display:flex;flex-direction:column;gap:8px}
+.tybtns a,.tybtns button{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:4px;font:500 13px Jost,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:1px solid #231E1B;background:transparent;color:#231E1B}
+.tybtns .solid{background:#7A4E3A;border-color:#7A4E3A;color:#fff}
+@media(prefers-reduced-motion:reduce){.tymask,.tybox{animation:none}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">Jeselle Baril</a><a class="back" href="index.html">← Back to site</a></header>
+<div class="bar" aria-hidden="true"><span id="prog"></span></div>
+<main>
+<div class="intro" id="intro">
+<h1>Project <i>brief</i></h1>
+<p>This helps me understand your business and plan your project properly, so we can start right away. It takes about 8–10 minutes.</p>
+<ul><li>25 short questions, one at a time</li><li>Your answers are saved to me privately</li><li>Please don't share passwords here</li></ul>
+<button type="button" class="btn" id="start">Start brief →</button>
+</div>
+<form id="brief" name="project-brief" method="POST" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field" hidden>
+<input type="hidden" name="form-name" value="project-brief">
+<input type="hidden" name="type" value="Project brief">
+<input type="hidden" name="client_time_zone" id="tz">
+<p hidden><label>Leave empty <input name="bot-field"></label></p>
+<section class="tfq" data-q="name">
+<p class="tfsec">About you</p>
+<p class="tfn">1 → <span class="req">Required *</span></p>
+<h2 class="tft">Let's start with your name</h2><p class="tfh"></p>
+<div class="tff"><input name="name" type="text" required placeholder="Your full name" autocomplete="name"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="email" hidden>
+<p class="tfsec">About you</p>
+<p class="tfn">2 → <span class="req">Required *</span></p>
+<h2 class="tft">Your email address</h2><p class="tfh">I’ll send updates and files here.</p>
+<div class="tff"><input name="email" type="email" required placeholder="name@example.com" autocomplete="email"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="phone" hidden>
+<p class="tfsec">About you</p>
+<p class="tfn">3 → <span class="">optional</span></p>
+<h2 class="tft">WhatsApp or phone number</h2><p class="tfh">Optional, for quick updates.</p>
+<div class="tff"><input name="phone" type="tel" placeholder="+63 …" autocomplete="tel"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="business" hidden>
+<p class="tfsec">About you</p>
+<p class="tfn">4 → <span class="req">Required *</span></p>
+<h2 class="tft">What’s your business or brand called?</h2><p class="tfh"></p>
+<div class="tff"><input name="business" type="text" required placeholder="Business name" autocomplete="organization"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="role" hidden>
+<p class="tfsec">About you</p>
+<p class="tfn">5 → <span class="req">Required *</span></p>
+<h2 class="tft">What’s your role?</h2><p class="tfh"></p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="radio" name="role" value="Owner / founder"><span class="key">A</span>Owner / founder</label><label class="tfo"><input type="radio" name="role" value="Manager"><span class="key">B</span>Manager</label><label class="tfo"><input type="radio" name="role" value="Marketing / staff"><span class="key">C</span>Marketing / staff</label><label class="tfo"><input type="radio" name="role" value="Other"><span class="key">D</span>Other</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="about" hidden>
+<p class="tfsec">Your business</p>
+<p class="tfn">6 → <span class="req">Required *</span></p>
+<h2 class="tft">What does your business do, and who are your customers?</h2><p class="tfh">Products or services, and your ideal customer.</p>
+<div class="tff"><textarea name="business_description" rows="3" required placeholder="e.g. Tour packages for families and barkadas in Luzon and Visayas"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="location" hidden>
+<p class="tfsec">Your business</p>
+<p class="tfn">7 → <span class="req">Required *</span></p>
+<h2 class="tft">Where are you based, and which areas do you serve?</h2><p class="tfh"></p>
+<div class="tff"><input name="location" type="text" required placeholder="e.g. Antipolo, Rizal – serving all of the Philippines"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="links" hidden>
+<p class="tfsec">Your business</p>
+<p class="tfn">8 → <span class="req">Required *</span></p>
+<h2 class="tft">Share all your current links</h2><p class="tfh">Website, Facebook, Instagram, TikTok, Google Business Profile, Shopee/Lazada… one per line. Type “none” if you don’t have any yet.</p>
+<div class="tff"><textarea name="current_links" rows="4" required placeholder="https://facebook.com/yourpage"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="competitors" hidden>
+<p class="tfsec">Your business</p>
+<p class="tfn">9 → <span class="">optional</span></p>
+<h2 class="tft">Who are your competitors?</h2><p class="tfh">Names or links of 2–3 businesses like yours. Optional.</p>
+<div class="tff"><textarea name="competitors" rows="3" placeholder="https://…"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="service" hidden>
+<p class="tfsec">The project</p>
+<p class="tfn">10 → <span class="req">Required *</span></p>
+<h2 class="tft">Which services do you need?</h2><p class="tfh">Choose all that apply.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Social media management"><span class="key">C</span>Social media management</label><label class="tfo"><input type="checkbox" name="service" value="AI automation & CRM"><span class="key">D</span>AI automation & CRM</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">E</span>Complete package</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">F</span>Not sure yet</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="detail" hidden>
+<p class="tfsec">The project</p>
+<p class="tfn">11 → <span class="req">Required *</span></p>
+<h2 class="tft">Tell me exactly what you need</h2><p class="tfh" id="tf-detail-h"></p>
+<div class="tff" id="tf-detail-wrap"><textarea name="service_details" rows="5" required placeholder="Type your answer here…"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="goal" hidden>
+<p class="tfsec">The project</p>
+<p class="tfn">12 → <span class="req">Required *</span></p>
+<h2 class="tft">What’s the main goal of this project?</h2><p class="tfh"></p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="radio" name="main_goal" value="More inquiries and leads"><span class="key">A</span>More inquiries and leads</label><label class="tfo"><input type="radio" name="main_goal" value="More sales or bookings"><span class="key">B</span>More sales or bookings</label><label class="tfo"><input type="radio" name="main_goal" value="Grow followers and brand awareness"><span class="key">C</span>Grow followers and brand awareness</label><label class="tfo"><input type="radio" name="main_goal" value="Save time with automation"><span class="key">D</span>Save time with automation</label><label class="tfo"><input type="radio" name="main_goal" value="Look more professional online"><span class="key">E</span>Look more professional online</label><label class="tfo"><input type="radio" name="main_goal" value="Something else"><span class="key">F</span>Something else</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="success" hidden>
+<p class="tfsec">The project</p>
+<p class="tfn">13 → <span class="req">Required *</span></p>
+<h2 class="tft">What would success look like in 3 months?</h2><p class="tfh">Be as specific as you can, e.g. “20 inquiries a month” or “posting 4 times a week without me doing it”.</p>
+<div class="tff"><textarea name="success_3_months" rows="3" required placeholder="Type your answer here…"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="assets" hidden>
+<p class="tfsec">Brand & content</p>
+<p class="tfn">14 → <span class="req">Required *</span></p>
+<h2 class="tft">Which brand materials do you already have?</h2><p class="tfh">Choose all you have.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="brand_assets" value="Logo"><span class="key">A</span>Logo</label><label class="tfo"><input type="checkbox" name="brand_assets" value="Brand colors / fonts"><span class="key">B</span>Brand colors / fonts</label><label class="tfo"><input type="checkbox" name="brand_assets" value="Product or service photos"><span class="key">C</span>Product or service photos</label><label class="tfo"><input type="checkbox" name="brand_assets" value="Videos"><span class="key">D</span>Videos</label><label class="tfo"><input type="checkbox" name="brand_assets" value="Written texts (about, services, prices)"><span class="key">E</span>Written texts (about, services, prices)</label><label class="tfo"><input type="checkbox" name="brand_assets" value="None yet"><span class="key">F</span>None yet</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="assets_link" hidden>
+<p class="tfsec">Brand & content</p>
+<p class="tfn">15 → <span class="">optional</span></p>
+<h2 class="tft">Upload your materials or share a link</h2><p class="tfh">Logo, photos, menus, price lists, documents. Upload up to 5 files (8 MB total), or share a Google Drive, Canva or Dropbox folder for bigger files. Optional, you can send them later.</p>
+<div class="tff"><div class="up" data-up="brief">
+<label class="updrop"><span class="upico">⇪</span><b>Upload files</b><small>Logo, photos, short clips, documents · up to 5 files, 8 MB total</small><input type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip" class="uppick" aria-label="Upload files"></label>
+<a class="upbig" href="#" target="_blank" rel="noopener" hidden><span class="upico">▶</span><span><b>Big files &amp; videos</b><small>Upload large videos and photo folders, up to 10 GB per file</small></span><span class="upgo">Upload →</span></a><ul class="uplist"></ul><p class="uptot"></p><input type="file" name="file_1" class="upfiles" tabindex="-1" aria-hidden="true"><input type="file" name="file_2" class="upfiles" tabindex="-1" aria-hidden="true"><input type="file" name="file_3" class="upfiles" tabindex="-1" aria-hidden="true"><input type="file" name="file_4" class="upfiles" tabindex="-1" aria-hidden="true"><input type="file" name="file_5" class="upfiles" tabindex="-1" aria-hidden="true">
+</div><input name="assets_link" type="url" class="publink" placeholder="Or paste a folder link: https://drive.google.com/drive/folders/…" style="margin-top:14px">
+<div class="pubhelp"><b>Important:</b> set the folder link to <b>“Anyone with the link” → Viewer</b> so I can open it.<br><span>Google Drive: right-click the folder → Share → General access → <i>Anyone with the link</i> → Copy link.</span>
+<label class="pubok"><input type="checkbox" name="link_is_public" value="Yes, anyone with the link can view"> I confirm my link is set to <b>Anyone with the link can view</b></label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="content" hidden>
+<p class="tfsec">Brand & content</p>
+<p class="tfn">16 → <span class="req">Required *</span></p>
+<h2 class="tft">Who will provide the texts and photos?</h2><p class="tfh"></p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="radio" name="content_by" value="I’ll provide everything"><span class="key">A</span>I’ll provide everything</label><label class="tfo"><input type="radio" name="content_by" value="I’ll provide some, please help with the rest"><span class="key">B</span>I’ll provide some, please help with the rest</label><label class="tfo"><input type="radio" name="content_by" value="Please create them for me"><span class="key">C</span>Please create them for me</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="style" hidden>
+<p class="tfsec">Brand & content</p>
+<p class="tfn">17 → <span class="req">Required *</span></p>
+<h2 class="tft">Which words describe the look you want?</h2><p class="tfh">Choose up to three.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="style" value="Modern"><span class="key">A</span>Modern</label><label class="tfo"><input type="checkbox" name="style" value="Elegant"><span class="key">B</span>Elegant</label><label class="tfo"><input type="checkbox" name="style" value="Warm & friendly"><span class="key">C</span>Warm & friendly</label><label class="tfo"><input type="checkbox" name="style" value="Minimal & clean"><span class="key">D</span>Minimal & clean</label><label class="tfo"><input type="checkbox" name="style" value="Bold & colorful"><span class="key">E</span>Bold & colorful</label><label class="tfo"><input type="checkbox" name="style" value="Professional & corporate"><span class="key">F</span>Professional & corporate</label><label class="tfo"><input type="checkbox" name="style" value="Playful"><span class="key">G</span>Playful</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="refs" hidden>
+<p class="tfsec">Brand & content</p>
+<p class="tfn">18 → <span class="">optional</span></p>
+<h2 class="tft">Any websites, pages or brands you like?</h2><p class="tfh">Paste links and say what you like about each one. Optional, but it helps a lot.</p>
+<div class="tff"><textarea name="reference_links" rows="4" placeholder="https://example.com – I like the layout and colors"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="access" hidden>
+<p class="tfsec">Access & tools</p>
+<p class="tfn">19 → <span class="req">Required *</span></p>
+<h2 class="tft">Which accounts will I need to work on?</h2><p class="tfh">Choose all that apply. Please do not type passwords here. I’ll send you a safe way to share access.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="accounts_needed" value="Domain / hosting"><span class="key">A</span>Domain / hosting</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Facebook page"><span class="key">B</span>Facebook page</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Instagram"><span class="key">C</span>Instagram</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="TikTok"><span class="key">D</span>TikTok</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Google Business Profile"><span class="key">E</span>Google Business Profile</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Google Analytics / Search Console"><span class="key">F</span>Google Analytics / Search Console</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Email or CRM tool"><span class="key">G</span>Email or CRM tool</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Booking / payment app"><span class="key">H</span>Booking / payment app</label><label class="tfo"><input type="checkbox" name="accounts_needed" value="Not sure / none yet"><span class="key">I</span>Not sure / none yet</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="tools" hidden>
+<p class="tfsec">Access & tools</p>
+<p class="tfn">20 → <span class="">optional</span></p>
+<h2 class="tft">Which tools or apps does your business use now?</h2><p class="tfh">e.g. Gmail, Google Sheets, Messenger, Canva, Shopify, a booking app. Optional.</p>
+<div class="tff"><textarea name="current_tools" rows="3" placeholder="Type here…"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="budget" hidden>
+<p class="tfsec">Budget & timing</p>
+<p class="tfn">21 → <span class="req">Required *</span></p>
+<h2 class="tft">What’s your budget for this project?</h2><p class="tfh">All rates are negotiable.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="radio" name="budget" value="Under $300"><span class="key">A</span>Under $300</label><label class="tfo"><input type="radio" name="budget" value="$300 – $800"><span class="key">B</span>$300 – $800</label><label class="tfo"><input type="radio" name="budget" value="$800 – $1,500"><span class="key">C</span>$800 – $1,500</label><label class="tfo"><input type="radio" name="budget" value="$1,500 – $3,000"><span class="key">D</span>$1,500 – $3,000</label><label class="tfo"><input type="radio" name="budget" value="$3,000+"><span class="key">E</span>$3,000+</label><label class="tfo"><input type="radio" name="budget" value="Not sure yet"><span class="key">F</span>Not sure yet</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="payment" hidden>
+<p class="tfsec">Budget & timing</p>
+<p class="tfn">22 → <span class="req">Required *</span></p>
+<h2 class="tft">How would you prefer to pay?</h2><p class="tfh">Choose all that work for you. After we agree on the project, I’ll send my GCash or Maya QR code, or my Remitly details, for the deposit.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="payment_method" value="GCash (QR code)"><span class="key">A</span>GCash (QR code)</label><label class="tfo"><input type="checkbox" name="payment_method" value="Maya (QR code)"><span class="key">B</span>Maya (QR code)</label><label class="tfo"><input type="checkbox" name="payment_method" value="Remitly (for clients abroad)"><span class="key">C</span>Remitly (for clients abroad)</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="timeline" hidden>
+<p class="tfsec">Budget & timing</p>
+<p class="tfn">23 → <span class="req">Required *</span></p>
+<h2 class="tft">When do you need this done?</h2><p class="tfh"></p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="radio" name="timeline" value="As soon as possible"><span class="key">A</span>As soon as possible</label><label class="tfo"><input type="radio" name="timeline" value="Within 2 weeks"><span class="key">B</span>Within 2 weeks</label><label class="tfo"><input type="radio" name="timeline" value="Within a month"><span class="key">C</span>Within a month</label><label class="tfo"><input type="radio" name="timeline" value="In 1–3 months"><span class="key">D</span>In 1–3 months</label><label class="tfo"><input type="radio" name="timeline" value="Flexible"><span class="key">E</span>Flexible</label></div><input name="deadline" type="text" placeholder="Optional: exact deadline or launch date" style="margin-top:12px"></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="updates" hidden>
+<p class="tfsec">Budget & timing</p>
+<p class="tfn">24 → <span class="req">Required *</span></p>
+<h2 class="tft">How do you prefer to receive updates?</h2><p class="tfh">Choose all that apply.</p>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="update_channel" value="Email"><span class="key">A</span>Email</label><label class="tfo"><input type="checkbox" name="update_channel" value="WhatsApp"><span class="key">B</span>WhatsApp</label><label class="tfo"><input type="checkbox" name="update_channel" value="Messenger"><span class="key">C</span>Messenger</label><label class="tfo"><input type="checkbox" name="update_channel" value="Viber"><span class="key">D</span>Viber</label><label class="tfo"><input type="checkbox" name="update_channel" value="Video call"><span class="key">E</span>Video call</label></div></div>
+<div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<section class="tfq" data-q="msg" hidden>
+<p class="tfsec">Budget & timing</p>
+<p class="tfn">25 → <span class="">optional</span></p>
+<h2 class="tft">Anything else I should know?</h2><p class="tfh">Deadlines, special requests or questions. Optional.</p>
+<div class="tff"><textarea name="message" rows="3" placeholder="Type here…"></textarea></div>
+<div class="tfnav"><button type="button" class="btn tfok">Submit brief</button><span class="tfent">press <b>Enter ↵</b></span></div>
+</section>
+<p class="err" id="err" hidden></p>
+</form>
+<div class="done" id="done" hidden>
+<h1>Thank you!</h1>
+<p>Your project brief was sent. A copy of your answers is on its way to your inbox, and I'll reply within 24 hours with next steps and a quote.</p>
+<p><a class="btn" href="index.html#book">Book a free call</a></p>
+</div>
+</main>
+<div class="foot" id="foot" hidden><button type="button" class="tfarrow" id="up">↑ Back</button><span class="count" id="count"></span></div>
+<script>
+{
+const ALERT_EMAIL='bariljeselle@gmail.com';
+// Thank-you pop-up after a form is sent
+window.showThanks=function(o){
+  const m=document.createElement('div');m.className='tymask';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label',o.title);
+  m.innerHTML=`<div class="tybox"><div class="tyico">✓</div><h3>${o.title}</h3><p>${o.text}</p>${/claude|anthropic|usercontent/i.test(location.hostname)?'<p class="typrev">Preview only: this is exactly what clients see. The real emails and reminders are sent from your live Netlify site.</p>':''}<ul class="tysteps">${o.steps.map(s=>`<li><span>${s[0]}</span><span>${s[1]}</span></li>`).join('')}</ul><div class="tybtns">${(o.actions||[]).map(a=>a.href?`<a class="${a.solid?'solid':''}" href="${a.href}"${a.ext?' target="_blank" rel="noopener"':''}>${a.label}</a>`:'').join('')}<button type="button" class="${(o.actions||[]).some(a=>a.solid)?'':'solid'}" data-close>Close</button></div></div>`;
+  const close=()=>{m.remove();document.removeEventListener('keydown',esc)};const esc=e=>{if(e.key==='Escape')close()};
+  m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-close]'))close()});document.addEventListener('keydown',esc);
+  document.body.appendChild(m);m.querySelector('[data-close]').focus();
+};
+// fetch with a time limit so a button never stays on "Sending…"
+window.postWithTimeout=function(url,opts,ms=20000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return fetch(url,{...opts,signal:c.signal}).finally(()=>clearTimeout(t))};
+
+
+// ===== BIG FILE & VIDEO UPLOADS =====
+// EDIT LATER: paste your Google Form (File upload question) or Dropbox File Request link
+// between the quotes. The "Big files & videos" button appears automatically once set.
+const BIG_UPLOAD_URL='';
+document.querySelectorAll('.upbig').forEach(a=>{a.hidden=false;if(/^https:\/\//.test(BIG_UPLOAD_URL)){a.href=BIG_UPLOAD_URL}else{a.removeAttribute('target');a.href='mailto:bariljeselle@gmail.com?subject='+encodeURIComponent('Large files / videos for my project')+'&body='+encodeURIComponent('Hi Jeselle,\n\nI have large files or videos to send for my project. Please send me an upload link.\n\nThank you!');a.querySelector('.upgo').textContent='Request link →';a.querySelector('small').textContent='Videos and large folders: I\'ll send you a private upload link'}});
+
+// File uploads (Netlify Forms stores them; download from Site > Forms)
+window.UP_MAX=8*1024*1024;
+document.querySelectorAll('.up').forEach(w=>{
+  const pick=w.querySelector('.uppick'),list=w.querySelector('.uplist'),tot=w.querySelector('.uptot'),drop=w.querySelector('.updrop');
+  w.files=[];
+  const fmt=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+  const draw=()=>{list.innerHTML=w.files.map((f,i)=>`<li><span>📎 ${f.name.replace(/[<>&"]/g,'')} · ${fmt(f.size)}</span><button type="button" data-i="${i}">Remove</button></li>`).join('');
+    const t=w.files.reduce((a,f)=>a+f.size,0);tot.textContent=w.files.length?`${w.files.length} of 5 files · ${fmt(t)} of 8 MB`+(t>UP_MAX?' — too large, please remove some, or use the Big files & videos upload or a Google Drive link':''):'';tot.classList.toggle('bad',t>UP_MAX)};
+  const add=fs=>{for(const f of fs){if(w.files.length<5)w.files.push(f)}draw();pick.value=''};
+  pick.addEventListener('change',()=>add(pick.files));
+  list.addEventListener('click',e=>{const b=e.target.closest('button');if(b){w.files.splice(+b.dataset.i,1);draw()}});
+  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+  drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+});
+window.buildFormData=function(form){
+  const fd=new FormData(form);
+  for(const k of [...fd.keys()])if(/^file_\d$/.test(k)||k==='')fd.delete(k);
+  const w=form.querySelector('.up');if(w&&w.files)w.files.forEach((f,i)=>fd.append('file_'+(i+1),f,f.name));
+  return fd;
+};
+window.uploadsTooBig=function(form){const w=form.querySelector('.up');return w&&w.files&&w.files.reduce((a,f)=>a+f.size,0)>UP_MAX};
+
+const form=document.getElementById('brief'),qs=[...form.querySelectorAll('.tfq')],prog=document.getElementById('prog'),cnt=document.getElementById('count'),err=document.getElementById('err'),up=document.getElementById('up');
+try{document.getElementById('tz').value=Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){}
+let at=0;
+const DETAIL={
+ 'Website design & development':'Website: do you have one now? Which pages (Home, About, Services, Gallery, Contact…) and features (booking, online shop, inquiry form, payments) do you need?',
+ 'SEO (Google visibility)':'SEO: which keywords and location should you show up for on Google? Do you have a Google Business Profile?',
+ 'Social media management':'Social media: which platforms, how many posts per week, and do you want Reels/TikToks? Do you have photos and videos I can use?',
+ 'AI automation & CRM':'Automation & CRM: which tasks repeat every day (replying to inquiries, follow-ups, bookings, invoices)? How do you track clients now?',
+ 'Complete package':'Complete package: describe your online presence today and what you want it to look like after the project.',
+ 'Not sure yet':'Tell me what feels hard right now with your online presence, and I’ll suggest the right fit.'};
+function setDetail(){const sel=[...form.querySelectorAll('input[name=service]:checked')].map(i=>i.value);
+ document.getElementById('tf-detail-h').innerHTML=(sel.length?sel:['Not sure yet']).map(v=>'• '+DETAIL[v]).join('<br>');}
+function show(n){qs.forEach((q,k)=>q.hidden=k!==n);at=n;prog.style.width=(n/qs.length*100)+'%';cnt.textContent=`Question ${n+1} of ${qs.length}`;up.disabled=n===0;err.hidden=true;
+ if(qs[n].dataset.q==='detail')setDetail();
+ const f=qs[n].querySelector('input:not([type=radio]):not([type=checkbox]),textarea');if(f)setTimeout(()=>f.focus({preventScroll:true}),60);
+ window.scrollTo({top:0});}
+function valid(q){
+ const req=q.querySelector('.tfn .req');
+ const boxes=q.querySelectorAll('input[type=checkbox]');if(req&&boxes.length&&![...boxes].some(b=>b.checked))return 'Please choose at least one option.';
+ if(q.dataset.q==='style'&&[...boxes].filter(b=>b.checked).length>3)return 'Please choose up to three.';
+ const radios=q.querySelectorAll('input[type=radio]');if(req&&radios.length&&![...radios].some(b=>b.checked))return 'Please choose one option.';
+ for(const f of q.querySelectorAll('input:not([type=radio]):not([type=checkbox]),textarea')){
+   if(f.required&&!f.value.trim())return 'Please fill this in.';
+   if(f.type==='email'&&f.value&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.value.trim()))return 'Please enter a valid email.';
+   if(f.type==='url'&&f.value&&!/^https?:\/\//i.test(f.value.trim()))return 'Please paste a full link starting with https://';
+ }
+ {const inp=q.querySelector('.publink');if(inp&&inp.value.trim()){if(!/^https:\/\/\S+\.\S+/.test(inp.value.trim()))return 'Please paste the full folder link, starting with https://';const cb=q.querySelector('input[name=link_is_public]');if(cb&&!cb.checked)return 'Please set your folder link to “Anyone with the link can view”, then tick the box to confirm.'}}
+ if(q.querySelector('.up')&&uploadsTooBig(form))return 'Your files are over 8 MB. Please remove some, or use the Big files & videos upload or a folder link.';
+ return '';}
+function fail(m){err.textContent=m;err.hidden=false;const q=qs[at];q.after(err);q.classList.remove('shake');void q.offsetWidth;q.classList.add('shake')}
+async function submit(){
+ const b=qs[at].querySelector('.tfok');b.disabled=true;b.textContent='Sending…';
+ const fd=buildFormData(form);const json={};fd.forEach((v,k)=>{if(k==='bot-field'||k==='form-name'||v instanceof File)return;json[k]=json[k]?json[k]+', '+v:v});
+ const IS_PREVIEW=/claude|anthropic|usercontent/i.test(location.hostname);const hasFile=[...fd.values()].some(v=>v instanceof File&&v.size);const x=IS_PREVIEW?await new Promise(r=>setTimeout(()=>r(true),700)):await postWithTimeout('/',{method:'POST',body:fd},hasFile?90000:20000).then(r=>r.ok).catch(()=>false);const y=false;
+ b.disabled=false;b.textContent='Submit brief';
+ if(x||y){form.hidden=true;document.getElementById('foot').hidden=true;document.getElementById('done').hidden=false;prog.style.width='100%';const nm=(json.name||'').split(' ')[0].replace(/[<>&"]/g,'');showThanks({title:`Thank you${nm?', '+nm:''}!`,text:'Your project brief was sent successfully.',steps:[['📩','A copy of all your answers is on its way to <b>'+String(json.email||'').replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['🔍','I’ll review your brief, links and files.'],['💬','Within 24 hours I’ll reply with a plan, quote and next steps.'],['💳','After you accept the quote, I’ll email your private payment link'+(json.payment_method?' for <b>'+String(json.payment_method).replace(/[<>&"]/g,'')+'</b>':'')+'.']],actions:[{href:'index.html#book',label:'Book a free call',solid:true}]})}
+ else{const body=encodeURIComponent('Hi Jeselle,\n\nHere is my project brief:\n\n'+Object.entries(json).filter(([k])=>!k.startsWith('_')).map(([k,v])=>k.replace(/_/g,' ')+': '+v).join('\n'));
+   const txt=decodeURIComponent(body);const pv=!/netlify\.app$|jeselle/i.test(location.hostname);err.hidden=false;err.innerHTML='<span>'+(pv?'<b>Preview mode:</b> the brief sends automatically on the live site. ':'<b>Couldn’t send automatically.</b> ')+'Send it in one tap instead, your answers are already filled in:</span><span class="fbbtns"><a class="btn" href="mailto:'+ALERT_EMAIL+'?subject='+encodeURIComponent('Project brief')+'&body='+body+'">Send by email</a><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/639311255454?text='+encodeURIComponent(txt)+'">Send on WhatsApp</a></span>';err.scrollIntoView({behavior:'smooth',block:'center'})}
+}
+function next(){const m=valid(qs[at]);if(m)return fail(m);if(at<qs.length-1)show(at+1);else submit()}
+form.addEventListener('click',e=>{if(e.target.closest('.tfok'))next()});
+form.addEventListener('change',e=>{if(e.target.type==='radio')setTimeout(next,300)});
+form.addEventListener('submit',e=>{e.preventDefault();next()});
+document.addEventListener('keydown',e=>{if(form.hidden)return;
+ if(e.key==='Enter'&&!e.shiftKey){if(e.target.tagName==='TEXTAREA'&&!(e.ctrlKey||e.metaKey))return;e.preventDefault();next();return}
+ if(e.key.length===1&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){const k=e.key.toUpperCase().charCodeAt(0)-65;const o=qs[at].querySelectorAll('.tfo input')[k];if(o){o.checked=o.type==='checkbox'?!o.checked:true;o.dispatchEvent(new Event('change',{bubbles:true}))}}});
+up.addEventListener('click',()=>{if(at>0)show(at-1)});
+document.querySelectorAll('.publink').forEach(inp=>{const help=inp.parentElement.querySelector('.pubhelp');const upd=()=>help.classList.toggle('on',!!inp.value.trim());inp.addEventListener('input',upd);upd()});
+document.getElementById('start').addEventListener('click',()=>{document.getElementById('intro').hidden=true;form.hidden=false;document.getElementById('foot').hidden=false;show(0)});
+}
+</script>
+</body>
+</html>
