@@ -114,6 +114,7 @@ GOOGLE MEET LINKS (automatic, one time setup ~10 min)
      Authorized redirect URI: https://jeselleva.netlify.app/api/google/callback
   5. Netlify → Environment variables: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET → redeploy
   6. admin.html → "Connect Google Calendar" → sign in → Allow (ignore "unverified app": Advanced → Go to)
+  Without this setup, every booking/inquiry/brief still gets a free instant video link (meet.jit.si) automatically.
   After this: every booking creates a Google Calendar event with a Meet link, invites the client,
   and puts a "Join Google Meet" button in both emails, reminders and the CRM.
   Inquiries & briefs: get their own Google Meet room link automatically (in both emails + the CRM).

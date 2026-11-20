@@ -1,5 +1,5 @@
 // Private CRM API for admin.html. Protected by the ADMIN_PASSWORD environment variable.
-import { crmStore, sendMail, OWNER, bookingEmails } from "../lib/core.mjs";
+import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
 import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
 import crypto from "node:crypto";
 
@@ -46,9 +46,8 @@ export default async (req) => {
     if (body.action === "make-room") {
       // Give an older inquiry/brief its own Google Meet room link (no time needed)
       let m;
-      try { m = await createSpace(store); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); }
-      if (!m) return Response.json({ error: "Connect Google Calendar first (button at the top of your CRM)." }, { status: 400 });
-      rec.meetLink = m.meetLink; rec.meetRoom = true; rec.meetError = "";
+      try { m = await createSpace(store); } catch (e) { m = null; }
+      rec.meetLink = m ? m.meetLink : roomLink(rec); rec.meetFallback = !m; rec.meetRoom = true; rec.meetError = "";
       await store.setJSON(body.key, rec);
       return Response.json({ ok: true, rec });
     }
@@ -61,9 +60,9 @@ export default async (req) => {
       if (rec.type !== "Booking" && !/won|paid/i.test(rec.status)) rec.status = "Call booked";
       rec.reminders = {};
       let m;
-      try { m = await createMeet(rec, store); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); }
-      if (!m) return Response.json({ error: "Connect Google Calendar first (button at the top of your CRM)." }, { status: 400 });
-      rec.meetLink = m.meetLink; rec.gcalEventId = m.eventId; rec.gcalEventLink = m.eventLink; rec.meetError = "";
+      try { m = await createMeet(rec, store); } catch (e) { m = null; rec.meetError = e.message; }
+      if (m) { rec.meetLink = m.meetLink; rec.gcalEventId = m.eventId; rec.gcalEventLink = m.eventLink; rec.meetError = ""; rec.meetFallback = false; }
+      else { rec.gcalEventId = ""; if (!rec.meetLink || !rec.meetFallback) rec.meetLink = roomLink(rec); rec.meetFallback = true; }
       const log = [];
       for (const msg of bookingEmails(rec)) { try { await sendMail(msg); log.push("sent:" + msg.to); } catch (e) { log.push("failed:" + msg.to + ":" + e.message); } }
       rec.emailLog = [...(rec.emailLog || []), ...log];
