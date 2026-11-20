@@ -80,6 +80,14 @@ export async function createMeet(rec, store = crmStore()) {
     await new Promise((res) => setTimeout(res, 1200));
     ev = await (await fetch(`${base}/${ev.id}`, { headers: { Authorization: `Bearer ${token}` } })).json();
   }
+  if (ev.hangoutLink) { // also paste the Meet link into the event's location and notes, so it's visible everywhere
+    try {
+      await fetch(`${base}/${ev.id}?sendUpdates=none`, {
+        method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ location: ev.hangoutLink, description: `🎥 Google Meet: ${ev.hangoutLink}\n\n${body.description}` }),
+      });
+    } catch {}
+  }
   return { meetLink: ev.hangoutLink || "", eventId: ev.id, eventLink: ev.htmlLink || "" };
 }
 
