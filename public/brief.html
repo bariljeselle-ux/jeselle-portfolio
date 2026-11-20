@@ -83,6 +83,10 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 .tybtns a,.tybtns button{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:4px;font:500 13px Jost,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:1px solid #231E1B;background:transparent;color:#231E1B}
 .tybtns .solid{background:#7A4E3A;border-color:#7A4E3A;color:#fff}
 @media(prefers-reduced-motion:reduce){.tymask,.tybox{animation:none}}
+.paylinks{margin-top:14px;background:#F4EDE4;border-left:3px solid #7A4E3A;padding:12px 14px;display:flex;flex-direction:column;gap:8px;max-width:520px}
+.plh{margin:0;font-weight:500;font-size:14px}.pln{margin:0;font-size:13px;color:#6E625A}
+.plbtns{display:flex;flex-wrap:wrap;gap:8px}.plbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:4px;background:#7A4E3A;color:#fff!important;text-decoration:none;font:500 13px Jost,sans-serif;letter-spacing:.06em}
+.plbtn:hover{background:#5C3828}
 </style>
 </head>
 <body>
@@ -257,6 +261,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <p class="tfn">22 → <span class="req">Required *</span></p>
 <h2 class="tft">How would you prefer to pay?</h2><p class="tfh">Choose all that work for you. After we agree on the project, I’ll send my GCash or Maya QR code, or my Remitly details, for the deposit.</p>
 <div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="payment_method" value="GCash (QR code)"><span class="key">A</span>GCash (QR code)</label><label class="tfo"><input type="checkbox" name="payment_method" value="Maya (QR code)"><span class="key">B</span>Maya (QR code)</label><label class="tfo"><input type="checkbox" name="payment_method" value="Remitly (for clients abroad)"><span class="key">C</span>Remitly (for clients abroad)</label></div></div>
+<div class="paylinks" id="paylinks" hidden><p class="plh">🔒 Your private payment page</p><div class="plbtns"></div><p class="pln">Opens in a new tab with the QR code. Pay only after we agree on the quote.</p></div>
 <div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
 </section>
 <section class="tfq" data-q="timeline" hidden>
@@ -366,9 +371,9 @@ function fail(m){err.textContent=m;err.hidden=false;const q=qs[at];q.after(err);
 async function submit(){
  const b=qs[at].querySelector('.tfok');b.disabled=true;b.textContent='Sending…';
  const fd=buildFormData(form);const json={};fd.forEach((v,k)=>{if(k==='bot-field'||k==='form-name'||v instanceof File)return;json[k]=json[k]?json[k]+', '+v:v});
- const IS_PREVIEW=/claude|anthropic|usercontent/i.test(location.hostname);const hasFile=[...fd.values()].some(v=>v instanceof File&&v.size);const x=IS_PREVIEW?await new Promise(r=>setTimeout(()=>r(true),700)):await postWithTimeout('/',{method:'POST',body:fd},hasFile?90000:20000).then(r=>r.ok).catch(()=>false);const y=false;
+ const IS_PREVIEW=/claude|anthropic|usercontent/i.test(location.hostname);const hasFile=[...fd.values()].some(v=>v instanceof File&&v.size);const x=IS_PREVIEW?await new Promise(r=>setTimeout(()=>r(true),700)):await postWithTimeout('/',{method:'POST',body:fd},hasFile?90000:20000).then(r=>r.ok).catch(()=>false);const x2=(!x&&!IS_PREVIEW)?await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({},json,{'form-name':undefined}))}).then(r=>r.ok).catch(()=>false):false;const y=false;
  b.disabled=false;b.textContent='Submit brief';
- if(x||y){form.hidden=true;document.getElementById('foot').hidden=true;document.getElementById('done').hidden=false;prog.style.width='100%';const nm=(json.name||'').split(' ')[0].replace(/[<>&"]/g,'');showThanks({title:`Thank you${nm?', '+nm:''}!`,text:'Your project brief was sent successfully.',steps:[['📩','A copy of all your answers is on its way to <b>'+String(json.email||'').replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['🔍','I’ll review your brief, links and files.'],['💬','Within 24 hours I’ll reply with a plan, quote and next steps.'],['💳','After you accept the quote, I’ll email your private payment link'+(json.payment_method?' for <b>'+String(json.payment_method).replace(/[<>&"]/g,'')+'</b>':'')+'.']],actions:[{href:'index.html#book',label:'Book a free call',solid:true}]})}
+ if(x||x2||y){form.hidden=true;document.getElementById('foot').hidden=true;document.getElementById('done').hidden=false;prog.style.width='100%';const nm=(json.name||'').split(' ')[0].replace(/[<>&"]/g,'');showThanks({title:`Thank you${nm?', '+nm:''}!`,text:'Your project brief was sent successfully.',steps:[['📩','A copy of all your answers is on its way to <b>'+String(json.email||'').replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['🔍','I’ll review your brief, links and files.'],['💬','Within 24 hours I’ll reply with a plan, quote and next steps.'],['💳','After you accept the quote, I’ll email your private payment link'+(json.payment_method?' for <b>'+String(json.payment_method).replace(/[<>&"]/g,'')+'</b>':'')+'.']],actions:[{href:'index.html#book',label:'Book a free call',solid:true}].concat(json.payment_method?[{href:'pay.html'+(/remitly/i.test(json.payment_method)?'#remitly':/maya/i.test(json.payment_method)?'#maya':/gcash/i.test(json.payment_method)?'#gcash':''),label:'View payment page',ext:true}]:[])})}
  else{const body=encodeURIComponent('Hi Jeselle,\n\nHere is my project brief:\n\n'+Object.entries(json).filter(([k])=>!k.startsWith('_')).map(([k,v])=>k.replace(/_/g,' ')+': '+v).join('\n'));
    const txt=decodeURIComponent(body);const pv=!/netlify\.app$|jeselle/i.test(location.hostname);err.hidden=false;err.innerHTML='<span>'+(pv?'<b>Preview mode:</b> the brief sends automatically on the live site. ':'<b>Couldn’t send automatically.</b> ')+'Send it in one tap instead, your answers are already filled in:</span><span class="fbbtns"><a class="btn" href="mailto:'+ALERT_EMAIL+'?subject='+encodeURIComponent('Project brief')+'&body='+body+'">Send by email</a><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/639311255454?text='+encodeURIComponent(txt)+'">Send on WhatsApp</a></span>';err.scrollIntoView({behavior:'smooth',block:'center'})}
 }
@@ -380,6 +385,14 @@ document.addEventListener('keydown',e=>{if(form.hidden)return;
  if(e.key==='Enter'&&!e.shiftKey){if(e.target.tagName==='TEXTAREA'&&!(e.ctrlKey||e.metaKey))return;e.preventDefault();next();return}
  if(e.key.length===1&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){const k=e.key.toUpperCase().charCodeAt(0)-65;const o=qs[at].querySelectorAll('.tfo input')[k];if(o){o.checked=o.type==='checkbox'?!o.checked:true;o.dispatchEvent(new Event('change',{bubbles:true}))}}});
 up.addEventListener('click',()=>{if(at>0)show(at-1)});
+
+// Payment question: show a link to the private payment page for each chosen method
+{const box=document.getElementById('paylinks');if(box){const map={'GCash':'gcash','Maya':'maya','Remitly':'remitly'};
+ const upd=()=>{const sel=[...document.querySelectorAll('input[name=payment_method]:checked')].map(i=>i.value);
+  const btns=sel.map(v=>{const k=Object.keys(map).find(n=>v.startsWith(n));return k?`<a class="plbtn" href="pay.html#${map[k]}" target="_blank" rel="noopener">View ${k} QR →</a>`:''}).join('');
+  box.querySelector('.plbtns').innerHTML=btns;box.hidden=!btns};
+ document.querySelectorAll('input[name=payment_method]').forEach(i=>i.addEventListener('change',upd));upd();}}
+
 document.querySelectorAll('.publink').forEach(inp=>{const help=inp.parentElement.querySelector('.pubhelp');const upd=()=>help.classList.toggle('on',!!inp.value.trim());inp.addEventListener('input',upd);upd()});
 document.getElementById('start').addEventListener('click',()=>{document.getElementById('intro').hidden=true;form.hidden=false;document.getElementById('foot').hidden=false;show(0)});
 }
