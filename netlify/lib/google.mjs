@@ -111,3 +111,26 @@ export async function cancelMeet(rec, store = crmStore()) {
   const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(rec.gcalEventId)}?sendUpdates=all`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
   return r.ok || r.status === 410 || r.status === 404;
 }
+
+// After connecting: give every existing record a real Google Meet link (upcoming bookings get a calendar event too)
+export async function backfillMeet(store = crmStore()) {
+  const { blobs } = await store.list();
+  let done = 0;
+  for (const b of blobs) {
+    if (b.key.startsWith("settings/")) continue;
+    const rec = await store.get(b.key, { type: "json" });
+    if (!rec || rec.type === "Payment" || /cancel|lost/i.test(rec.status || "")) continue;
+    if (rec.meetLink && /meet\.google\.com/.test(rec.meetLink)) continue;
+    try {
+      if (rec.start && new Date(rec.start) > new Date()) {
+        const m = await createMeet(rec, store);
+        if (m) Object.assign(rec, { meetLink: m.meetLink, gcalEventId: m.eventId, gcalEventLink: m.eventLink, meetFallback: false, meetError: "" });
+      } else {
+        const m = await createSpace(store);
+        if (m) Object.assign(rec, { meetLink: m.meetLink, meetRoom: true, meetFallback: false, meetError: "" });
+      }
+      await store.setJSON(b.key, rec); done++;
+    } catch (e) { rec.meetError = e.message; await store.setJSON(b.key, rec); }
+  }
+  return done;
+}
