@@ -82,9 +82,17 @@ let _transport;
 export function transport() {
   if (_transport) return _transport;
   if (process.env.MAIL_TEST === "1") { _transport = nodemailer.createTransport({ jsonTransport: true }); return _transport; }
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) throw new Error("Missing GMAIL_USER / GMAIL_APP_PASSWORD environment variables");
-  _transport = nodemailer.createTransport({ service: "gmail", auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, "") } });
-  return _transport;
+  // Option A (no 2-Step Verification needed): Brevo free email service, 300 emails/day
+  if (process.env.BREVO_LOGIN && process.env.BREVO_SMTP_KEY) {
+    _transport = nodemailer.createTransport({ host: "smtp-relay.brevo.com", port: 587, secure: false, auth: { user: process.env.BREVO_LOGIN.trim(), pass: process.env.BREVO_SMTP_KEY.trim() } });
+    return _transport;
+  }
+  // Option B: Gmail with an App Password
+  if (process.env.GMAIL_APP_PASSWORD) {
+    _transport = nodemailer.createTransport({ service: "gmail", auth: { user: OWNER.email(), pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, "") } });
+    return _transport;
+  }
+  throw new Error("Email is not set up yet: add BREVO_LOGIN + BREVO_SMTP_KEY (or GMAIL_APP_PASSWORD) in Netlify environment variables");
 }
 export const sent = [];
 export async function sendMail(msg) {

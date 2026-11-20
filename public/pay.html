@@ -144,7 +144,8 @@ f.addEventListener('submit',async e=>{
   btn.disabled=true;btn.textContent='Sending…';
   let ok=false;
   if(PREVIEW){await new Promise(r=>setTimeout(r,700));ok=true}
-  else{const c=new AbortController();const t=setTimeout(()=>c.abort(),60000);try{const r=await fetch('/',{method:'POST',body:new FormData(f),signal:c.signal});ok=r.ok}catch(x){}clearTimeout(t)}
+  else{const c=new AbortController();const t=setTimeout(()=>c.abort(),60000);try{const r=await fetch('/',{method:'POST',body:new FormData(f),signal:c.signal});ok=r.ok}catch(x){}clearTimeout(t);
+  if(!ok){const o={};new FormData(f).forEach((v,k)=>{if(v instanceof File){if(v.size)o.attached_files=v.name+' (please email the receipt)';return}if(k!=='form-name')o[k]=v});try{const r2=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)});ok=r2.ok}catch(x){}}}
   btn.disabled=false;btn.textContent='Send proof of payment';
   if(ok){thanks(f.name.value.split(' ')[0],f.email.value);f.reset()}
   else{err.hidden=false;err.innerHTML='Sorry, it couldn’t be sent. Please email your receipt to <a href="mailto:bariljeselle@gmail.com?subject=Proof%20of%20payment">bariljeselle@gmail.com</a>.'}
