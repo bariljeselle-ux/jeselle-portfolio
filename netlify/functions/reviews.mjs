@@ -1,8 +1,8 @@
 // Client reviews & feedback for reviews.html (public) and admin.html (private).
 // Public:  GET  /api/reviews                      -> published reviews + rating summary
-//          POST /api/reviews {action:"submit"...}  -> new review (waits for your approval)
+//          POST /api/reviews {action:"submit"...}  -> new review (shows right away if the client allowed it)
 // Private: POST /api/reviews with header x-admin-key = ADMIN_PASSWORD
-//          {action:"list"} | {action:"publish"|"hide"|"delete", key} | {action:"reply", key, reply}
+//          {action:"list"} | {action:"publish"|"hide"|"delete", key} | {action:"reply", key, reply} | {action:"add", ...collected testimonial}
 import { getStore } from "@netlify/blobs";
 import { sendMail, layout, OWNER } from "../lib/core.mjs";
 import crypto from "node:crypto";
@@ -25,7 +25,7 @@ export function publicView(r) {
   return {
     id: r.id, createdAt: r.createdAt, name: r.showName ? r.name : r.name.split(/\s+/)[0] + (r.name.trim().includes(" ") ? " " + r.name.trim().split(/\s+/).pop()[0] + "." : ""),
     business: r.showName ? r.business : "", service: r.service, rating: r.rating, scores: r.scores, recommend: r.recommend,
-    title: r.title, text: r.text, tags: r.tags, reply: r.reply || "", replyAt: r.replyAt || "",
+    title: r.title, text: r.text, tags: r.tags, reply: r.reply || "", replyAt: r.replyAt || "", source: r.source || "",
   };
 }
 
@@ -34,8 +34,8 @@ export function summary(list) {
   const avg = (f) => (n ? Math.round((list.reduce((a, r) => a + (f(r) || 0), 0) / n) * 10) / 10 : 0);
   const counts = [5, 4, 3, 2, 1].map((s) => list.filter((r) => r.rating === s).length);
   const scores = Object.fromEntries(CRIT.map((c) => { const has = list.filter((r) => r.scores?.[c]); return [c, has.length ? Math.round((has.reduce((a, r) => a + r.scores[c], 0) / has.length) * 10) / 10 : 0]; }));
-  const rec = list.filter((r) => r.recommend === "Yes").length;
-  return { count: n, average: avg((r) => r.rating), counts, scores, recommendPct: n ? Math.round((rec / n) * 100) : 0 };
+  const answered = list.filter((r) => r.recommend), rec = answered.filter((r) => r.recommend === "Yes").length;
+  return { count: n, average: avg((r) => r.rating), counts, scores, recommendPct: answered.length ? Math.round((rec / answered.length) * 100) : null };
 }
 
 export function cleanSubmission(b) {
@@ -82,7 +82,7 @@ export default async (req) => {
     const { rec, error } = cleanSubmission(body);
     if (error) return Response.json({ error }, { status: 400 });
     const id = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + "-" + crypto.randomBytes(4).toString("hex");
-    Object.assign(rec, { id, key: "review/" + id, createdAt: new Date().toISOString(), status: "Pending" });
+    Object.assign(rec, { id, key: "review/" + id, createdAt: new Date().toISOString(), status: rec.canPublish ? "Published" : "Private" });
     await store.setJSON(rec.key, rec);
     try { await notify(rec); } catch (e) { console.log("review email failed:", e.message); }
     return Response.json({ ok: true });
@@ -94,6 +94,16 @@ export default async (req) => {
   if (body.action === "list") {
     const all = await loadAll(store);
     return Response.json({ reviews: all, summary: summary(all.filter((r) => r.status === "Published")) }, { headers: { "Cache-Control": "no-store" } });
+  }
+  if (body.action === "add") {
+    // A testimonial you collected elsewhere (Messenger, email, Google…), published right away
+    const { rec, error } = cleanSubmission({ ...body, canPublish: true });
+    if (error) return Response.json({ error }, { status: 400 });
+    const when = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date || "")) ? new Date(body.date + "T12:00:00+08:00") : new Date();
+    const id = when.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + "-" + crypto.randomBytes(4).toString("hex");
+    Object.assign(rec, { id, key: "review/" + id, createdAt: when.toISOString(), status: "Published", source: str(body.source, 60).trim(), addedByOwner: true });
+    await store.setJSON(rec.key, rec);
+    return Response.json({ ok: true, rec });
   }
   const key = String(body.key || "");
   if (!key.startsWith("review/")) return Response.json({ error: "Not found" }, { status: 404 });
@@ -129,7 +139,7 @@ async function notify(r) {
   await sendMail({
     to: OWNER.email(),
     subject: `${"⭐".repeat(r.rating)} New review from ${r.name}`,
-    html: layout(`New ${r.rating}-star review`, `<p style="margin:0 0 12px;font-size:15px">${esc(r.name)} left feedback on your website. It's waiting in your CRM: publish it, reply, or delete it.</p>${table}<p style="margin:16px 0 0"><a href="${OWNER.site()}/admin.html#reviews" style="display:inline-block;background:#7A4E3A;color:#fff;text-decoration:none;padding:12px 20px;border-radius:4px;font-size:14px">Open reviews in CRM</a></p>`),
+    html: layout(`New ${r.rating}-star review`, `<p style="margin:0 0 12px;font-size:15px">${esc(r.name)} left feedback on your website. ${r.canPublish ? "It's now live on your reviews page. You can reply, hide or delete it in your CRM." : "They asked to keep it private, so only you can see it in your CRM."}</p>${table}<p style="margin:16px 0 0"><a href="${OWNER.site()}/admin.html#reviews" style="display:inline-block;background:#7A4E3A;color:#fff;text-decoration:none;padding:12px 20px;border-radius:4px;font-size:14px">Open reviews in CRM</a></p>`),
   });
   if (r.email) {
     await sendMail({

@@ -124,9 +124,10 @@ REVIEWS & FEEDBACK (reviews.html)
   Send happy clients this link:  https://jeselleva.netlify.app/reviews.html#write
   - Clients rate 1–5 stars, rate the details, pick highlights, write a review and a
     PRIVATE "what to improve" note (only you see it).
-  - You get a "New review" email. Nothing shows publicly until you approve it.
-  - admin.html → "Reviews & feedback": Publish, Hide, write a public reply, or Delete
-    (tap Delete twice to remove it forever). Clients who said "don't publish" can't be published.
+  - Reviews go live right away (like Shopee/Lazada) when the client allows it; you get an email.
+  - admin.html → "Reviews & feedback": Hide, Publish again, reply publicly, or Delete
+    (tap Delete twice). "Add a testimonial you collected" posts real feedback clients sent
+    you on Messenger/email (shown as "via Messenger"). Private feedback is never shown.
   - Published reviews also show on your homepage ("Kind words from clients").
 
 SOCIAL ICONS (Instagram, TikTok, Facebook)
