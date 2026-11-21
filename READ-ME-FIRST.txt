@@ -119,3 +119,16 @@ GOOGLE MEET LINKS (automatic, one time setup ~10 min)
   and puts a "Join Google Meet" button in both emails, reminders and the CRM.
   Inquiries & briefs: get their own Google Meet room link automatically (in both emails + the CRM).
   To set a time: open the record in the CRM → pick a time → "Schedule call + Meet link".
+
+REVIEWS & FEEDBACK (reviews.html)
+  Send happy clients this link:  https://jeselleva.netlify.app/reviews.html#write
+  - Clients rate 1–5 stars, rate the details, pick highlights, write a review and a
+    PRIVATE "what to improve" note (only you see it).
+  - You get a "New review" email. Nothing shows publicly until you approve it.
+  - admin.html → "Reviews & feedback": Publish, Hide, write a public reply, or Delete
+    (tap Delete twice to remove it forever). Clients who said "don't publish" can't be published.
+  - Published reviews also show on your homepage ("Kind words from clients").
+
+SOCIAL ICONS (Instagram, TikTok, Facebook)
+  Open public/index.html, search for  data-social="instagram"  (and tiktok, facebook)
+  and replace href="#" with your link. Icons stay hidden until a link is added.
