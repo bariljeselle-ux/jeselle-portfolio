@@ -146,3 +146,10 @@ OUT-OF-SCOPE CHECK (automatic)
   You'll see "⚠️ Heads up" at the top of the alert email and on the record in admin.html,
   with what the client wrote and what to do (🟢 add-on, 🟡 learnable, 🔴 decline).
   To change what gets flagged: netlify/lib/scope.mjs (or just ask Claude).
+
+INCOME RECORDS (admin.html → 💰 Income records)
+  Record every payment you receive, in pesos (what actually landed in GCash/Maya/Remitly).
+  - From a payment proof: open it → "💰 Record as income" (it fills in the details and marks it Paid).
+  - Anything else: "➕ Add payment received".
+  - See this month, this year, and how close you are to the ₱250,000 tax-free limit.
+  - "⬇️ Export for BIR (CSV)" downloads the year's list with a total, for your filing or accountant.
