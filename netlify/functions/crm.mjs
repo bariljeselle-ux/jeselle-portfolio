@@ -9,7 +9,36 @@ const ok = (req) => {
   if (!pass || given.length !== pass.length) return false;
   return crypto.timingSafeEqual(Buffer.from(given), Buffer.from(pass));
 };
-const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
+
+// Expense entry: what you spent for your business, in pesos.
+export const EXPENSE_CATEGORIES = ["Software & subscriptions", "Domain & hosting", "Internet & mobile load", "Equipment & gadgets", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Government & registration fees", "Other"];
+export function cleanExpense(e) {
+  const s = (v, n) => String(v ?? "").trim().slice(0, n);
+  const date = s(e.date, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(new Date(date))) return { error: "Pick the date you paid." };
+  const description = s(e.description, 200);
+  if (!description) return { error: "Type what you paid for." };
+  const n = Number(String(e.php ?? "").replace(/[^0-9.]/g, ""));
+  const php = isFinite(n) ? Math.round(n * 100) / 100 : 0;
+  if (!(php > 0)) return { error: "Type how much you paid in pesos (₱)." };
+  const category = EXPENSE_CATEGORIES.includes(e.category) ? e.category : "Other";
+  return { date, category, description, vendor: s(e.vendor, 120), php, method: s(e.method, 40), receipt: e.receipt === true || e.receipt === "on" || e.receipt === "yes", notes: s(e.notes, 500) };
+}
+
+// Income entry: what you actually received, in pesos, for your records and BIR.
+export function cleanIncome(e) {
+  const s = (v, n) => String(v ?? "").trim().slice(0, n);
+  const date = s(e.date, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(new Date(date))) return { error: "Pick the date you received the payment." };
+  const client = s(e.client, 120);
+  if (!client) return { error: "Type the client's name." };
+  const num = (v) => { const n = Number(String(v ?? "").replace(/[^0-9.]/g, "")); return isFinite(n) ? Math.round(n * 100) / 100 : 0; };
+  const php = num(e.php);
+  if (!(php > 0)) return { error: "Type how much you received in pesos (₱)." };
+  const currency = ["PHP", "USD", "EUR", "GBP", "AUD", "CAD", "SGD", "Other"].includes(e.currency) ? e.currency : "PHP";
+  return { date, client, service: s(e.service, 80), description: s(e.description, 200), amount: num(e.amount) || (currency === "PHP" ? php : 0), currency, php, method: s(e.method, 40), reference: s(e.reference, 80), notes: s(e.notes, 500), sourceKey: s(e.sourceKey, 120) };
+}
 
 export default async (req) => {
   if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in Netlify environment variables first." }, { status: 503 });
@@ -28,7 +57,43 @@ export default async (req) => {
       try { return Response.json({ url: await authUrl(store) }); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); }
     }
     if (body.action === "google-disconnect") { await disconnect(store); return Response.json({ ok: true }); }
-    if (String(body.key || "").startsWith("settings/")) return Response.json({ error: "Not found" }, { status: 404 });
+    // ----- Income records (for your own books and BIR) -----
+    if (body.action === "income-save") {
+      const v = cleanIncome(body.entry || {});
+      if (v.error) return Response.json({ error: v.error }, { status: 400 });
+      let key = String(body.key || "");
+      let prev = null;
+      if (key) { if (!key.startsWith("income/")) return Response.json({ error: "Not found" }, { status: 404 }); prev = await store.get(key, { type: "json" }); if (!prev) return Response.json({ error: "Not found" }, { status: 404 }); }
+      else key = "income/" + v.date.replace(/-/g, "") + "-" + crypto.randomBytes(4).toString("hex");
+      const rec = { ...(prev || { createdAt: new Date().toISOString() }), ...v, key, id: key.slice(7), updatedAt: new Date().toISOString() };
+      await store.setJSON(key, rec);
+      // mark the linked payment proof as Paid
+      if (v.sourceKey && !prev) { try { const src = await store.get(v.sourceKey, { type: "json" }); if (src) { src.status = "Paid"; src.incomeKey = key; await store.setJSON(v.sourceKey, src); } } catch {} }
+      return Response.json({ ok: true, rec });
+    }
+    if (body.action === "expense-save") {
+      const v = cleanExpense(body.entry || {});
+      if (v.error) return Response.json({ error: v.error }, { status: 400 });
+      let key = String(body.key || ""), prev = null;
+      if (key) { if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 }); prev = await store.get(key, { type: "json" }); if (!prev) return Response.json({ error: "Not found" }, { status: 404 }); }
+      else key = "expense/" + v.date.replace(/-/g, "") + "-" + crypto.randomBytes(4).toString("hex");
+      const rec = { ...(prev || { createdAt: new Date().toISOString() }), ...v, key, id: key.slice(8), updatedAt: new Date().toISOString() };
+      await store.setJSON(key, rec);
+      return Response.json({ ok: true, rec });
+    }
+    if (body.action === "expense-delete") {
+      const key = String(body.key || "");
+      if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
+      await store.delete(key);
+      return Response.json({ ok: true });
+    }
+    if (body.action === "income-delete") {
+      const key = String(body.key || "");
+      if (!key.startsWith("income/")) return Response.json({ error: "Not found" }, { status: 404 });
+      await store.delete(key);
+      return Response.json({ ok: true });
+    }
+    if (String(body.key || "").startsWith("settings/") || String(body.key || "").startsWith("income/") || String(body.key || "").startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
     const rec = await store.get(String(body.key || ""), { type: "json" });
     if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
     if (body.action === "update") {
@@ -74,9 +139,40 @@ export default async (req) => {
   }
 
   const { blobs } = await store.list();
-  const recs = [];
-  for (const b of blobs) { if (b.key.startsWith("settings/")) continue; const r = await store.get(b.key, { type: "json" }); if (r) recs.push(r); }
+  const recs = [], income = [], expenses = [];
+  for (const b of blobs) {
+    if (b.key.startsWith("settings/")) continue;
+    const r = await store.get(b.key, { type: "json" });
+    if (!r) continue;
+    (b.key.startsWith("income/") ? income : b.key.startsWith("expense/") ? expenses : recs).push(r);
+  }
   recs.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+  income.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+  expenses.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+
+  if (url.searchParams.get("format") === "expense-csv") {
+    const year = (url.searchParams.get("year") || "").slice(0, 4);
+    const list = expenses.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Paid with", "Receipt kept", "Notes"];
+    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.method, r.receipt ? "Yes" : "No", r.notes].map(csvCell).join(","));
+    const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
+    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
+      headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="expenses-${year || "all"}.csv"` },
+    });
+  }
+
+  if (url.searchParams.get("format") === "income-csv") {
+    const year = (url.searchParams.get("year") || "").slice(0, 4);
+    const list = income.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+    const head = ["Date", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Notes"];
+    const rows = list.map((r) => [r.date, r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, r.notes].map(csvCell).join(","));
+    const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
+    rows.push(["", "", "", "TOTAL", "", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
+      headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="income-${year || "all"}.csv"` },
+    });
+  }
 
   if (url.searchParams.get("format") === "csv") {
     const cols = ["createdAt", "type", "status", "start", "name", "email", "business", "service", "phone", "client_time_zone", "followUp", "notes"];
@@ -87,7 +183,7 @@ export default async (req) => {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="crm-${new Date().toISOString().slice(0, 10)}.csv"` },
     });
   }
-  return Response.json({ records: recs }, { headers: { "Cache-Control": "no-store" } });
+  return Response.json({ records: recs, income, expenses }, { headers: { "Cache-Control": "no-store" } });
 };
 
 export const config = { path: "/api/crm" };
