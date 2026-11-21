@@ -153,3 +153,7 @@ INCOME RECORDS (admin.html → 💰 Income records)
   - Anything else: "➕ Add payment received".
   - See this month, this year, and how close you are to the ₱250,000 tax-free limit.
   - "⬇️ Export for BIR (CSV)" downloads the year's list with a total, for your filing or accountant.
+
+== Wise (Nov 22, 2026) ==
+Wise payment link: https://wise.com/pay/me/jeselleb6 (Wisetag @jeselleb6). QR image: public/images/wise-qr.png.
+Added to: payment page (pay.html#wise), project brief payment question, Terms section on payments, homepage FAQs, admin "Send payment link" email, owner payment email.

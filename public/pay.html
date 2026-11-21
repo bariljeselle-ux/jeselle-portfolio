@@ -30,7 +30,7 @@ h1 i{color:#7A4E3A}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#E2D9CF;border:1px solid #E2D9CF}
 .steps div{background:#fff;padding:16px}.steps b{font-family:'Cormorant Garamond',serif;font-size:24px;color:#7A4E3A;display:block;line-height:1}
 .steps span{font-size:14px;color:#4A413B}
-.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.methods{display:grid;grid-template-columns:1fr;gap:18px}@media(min-width:640px){.methods{grid-template-columns:repeat(2,1fr)}}
 .m{background:#fff;border:1px solid #E2D9CF;border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
 .m.pick{border:2px solid #7A4E3A;box-shadow:0 14px 30px -16px rgba(122,78,58,.6)}.m.pick .tag::after{content:" · your choice"}.m.pick .tag{letter-spacing:.06em;white-space:nowrap}
 .m h2{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px}
@@ -70,7 +70,7 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 </section>
 
 <div class="steps" aria-label="How it works">
-<div><b>1</b><span>Choose GCash, Maya or Remitly</span></div>
+<div><b>1</b><span>Choose GCash, Maya, Wise or Remitly</span></div>
 <div><b>2</b><span>Pay the amount on your quote</span></div>
 <div><b>3</b><span>Upload your receipt below. I confirm by email within 24 hours</span></div>
 </div>
@@ -89,6 +89,14 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 <p class="who">InstaPay QR · Jeselle Baril</p>
 <img class="qr" src="images/maya-qr.png" alt="Maya QR code for Jeselle Baril" onerror="this.closest('.m').hidden=true">
 <p>Open Maya → <b>Scan</b> → scan or upload this code → enter the amount. Works with any InstaPay bank or e-wallet app too.</p>
+</article>
+<article class="m" id="m-wise">
+<span class="tag">Clients abroad</span>
+<h2>Wise</h2>
+<p class="who">@jeselleb6 · Jeselle Baril</p>
+<img class="qr" src="images/wise-qr.png" alt="Wise payment QR code for Jeselle Baril">
+<p>Scan with your phone camera, or tap the button. Pay by card or bank in USD, EUR, GBP, AUD, CAD and more, at the real exchange rate.</p>
+<a class="btn solid" href="https://wise.com/pay/me/jeselleb6" target="_blank" rel="noopener">Pay with Wise ↗</a>
 </article>
 <article class="m" id="m-remitly">
 <span class="tag">Clients abroad</span>
@@ -112,7 +120,7 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 <label><i class="lt">Your email <b class="ast">*</b></i><input name="email" type="email" required autocomplete="email"></label>
 </div>
 <div class="row">
-<label><i class="lt">Paid with <b class="ast">*</b></i><select name="payment_method" required><option value="">Choose…</option><option>GCash</option><option>Maya</option><option>Remitly</option></select></label>
+<label><i class="lt">Paid with <b class="ast">*</b></i><select name="payment_method" required><option value="">Choose…</option><option>GCash</option><option>Maya</option><option>Wise</option><option>Remitly</option></select></label>
 <label><i class="lt">Amount paid <b class="ast">*</b></i><input name="amount" required placeholder="e.g. ₱5,000 or $100"></label>
 </div>
 <div class="row">
@@ -130,7 +138,7 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 {
 
 // Opened from a payment link like pay.html#remitly: highlight that method and preselect it
-{const h=(location.hash||'').slice(1).toLowerCase();const map={gcash:'GCash',maya:'Maya',remitly:'Remitly'};
+{const h=(location.hash||'').slice(1).toLowerCase();const map={gcash:'GCash',maya:'Maya',wise:'Wise',remitly:'Remitly'};
  if(map[h]){const card=document.getElementById('m-'+h);if(card&&!card.hidden){card.classList.add('pick');setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'center'}),300)}
   const sel=document.querySelector('select[name=payment_method]');if(sel)sel.value=map[h];}}
 const f=document.getElementById('pay-form'),err=document.getElementById('err'),btn=document.getElementById('send');

@@ -271,7 +271,7 @@ export function paymentEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `💰 Payment proof: ${d.amount} via ${d.payment_method} – ${d.name}`,
     html: layout("New payment proof", box(`<b>${esc(d.amount)}</b> via <b>${esc(d.payment_method)}</b>${d.reference ? "<br>Reference: " + esc(d.reference) : ""}`) +
-      p("Check your GCash / Maya / Remitly app to confirm the money arrived, then reply to the client.") +
+      p("Check your GCash / Maya / Wise / Remitly app to confirm the money arrived, then reply to the client.") +
       (rec.files ? p("📎 Receipt: open <b>Netlify → Forms → payment</b> to view it.") : "") + detailsTable(d) +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];

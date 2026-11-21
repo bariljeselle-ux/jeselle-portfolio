@@ -108,7 +108,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </ol>
 <p class="ih">Every month (your reminder on the 1st)</p>
 <ol>
-<li>Compare this list with your GCash, Maya and Remitly history. Every client payment should be here.</li>
+<li>Compare this list with your GCash, Maya, Wise and Remitly history. Every client payment should be here.</li>
 <li>Check the <b>tax-free limit</b> bar. Once your yearly total passes ₱250,000, income tax applies (8% of the amount above it, if you choose the 8% option).</li>
 </ol>
 <p class="ih">Once you're registered with the BIR</p>
@@ -210,7 +210,7 @@ function draw(){
   $('list').innerHTML=list.length?list.map(card).join(''):'<div class="empty">Nothing here yet. New bookings, inquiries and briefs appear automatically.</div>';
 }
 function payBtn(r){const d=r.data||{};if(r.type==='Payment')return '';
-  const m=String(d.payment_method||'').toLowerCase();const key=m.includes('remitly')?'remitly':m.includes('maya')?'maya':m.includes('gcash')?'gcash':'';
+  const m=String(d.payment_method||'').toLowerCase();const key=m.includes('wise')?'wise':m.includes('remitly')?'remitly':m.includes('maya')?'maya':m.includes('gcash')?'gcash':'';
   const link=location.origin+'/pay.html'+(key?'#'+key:'');const first=String(d.name||'').split(' ')[0];
   const body=`Hi ${first},\n\nThank you for accepting the quote! Here is your private payment page${key?' ('+d.payment_method+')':''}:\n${link}\n\nAmount: [amount]\n\nAfter paying, please upload your receipt on the same page so I can confirm it and start your project.\n\nThank you!\nJeselle`;
   return `<a class="btn pri" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Your payment link – Jeselle Baril')}&body=${encodeURIComponent(body)}">Send payment link</a>`}
