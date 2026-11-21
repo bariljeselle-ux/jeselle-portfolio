@@ -11,6 +11,21 @@ const ok = (req) => {
 };
 const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
 
+// Expense entry: what you spent for your business, in pesos.
+export const EXPENSE_CATEGORIES = ["Software & subscriptions", "Domain & hosting", "Internet & mobile load", "Equipment & gadgets", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Government & registration fees", "Other"];
+export function cleanExpense(e) {
+  const s = (v, n) => String(v ?? "").trim().slice(0, n);
+  const date = s(e.date, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(new Date(date))) return { error: "Pick the date you paid." };
+  const description = s(e.description, 200);
+  if (!description) return { error: "Type what you paid for." };
+  const n = Number(String(e.php ?? "").replace(/[^0-9.]/g, ""));
+  const php = isFinite(n) ? Math.round(n * 100) / 100 : 0;
+  if (!(php > 0)) return { error: "Type how much you paid in pesos (₱)." };
+  const category = EXPENSE_CATEGORIES.includes(e.category) ? e.category : "Other";
+  return { date, category, description, vendor: s(e.vendor, 120), php, method: s(e.method, 40), receipt: e.receipt === true || e.receipt === "on" || e.receipt === "yes", notes: s(e.notes, 500) };
+}
+
 // Income entry: what you actually received, in pesos, for your records and BIR.
 export function cleanIncome(e) {
   const s = (v, n) => String(v ?? "").trim().slice(0, n);
@@ -56,13 +71,29 @@ export default async (req) => {
       if (v.sourceKey && !prev) { try { const src = await store.get(v.sourceKey, { type: "json" }); if (src) { src.status = "Paid"; src.incomeKey = key; await store.setJSON(v.sourceKey, src); } } catch {} }
       return Response.json({ ok: true, rec });
     }
+    if (body.action === "expense-save") {
+      const v = cleanExpense(body.entry || {});
+      if (v.error) return Response.json({ error: v.error }, { status: 400 });
+      let key = String(body.key || ""), prev = null;
+      if (key) { if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 }); prev = await store.get(key, { type: "json" }); if (!prev) return Response.json({ error: "Not found" }, { status: 404 }); }
+      else key = "expense/" + v.date.replace(/-/g, "") + "-" + crypto.randomBytes(4).toString("hex");
+      const rec = { ...(prev || { createdAt: new Date().toISOString() }), ...v, key, id: key.slice(8), updatedAt: new Date().toISOString() };
+      await store.setJSON(key, rec);
+      return Response.json({ ok: true, rec });
+    }
+    if (body.action === "expense-delete") {
+      const key = String(body.key || "");
+      if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
+      await store.delete(key);
+      return Response.json({ ok: true });
+    }
     if (body.action === "income-delete") {
       const key = String(body.key || "");
       if (!key.startsWith("income/")) return Response.json({ error: "Not found" }, { status: 404 });
       await store.delete(key);
       return Response.json({ ok: true });
     }
-    if (String(body.key || "").startsWith("settings/") || String(body.key || "").startsWith("income/")) return Response.json({ error: "Not found" }, { status: 404 });
+    if (String(body.key || "").startsWith("settings/") || String(body.key || "").startsWith("income/") || String(body.key || "").startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
     const rec = await store.get(String(body.key || ""), { type: "json" });
     if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
     if (body.action === "update") {
@@ -108,15 +139,28 @@ export default async (req) => {
   }
 
   const { blobs } = await store.list();
-  const recs = [], income = [];
+  const recs = [], income = [], expenses = [];
   for (const b of blobs) {
     if (b.key.startsWith("settings/")) continue;
     const r = await store.get(b.key, { type: "json" });
     if (!r) continue;
-    (b.key.startsWith("income/") ? income : recs).push(r);
+    (b.key.startsWith("income/") ? income : b.key.startsWith("expense/") ? expenses : recs).push(r);
   }
   recs.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
   income.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+  expenses.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
+
+  if (url.searchParams.get("format") === "expense-csv") {
+    const year = (url.searchParams.get("year") || "").slice(0, 4);
+    const list = expenses.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Paid with", "Receipt kept", "Notes"];
+    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.method, r.receipt ? "Yes" : "No", r.notes].map(csvCell).join(","));
+    const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
+    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
+      headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="expenses-${year || "all"}.csv"` },
+    });
+  }
 
   if (url.searchParams.get("format") === "income-csv") {
     const year = (url.searchParams.get("year") || "").slice(0, 4);
@@ -139,7 +183,7 @@ export default async (req) => {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="crm-${new Date().toISOString().slice(0, 10)}.csv"` },
     });
   }
-  return Response.json({ records: recs, income }, { headers: { "Cache-Control": "no-store" } });
+  return Response.json({ records: recs, income, expenses }, { headers: { "Cache-Control": "no-store" } });
 };
 
 export const config = { path: "/api/crm" };

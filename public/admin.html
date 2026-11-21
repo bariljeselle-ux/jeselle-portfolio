@@ -140,6 +140,44 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </form>
 <div id="ilist"></div>
 </section>
+<section id="expenses"><h2>🧾 Business expenses</h2>
+<p style="margin:-4px 0 12px;font-size:14px;color:#6E625A">What you spend to run your business, in pesos. Together with your income, this shows your real profit.</p>
+<details class="iguide eguide" open><summary>📝 What you must do here</summary>
+<p class="ih">What counts as a business expense</p>
+<ol>
+<li>Things you pay for <b>because of your work</b>: Canva Pro, your domain, internet or mobile load for work, a course, transfer fees, ads for your business, a new laptop or headset.</li>
+<li>Personal spending (food, clothes, family) does <b>not</b> go here.</li>
+</ol>
+<p class="ih">Every time you pay for something for work</p>
+<ol>
+<li>Tap <b>➕ Add expense</b>, pick the category, and type the amount in pesos.</li>
+<li>Keep the receipt (a screenshot or photo) in your Google Drive "Receipts [year]" folder, then tick <b>Receipt kept</b>.</li>
+</ol>
+<p class="ih">Why it matters</p>
+<ol>
+<li><b>Profit = income − expenses.</b> It tells you if your prices are right.</li>
+<li>If you choose the <b>8% option</b>, expenses don't lower your tax, but the BIR can still ask for your records. If you choose the <b>graduated rates</b>, receipted expenses can lower your tax. Ask your accountant which is better for you.</li>
+</ol>
+</details>
+<div class="tools" style="margin-bottom:12px"><button class="pri" id="eadd">➕ Add expense</button><button id="ecsv">⬇️ Export expenses (CSV)</button></div>
+<div class="isum" id="esum"></div>
+<form class="iform" id="eform" hidden>
+<p style="margin:0 0 10px;font-weight:500" id="etitle">Add expense</p>
+<div class="g">
+<label>Date paid<input type="date" name="date" required></label>
+<label>Category<select name="category"><option>Software &amp; subscriptions</option><option>Domain &amp; hosting</option><option>Internet &amp; mobile load</option><option>Equipment &amp; gadgets</option><option>Courses &amp; training</option><option>Transfer &amp; payment fees</option><option>Advertising &amp; promotion</option><option>Office supplies</option><option>Government &amp; registration fees</option><option>Other</option></select></label>
+<label>What for<input name="description" required maxlength="200" placeholder="e.g. Canva Pro, 1 month"></label>
+<label>Paid to<input name="vendor" maxlength="120" placeholder="e.g. Canva, Globe, Porkbun"></label>
+<label>Amount (₱)<input name="php" inputmode="decimal" required></label>
+<label>Paid with<select name="method"><option>GCash</option><option>Maya</option><option>Debit card</option><option>Credit card</option><option>Cash</option><option>Bank transfer</option><option>Wise</option><option>Other</option></select></label>
+<label>Notes<input name="notes" maxlength="500"></label>
+<label style="flex-direction:row;align-items:center;gap:8px;font-size:14px;color:#231E1B"><input type="checkbox" name="receipt" style="min-height:0;width:18px;height:18px"> Receipt kept</label>
+</div>
+<input type="hidden" name="key">
+<div class="row" style="margin-top:12px"><button class="pri" type="submit">Save</button><button type="button" id="ecancel">Cancel</button></div>
+</form>
+<div id="elist"></div>
+</section>
 <section id="reviews"><h2>Reviews &amp; feedback</h2><div class="rsum" id="rsum"></div><div class="tools" style="margin-bottom:12px"><div class="tabs" id="rtabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Published" aria-pressed="false">Live</button><button data-f="Private" aria-pressed="false">Private</button><button data-f="Hidden" aria-pressed="false">Hidden</button></div><a class="btn" href="/reviews.html" target="_blank" rel="noopener">Open reviews page ↗</a><button id="rlink">Copy review link for clients</button></div><details class="card" id="radd" style="padding:14px;margin-bottom:12px"><summary style="cursor:pointer;font-weight:500">➕ Add a testimonial you collected (Messenger, email, Google…)</summary><p style="font-size:13px;color:#6E625A;margin:8px 0">Only add real feedback a client actually sent you, in their words. It shows "via [where you got it]" on your page.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px"><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Client name<input id="a-name"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Business<input id="a-biz"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Stars<select id="a-rate"><option value="5">★★★★★ 5</option><option value="4">★★★★☆ 4</option><option value="3">★★★☆☆ 3</option><option value="2">★★☆☆☆ 2</option><option value="1">★☆☆☆☆ 1</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Service<select id="a-svc"><option value="">—</option><option>Website design</option><option>SEO</option><option>Social media management</option><option>Graphic design</option><option>CRM &amp; automation</option><option>Complete package</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Where they sent it<select id="a-src"><option>Facebook Messenger</option><option>Email</option><option>Google review</option><option>Text message</option><option>Facebook comment</option><option>Other</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Date received<input type="date" id="a-date"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Their photo or logo (optional)<input type="file" id="a-photo" accept="image/*" style="padding:7px"></label></div><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px;margin-top:10px">Their words<textarea id="a-text" rows="3"></textarea></label><div class="row" style="margin-top:10px"><button class="pri" id="a-save">Add to my reviews page</button></div></details><div class="list" id="rlist"></div></section>
 <p class="msg" id="amsg" hidden></p>
 </main>
@@ -157,7 +195,7 @@ const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
-  try{const j=await api();RECS=j.records||[];INC=j.income||[];$('login').hidden=true;$('app').hidden=false;draw();idraw();gload();rload();if(/^#(reviews|income)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
+  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];$('login').hidden=true;$('app').hidden=false;draw();idraw();edraw();gload();rload();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
 function draw(){
@@ -225,38 +263,62 @@ $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)
 $('q').addEventListener('input',draw);
 $('refresh').addEventListener('click',load);
 $('test').addEventListener('click',async()=>{try{await api({body:{action:'test-email'}});note('Test email sent. Check your inbox.')}catch(e){note(e.message,1)}});
-$('csv').addEventListener('click',async()=>{try{const r=await api({qs:'?format=csv',raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crm-'+new Date().toISOString().slice(0,10)+'.csv';a.click()}catch(e){note(e.message,1)}});
+$('csv').addEventListener('click',async()=>{try{const r=await api({qs:'?format=csv',raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crm-'+today()+'.csv';a.click()}catch(e){note(e.message,1)}});
 
 
 // ---------- Income records ----------
-try{const g=document.querySelector('.iguide');if(localStorage.getItem('iguide')==='closed')g.open=false;g.addEventListener('toggle',()=>{try{localStorage.setItem('iguide',g.open?'open':'closed')}catch(e){}})}catch(e){}
+document.querySelectorAll('.iguide').forEach((g,i)=>{try{const k='guide'+i;const v=localStorage.getItem(k);if(v)g.open=v==='open';g.addEventListener('toggle',()=>{try{localStorage.setItem(k,g.open?'open':'closed')}catch(e){}})}catch(e){}});
 
 let INC=[];
 const peso=n=>'₱'+(Number(n)||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const TAXFREE=250000;
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
 function iyears(){const ys=new Set([String(new Date().getFullYear()),...INC.map(r=>(r.date||'').slice(0,4))]);const sel=$('iyear'),cur=sel.value||String(new Date().getFullYear());sel.innerHTML=[...ys].sort().reverse().map(y=>`<option${y===cur?' selected':''}>${y}</option>`).join('');}
 function idraw(){
   iyears();const y=$('iyear').value,list=INC.filter(r=>(r.date||'').startsWith(y));
   const tot=list.reduce((a,r)=>a+(Number(r.php)||0),0);
-  const ym=new Date().toISOString().slice(0,7);const mon=INC.filter(r=>(r.date||'').startsWith(ym)).reduce((a,r)=>a+(Number(r.php)||0),0);
+  const ym=today().slice(0,7);const mon=INC.filter(r=>(r.date||'').startsWith(ym)).reduce((a,r)=>a+(Number(r.php)||0),0);
   const pct=Math.min(100,tot/TAXFREE*100);
   $('isum').innerHTML=`<div><small>This month</small><b>${peso(mon)}</b></div><div><small>${esc(y)} total</small><b>${peso(tot)}</b><span style="font-size:13px;color:#6E625A">${list.length} payment${list.length===1?'':'s'}</span></div><div><small>Tax-free limit (₱250,000/yr)</small><div class="ibar"><span style="width:${pct}%;${tot>TAXFREE?'background:#C9853A':''}"></span></div><span style="font-size:13px;color:#6E625A">${tot>TAXFREE?`Over by ${peso(tot-TAXFREE)}. With the 8% option, tax is about ${peso((tot-TAXFREE)*0.08)}.`:`${peso(TAXFREE-tot)} left before income tax applies`}</span></div>`;
   $('ilist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>Client</th><th>For</th><th>Via</th><th style="text-align:right">Charged</th><th style="text-align:right">Received</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.client)}</b></td><td>${esc([r.service,r.description].filter(Boolean).join(' · '))}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.method)}${r.reference?`<br><small style="color:#6E625A">Ref ${esc(r.reference)}</small>`:''}</td><td class="n">${r.amount?esc(r.currency+' '+Number(r.amount).toLocaleString('en-US')):''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="i-edit">Edit</button> <button class="i-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="5">Total ${esc(y)}</td><td class="n">${peso(tot)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No payments recorded for ${esc(y)} yet. When a client pays, tap <b>➕ Add payment received</b>, or open their payment proof below and tap <b>Record as income</b>.</div>`;
 }
 function iopen(v={}){const f=$('iform');f.hidden=false;f.reset();$('ititle').textContent=v.key?'Edit payment':'Add payment received';
-  const d={date:new Date().toISOString().slice(0,10),currency:'PHP',method:'GCash',...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(el&&val!=null)el.value=val}
+  const d={date:today(),currency:'PHP',method:'GCash',...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(el&&val!=null)el.value=val}
   f.scrollIntoView({behavior:'smooth',block:'center'});f.elements.client.focus()}
 $('iadd').addEventListener('click',()=>iopen());
 $('icancel').addEventListener('click',()=>{$('iform').hidden=true});
-$('iyear').addEventListener('change',idraw);
+$('iyear').addEventListener('change',()=>{idraw();edraw()});
 $('iform').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,entry=Object.fromEntries(new FormData(f));const key=entry.key;delete entry.key;
   try{const j=await api({body:{action:'income-save',key,entry}});INC=[j.rec,...INC.filter(r=>r.key!==j.rec.key)].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     if(entry.sourceKey&&!key){RECS=RECS.map(r=>r.key===entry.sourceKey?{...r,status:'Paid',incomeKey:j.rec.key}:r);draw()}
-    f.hidden=true;$('iyear').value=j.rec.date.slice(0,4);idraw();note('Payment recorded ✓')}catch(err){note(err.message,1)}});
+    f.hidden=true;$('iyear').value=j.rec.date.slice(0,4);idraw();edraw();note('Payment recorded ✓')}catch(err){note(err.message,1)}});
 $('ilist').addEventListener('click',async e=>{const tr=e.target.closest('tr[data-key]');if(!tr)return;const key=tr.dataset.key,r=INC.find(x=>x.key===key);
   if(e.target.closest('.i-edit'))iopen({...r});
   if(e.target.closest('.i-del')){const b=e.target.closest('.i-del');if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again';return}try{await api({body:{action:'income-delete',key}});INC=INC.filter(x=>x.key!==key);idraw();note('Deleted')}catch(err){note(err.message,1)}}});
 $('icsv').addEventListener('click',async()=>{try{const y=$('iyear').value;const r=await api({qs:'?format=income-csv&year='+encodeURIComponent(y),raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='income-'+y+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}catch(err){note(err.message,1)}});
+
+// ---------- Expenses ----------
+let EXP=[];
+function edraw(){
+  const y=$('iyear').value||String(new Date().getFullYear());
+  const list=EXP.filter(r=>(r.date||'').startsWith(y));
+  const spent=list.reduce((a,r)=>a+(Number(r.php)||0),0);
+  const earned=INC.filter(r=>(r.date||'').startsWith(y)).reduce((a,r)=>a+(Number(r.php)||0),0);
+  const profit=earned-spent;const noRcpt=list.filter(r=>!r.receipt).length;
+  $('esum').innerHTML=`<div><small>${esc(y)} expenses</small><b>${peso(spent)}</b><span style="font-size:13px;color:#6E625A">${list.length} item${list.length===1?'':'s'}${noRcpt?` · <span style="color:#B5761A">${noRcpt} without receipt</span>`:''}</span></div><div><small>${esc(y)} income</small><b>${peso(earned)}</b></div><div><small>${esc(y)} profit</small><b style="color:${profit<0?'#8A2E1E':'#2F6B3F'}">${peso(profit)}</b><span style="font-size:13px;color:#6E625A">income − expenses</span></div>`;
+  $('elist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>What</th><th>Category</th><th>Paid with</th><th style="text-align:right">Amount</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.description)}</b>${r.vendor?`<br><small style="color:#6E625A">${esc(r.vendor)}</small>`:''}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.category)}</td><td>${esc(r.method)}<br><small style="color:${r.receipt?'#2F6B3F':'#B5761A'}">${r.receipt?'✓ Receipt kept':'No receipt yet'}</small></td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="e-edit">Edit</button> <button class="e-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total ${esc(y)}</td><td class="n">${peso(spent)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No expenses recorded for ${esc(y)} yet. When you pay for something for work (Canva Pro, domain, load, a course), tap <b>➕ Add expense</b>.</div>`;
+}
+function eopen(v={}){const f=$('eform');f.hidden=false;f.reset();$('etitle').textContent=v.key?'Edit expense':'Add expense';
+  const d={date:today(),method:'GCash',...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(!el||val==null)continue;if(el.type==='checkbox')el.checked=!!val;else el.value=val}
+  f.scrollIntoView({behavior:'smooth',block:'center'});f.elements.description.focus()}
+$('eadd').addEventListener('click',()=>eopen());
+$('ecancel').addEventListener('click',()=>{$('eform').hidden=true});
+$('eform').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,entry=Object.fromEntries(new FormData(f));entry.receipt=f.elements.receipt.checked;const key=entry.key;delete entry.key;
+  try{const j=await api({body:{action:'expense-save',key,entry}});EXP=[j.rec,...EXP.filter(r=>r.key!==j.rec.key)].sort((a,b)=>(b.date||'').localeCompare(a.date||''));f.hidden=true;$('iyear').value=j.rec.date.slice(0,4);idraw();edraw();note('Expense saved ✓')}catch(err){note(err.message,1)}});
+$('elist').addEventListener('click',async e=>{const tr=e.target.closest('tr[data-key]');if(!tr)return;const key=tr.dataset.key,r=EXP.find(x=>x.key===key);
+  if(e.target.closest('.e-edit'))eopen({...r});
+  if(e.target.closest('.e-del')){const b=e.target.closest('.e-del');if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again';return}try{await api({body:{action:'expense-delete',key}});EXP=EXP.filter(x=>x.key!==key);edraw();note('Deleted')}catch(err){note(err.message,1)}}});
+$('ecsv').addEventListener('click',async()=>{try{const y=$('iyear').value;const r=await api({qs:'?format=expense-csv&year='+encodeURIComponent(y),raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='expenses-'+y+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}catch(err){note(err.message,1)}});
 // ---------- Reviews ----------
 let REVS=[],RF='all';
 const toJpeg=f=>new Promise((ok,no)=>{if(!f)return ok('');const u=URL.createObjectURL(f),i=new Image();i.onload=()=>{const S=320,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),m=Math.min(i.naturalWidth,i.naturalHeight);x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(i,(i.naturalWidth-m)/2,(i.naturalHeight-m)/2,m,m,0,0,S,S);URL.revokeObjectURL(u);let q=.85,d=c.toDataURL('image/jpeg',q);while(d.length>190000&&q>.4){q-=.15;d=c.toDataURL('image/jpeg',q)}ok(d)};i.onerror=()=>no(new Error("That photo couldn't be opened"));i.src=u});
