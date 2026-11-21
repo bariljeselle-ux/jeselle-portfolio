@@ -134,3 +134,15 @@ REVIEWS & FEEDBACK (reviews.html)
 SOCIAL ICONS (Instagram, TikTok, Facebook)
   Open public/index.html, search for  data-social="instagram"  (and tiktok, facebook)
   and replace href="#" with your link. Icons stay hidden until a link is added.
+
+TERMS & HOSTING PAGES
+  terms.html   – your client terms (50% deposit, 2 revisions, refunds, ownership).
+  hosting.html – the 4 website delivery options, what you share, and costs.
+  Send clients: https://jeselleva.netlify.app/hosting.html  (or #option-1 … #option-4)
+
+OUT-OF-SCOPE CHECK (automatic)
+  Every inquiry, booking note and project brief is scanned for requests that are not
+  in your services (e.g. mobile apps, bookkeeping, running ads, fake followers).
+  You'll see "⚠️ Heads up" at the top of the alert email and on the record in admin.html,
+  with what the client wrote and what to do (🟢 add-on, 🟡 learnable, 🔴 decline).
+  To change what gets flagged: netlify/lib/scope.mjs (or just ask Claude).
