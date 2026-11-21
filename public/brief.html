@@ -95,6 +95,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 .plbtns{display:flex;flex-wrap:wrap;gap:8px}.plbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:4px;background:#7A4E3A;color:#fff!important;text-decoration:none;font:500 13px Jost,sans-serif;letter-spacing:.06em}
 .plbtn:hover{background:#5C3828}
 </style>
+<style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}:root{--hb:84px}</style>
 </head>
 <body>
 <header><a class="brand" href="index.html">Jeselle Baril</a><a class="back" href="index.html">← Back to site</a></header>
@@ -178,7 +179,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <p class="tfsec">The project</p>
 <p class="tfn">10 → <span class="req">Required *</span></p>
 <h2 class="tft">Which services do you need?</h2><p class="tfh">Choose all that apply.</p>
-<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Social media management"><span class="key">C</span>Social media management</label><label class="tfo"><input type="checkbox" name="service" value="AI automation & CRM"><span class="key">D</span>AI automation & CRM</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">E</span>Complete package</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">F</span>Not sure yet</label></div></div>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Social media management"><span class="key">C</span>Social media management</label><label class="tfo"><input type="checkbox" name="service" value="AI automation & CRM"><span class="key">D</span>AI automation & CRM</label><label class="tfo"><input type="checkbox" name="service" value="Graphic design"><span class="key">E</span>Graphic design (lead magnets, ads)</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">F</span>Complete package</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">G</span>Not sure yet</label></div></div>
 <div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
 </section>
 <section class="tfq" data-q="detail" hidden>
@@ -353,6 +354,7 @@ const DETAIL={
  'SEO (Google visibility)':'SEO: which keywords and location should you show up for on Google? Do you have a Google Business Profile?',
  'Social media management':'Social media: which platforms, how many posts per week, and do you want Reels/TikToks? Do you have photos and videos I can use?',
  'AI automation & CRM':'Automation & CRM: which tasks repeat every day (replying to inquiries, follow-ups, bookings, invoices)? How do you track clients now?',
+ 'Graphic design':'Graphic design: what do you need (lead magnet, ad creatives, posts, flyers, logo)? Do you have a logo, brand colors or examples you like?',
  'Complete package':'Complete package: describe your online presence today and what you want it to look like after the project.',
  'Not sure yet':'Tell me what feels hard right now with your online presence, and I’ll suggest the right fit.'};
 function setDetail(){const sel=[...form.querySelectorAll('input[name=service]:checked')].map(i=>i.value);
@@ -405,5 +407,6 @@ document.getElementById('start').addEventListener('click',()=>{document.getEleme
 }
 </script>
 <script>/* fallback for browsers without :has() */document.addEventListener("change",function(e){var i=e.target;if(!i.closest||!i.closest(".tfo"))return;var n=i.name,scope=i.form||document;scope.querySelectorAll(".tfo input"+(n?'[name="'+n+'"]':"")).forEach(function(x){var l=x.closest(".tfo");if(l)l.classList.toggle("on",x.checked)})});</script>
+<a href="/" class="homefab" aria-label="Back to homepage" title="Back to homepage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></a>
 </body>
 </html>

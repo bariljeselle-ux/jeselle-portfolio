@@ -63,6 +63,8 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .sched{display:flex;flex-direction:column;gap:6px;padding:10px;background:#F7F3EE;border-radius:4px}
 .sched small{color:#6E625A;font-size:12px}
 [hidden]{display:none!important}
+.rvw{background:#fff;border:1px solid #E2D9CF;border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px}.rvw.Pending,.rvw.Private{border-left:3px solid #E0A526}.rvw.Published{border-left:3px solid #2F6B3F}.rvw.Hidden{border-left:3px solid #C9BAAB;opacity:.85}.rvtop{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center}.gold{color:#E0A526;font-size:18px;letter-spacing:1px}.rvw p{margin:0;white-space:pre-line}.rvw .imp{background:#FBF3E4;border-radius:4px;padding:10px 12px;font-size:14px}.rvw .sc{display:flex;flex-wrap:wrap;gap:6px}.rsum{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:-4px 0 12px;font-size:14px;color:#6E625A}.rsum b{font-family:'Cormorant Garamond',serif;font-size:30px;color:#231E1B;font-weight:600}
+
 @media(max-width:820px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.cb{grid-template-columns:minmax(0,1fr)}.upc{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:520px){header{position:static}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ch{grid-template-columns:minmax(0,1fr) auto}.ch .badge{grid-column:1/-1;justify-self:start}.tools input{max-width:none}}
 </style>
@@ -92,6 +94,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </div>
 <div class="list" id="list"></div>
 </section>
+<section id="reviews"><h2>Reviews &amp; feedback</h2><div class="rsum" id="rsum"></div><div class="tools" style="margin-bottom:12px"><div class="tabs" id="rtabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Published" aria-pressed="false">Live</button><button data-f="Private" aria-pressed="false">Private</button><button data-f="Hidden" aria-pressed="false">Hidden</button></div><a class="btn" href="/reviews.html" target="_blank" rel="noopener">Open reviews page ↗</a><button id="rlink">Copy review link for clients</button></div><details class="card" id="radd" style="padding:14px;margin-bottom:12px"><summary style="cursor:pointer;font-weight:500">➕ Add a testimonial you collected (Messenger, email, Google…)</summary><p style="font-size:13px;color:#6E625A;margin:8px 0">Only add real feedback a client actually sent you, in their words. It shows "via [where you got it]" on your page.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px"><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Client name<input id="a-name"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Business<input id="a-biz"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Stars<select id="a-rate"><option value="5">★★★★★ 5</option><option value="4">★★★★☆ 4</option><option value="3">★★★☆☆ 3</option><option value="2">★★☆☆☆ 2</option><option value="1">★☆☆☆☆ 1</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Service<select id="a-svc"><option value="">—</option><option>Website design</option><option>SEO</option><option>Social media management</option><option>Graphic design</option><option>CRM &amp; automation</option><option>Complete package</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Where they sent it<select id="a-src"><option>Facebook Messenger</option><option>Email</option><option>Google review</option><option>Text message</option><option>Facebook comment</option><option>Other</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Date received<input type="date" id="a-date"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Their photo or logo (optional)<input type="file" id="a-photo" accept="image/*" style="padding:7px"></label></div><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px;margin-top:10px">Their words<textarea id="a-text" rows="3"></textarea></label><div class="row" style="margin-top:10px"><button class="pri" id="a-save">Add to my reviews page</button></div></details><div class="list" id="rlist"></div></section>
 <p class="msg" id="amsg" hidden></p>
 </main>
 </div>
@@ -108,7 +111,7 @@ const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
-  try{const j=await api();RECS=j.records||[];$('login').hidden=true;$('app').hidden=false;draw();gload()}
+  try{const j=await api();RECS=j.records||[];$('login').hidden=true;$('app').hidden=false;draw();gload();rload();if(location.hash==='#reviews')setTimeout(()=>$('reviews').scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
 function draw(){
@@ -173,6 +176,39 @@ $('q').addEventListener('input',draw);
 $('refresh').addEventListener('click',load);
 $('test').addEventListener('click',async()=>{try{await api({body:{action:'test-email'}});note('Test email sent. Check your inbox.')}catch(e){note(e.message,1)}});
 $('csv').addEventListener('click',async()=>{try{const r=await api({qs:'?format=csv',raw:true});if(!r.ok)throw new Error('Export failed');const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crm-'+new Date().toISOString().slice(0,10)+'.csv';a.click()}catch(e){note(e.message,1)}});
+
+// ---------- Reviews ----------
+let REVS=[],RF='all';
+const toJpeg=f=>new Promise((ok,no)=>{if(!f)return ok('');const u=URL.createObjectURL(f),i=new Image();i.onload=()=>{const S=320,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),m=Math.min(i.naturalWidth,i.naturalHeight);x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(i,(i.naturalWidth-m)/2,(i.naturalHeight-m)/2,m,m,0,0,S,S);URL.revokeObjectURL(u);let q=.85,d=c.toDataURL('image/jpeg',q);while(d.length>190000&&q>.4){q-=.15;d=c.toDataURL('image/jpeg',q)}ok(d)};i.onerror=()=>no(new Error("That photo couldn't be opened"));i.src=u});
+const rapi=async b=>{const r=await fetch('/api/reviews',{method:'POST',headers:{'x-admin-key':KEY,'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json().catch(()=>({error:'Server not reachable'}));if(!r.ok)throw new Error(j.error||'Error');return j};
+const gold=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+async function rload(){try{const j=await rapi({action:'list'});REVS=j.reviews||[];rdraw()}catch(e){$('rlist').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+function rdraw(){
+  const pub=REVS.filter(r=>r.status==='Published'),pend=REVS.filter(r=>r.status==='Private').length;
+  const avg=pub.length?(pub.reduce((a,r)=>a+r.rating,0)/pub.length).toFixed(1):'–';
+  $('rsum').innerHTML=`<span><b>${avg}</b> <span class="gold">★</span> average on your page</span><span>${pub.length} published</span><span>${pend?`${pend} private feedback (only you see these)`:''}</span>`;
+  const l=REVS.filter(r=>RF==='all'||r.status===RF);
+  $('rlist').innerHTML=l.length?l.map(r=>{const d=new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const sc=Object.entries(r.scores||{}).map(([k,v])=>`<span class="chip">${esc(k)} ${gold(v)}</span>`).join('');
+    return `<article class="rvw ${esc(r.status)}" data-key="${esc(r.key)}"><div class="rvtop"><span>${r.hasPhoto&&r.status==='Published'?`<img src="/api/reviews?photo=${esc(r.id)}" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">`:r.hasPhoto?'📷 ':''}<span class="gold">${gold(r.rating)}</span> <b>${esc(r.name)}</b>${r.business?' · '+esc(r.business):''} <small style="color:#6E625A">· ${d}</small></span><span class="st">${r.status==='Published'?'✅ Live':r.status==='Private'?'🔒 Private':r.status==='Pending'?'⏳ Waiting':'🙈 Hidden'}</span></div>
+    ${r.title?`<p><b>${esc(r.title)}</b></p>`:''}${r.text?`<p>${esc(r.text)}</p>`:''}
+    ${r.improve?`<div class="imp"><b>🔒 What to improve (private):</b><br>${esc(r.improve)}</div>`:''}
+    <div class="sc">${r.source?`<span class="chip">💬 via ${esc(r.source)}</span>`:''}${r.service?`<span class="chip">${esc(r.service)}</span>`:''}${r.recommend?`<span class="chip">Recommend: ${esc(r.recommend)}</span>`:''}${sc}${(r.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}${r.email?`<a class="chip" href="mailto:${esc(r.email)}">${esc(r.email)}</a>`:''}${r.canPublish?'':'<span class="chip warn">Private: client said do not publish</span>'}${r.canPublish&&!r.showName?'<span class="chip">Shows first name only</span>':''}</div>
+    <label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Your public reply (optional)<textarea class="r-reply" rows="2" placeholder="Thank you so much!…">${esc(r.reply||'')}</textarea></label>
+    <div class="row">${r.status!=='Published'&&r.canPublish?'<button class="pri r-pub">Publish</button>':''}${r.status==='Published'?'<button class="r-hide">Hide</button>':''}<button class="r-rep">Save reply</button>${r.hasPhoto?'<button class="r-rmph">Remove photo</button>':''}<button class="r-del warn">Delete</button></div></article>`}).join(''):'<div class="empty">No reviews here yet. Share your review link with happy clients.</div>';
+}
+$('a-save').addEventListener('click',async e=>{const b=e.target,v=id=>$(id).value.trim();if(!v('a-name')||!v('a-text')){note('Add the client name and their words',1);return}b.disabled=true;try{const j=await rapi({action:'add',name:v('a-name'),business:v('a-biz'),rating:Number(v('a-rate')),service:v('a-svc'),source:v('a-src'),date:v('a-date'),text:v('a-text'),showName:true,photo:await toJpeg($('a-photo').files[0])});$('a-photo').value='';REVS=[j.rec,...REVS].sort((a,c)=>c.createdAt.localeCompare(a.createdAt));['a-name','a-biz','a-text','a-date'].forEach(i=>$(i).value='');$('radd').open=false;rdraw();note('Testimonial added to your reviews page ✓')}catch(err){note(err.message,1)}b.disabled=false});
+$('rtabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;RF=b.dataset.f;[...$('rtabs').children].forEach(x=>x.setAttribute('aria-pressed',x===b));rdraw()});
+$('rlink').addEventListener('click',async()=>{const u=location.origin+'/reviews.html#write';try{await navigator.clipboard.writeText(u);note('Review link copied ✓ '+u)}catch(e){note(u)}});
+$('rlist').addEventListener('click',async e=>{const c=e.target.closest('.rvw');if(!c)return;const key=c.dataset.key,b=e.target.closest('button');if(!b)return;
+  const upd=j=>{REVS=REVS.map(r=>r.key===key?j.rec:r);rdraw()};
+  try{
+    if(b.classList.contains('r-pub')){upd(await rapi({action:'publish',key}));note('Published on your reviews page ✓')}
+    else if(b.classList.contains('r-hide')){upd(await rapi({action:'hide',key}));note('Hidden from your page')}
+    else if(b.classList.contains('r-rmph')){upd(await rapi({action:'remove-photo',key}));note('Photo removed')}
+    else if(b.classList.contains('r-rep')){upd(await rapi({action:'reply',key,reply:c.querySelector('.r-reply').value}));note('Reply saved ✓')}
+    else if(b.classList.contains('r-del')){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete forever';return}await rapi({action:'delete',key});REVS=REVS.filter(r=>r.key!==key);rdraw();note('Review deleted')}
+  }catch(err){note(err.message,1)}});
 $('out').addEventListener('click',()=>{KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
 const login=()=>{KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load()};
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
