@@ -134,3 +134,8 @@ REVIEWS & FEEDBACK (reviews.html)
 SOCIAL ICONS (Instagram, TikTok, Facebook)
   Open public/index.html, search for  data-social="instagram"  (and tiktok, facebook)
   and replace href="#" with your link. Icons stay hidden until a link is added.
+
+TERMS & HOSTING PAGES
+  terms.html   – your client terms (50% deposit, 2 revisions, refunds, ownership).
+  hosting.html – the 4 website delivery options, what you share, and costs.
+  Send clients: https://jeselleva.netlify.app/hosting.html  (or #option-1 … #option-4)
