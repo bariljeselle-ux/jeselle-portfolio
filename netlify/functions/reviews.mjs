@@ -8,6 +8,17 @@ import { sendMail, layout, OWNER } from "../lib/core.mjs";
 import crypto from "node:crypto";
 
 export const reviewStore = () => getStore({ name: "reviews", consistency: "strong" });
+export const photoStore = () => getStore({ name: "review-photos", consistency: "strong" });
+
+// Client photo: a small square JPEG made in the browser (max ~150 KB). Returns a Buffer, null, or { error }.
+export function parsePhoto(dataUrl) {
+  if (!dataUrl) return null;
+  const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(dataUrl));
+  if (!m) return { error: "That photo couldn't be read. Please try another one." };
+  const buf = Buffer.from(m[1], "base64");
+  if (buf.length > 150000 || buf.length < 200 || buf[0] !== 0xff || buf[1] !== 0xd8) return { error: "That photo couldn't be read. Please try another one." };
+  return buf;
+}
 const CRIT = ["communication", "quality", "speed", "value"];
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const str = (v, n) => String(v ?? "").replace(/\s+$/g, "").slice(0, n);
@@ -26,6 +37,7 @@ export function publicView(r) {
     id: r.id, createdAt: r.createdAt, name: r.showName ? r.name : r.name.split(/\s+/)[0] + (r.name.trim().includes(" ") ? " " + r.name.trim().split(/\s+/).pop()[0] + "." : ""),
     business: r.showName ? r.business : "", service: r.service, rating: r.rating, scores: r.scores, recommend: r.recommend,
     title: r.title, text: r.text, tags: r.tags, reply: r.reply || "", replyAt: r.replyAt || "", source: r.source || "",
+    photo: r.hasPhoto ? `/api/reviews?photo=${r.id}` : "",
   };
 }
 
@@ -65,6 +77,15 @@ const seen = new Map();
 export default async (req) => {
   const store = reviewStore();
   if (req.method === "GET") {
+    const pid = new URL(req.url).searchParams.get("photo");
+    if (pid) {
+      // Photos are only served for reviews that are live on the page
+      if (!/^[\w-]{6,40}$/.test(pid)) return new Response("Not found", { status: 404 });
+      const r = await store.get("review/" + pid, { type: "json" });
+      const img = r && r.status === "Published" && r.hasPhoto ? await photoStore().get(pid, { type: "arrayBuffer" }) : null;
+      if (!img) return new Response("Not found", { status: 404 });
+      return new Response(img, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=3600", "X-Content-Type-Options": "nosniff" } });
+    }
     const all = await loadAll(store);
     const pub = all.filter((r) => r.status === "Published");
     return Response.json({ summary: summary(pub), reviews: pub.map(publicView) }, { headers: { "Cache-Control": "public, max-age=60" } });
@@ -81,8 +102,11 @@ export default async (req) => {
     seen.set(ip, now);
     const { rec, error } = cleanSubmission(body);
     if (error) return Response.json({ error }, { status: 400 });
+    const photo = parsePhoto(body.photo);
+    if (photo?.error) return Response.json({ error: photo.error }, { status: 400 });
     const id = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + "-" + crypto.randomBytes(4).toString("hex");
     Object.assign(rec, { id, key: "review/" + id, createdAt: new Date().toISOString(), status: rec.canPublish ? "Published" : "Private" });
+    if (photo) { await photoStore().set(id, photo); rec.hasPhoto = true; }
     await store.setJSON(rec.key, rec);
     try { await notify(rec); } catch (e) { console.log("review email failed:", e.message); }
     return Response.json({ ok: true });
@@ -99,21 +123,25 @@ export default async (req) => {
     // A testimonial you collected elsewhere (Messenger, email, Google…), published right away
     const { rec, error } = cleanSubmission({ ...body, canPublish: true });
     if (error) return Response.json({ error }, { status: 400 });
+    const photo = parsePhoto(body.photo);
+    if (photo?.error) return Response.json({ error: photo.error }, { status: 400 });
     const when = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date || "")) ? new Date(body.date + "T12:00:00+08:00") : new Date();
     const id = when.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + "-" + crypto.randomBytes(4).toString("hex");
     Object.assign(rec, { id, key: "review/" + id, createdAt: when.toISOString(), status: "Published", source: str(body.source, 60).trim(), addedByOwner: true });
+    if (photo) { await photoStore().set(id, photo); rec.hasPhoto = true; }
     await store.setJSON(rec.key, rec);
     return Response.json({ ok: true, rec });
   }
   const key = String(body.key || "");
   if (!key.startsWith("review/")) return Response.json({ error: "Not found" }, { status: 404 });
-  if (body.action === "delete") { await store.delete(key); return Response.json({ ok: true }); }
+  if (body.action === "delete") { await store.delete(key); try { await photoStore().delete(key.slice(7)); } catch {} return Response.json({ ok: true }); }
   const rec = await store.get(key, { type: "json" });
   if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
   if (body.action === "publish") {
     if (!rec.canPublish) return Response.json({ error: "This client asked to keep their feedback private." }, { status: 400 });
     rec.status = "Published"; rec.publishedAt = new Date().toISOString();
   } else if (body.action === "hide") rec.status = "Hidden";
+  else if (body.action === "remove-photo") { try { await photoStore().delete(rec.id); } catch {} rec.hasPhoto = false; }
   else if (body.action === "reply") { rec.reply = str(body.reply, 1500).trim(); rec.replyAt = rec.reply ? new Date().toISOString() : ""; }
   else return Response.json({ error: "Unknown action" }, { status: 400 });
   await store.setJSON(key, rec);

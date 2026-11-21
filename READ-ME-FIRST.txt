@@ -128,6 +128,7 @@ REVIEWS & FEEDBACK (reviews.html)
   - admin.html → "Reviews & feedback": Hide, Publish again, reply publicly, or Delete
     (tap Delete twice). "Add a testimonial you collected" posts real feedback clients sent
     you on Messenger/email (shown as "via Messenger"). Private feedback is never shown.
+  - Clients can add a photo or logo (small circle). Remove it anytime with "Remove photo".
   - Published reviews also show on your homepage ("Kind words from clients").
 
 SOCIAL ICONS (Instagram, TikTok, Facebook)

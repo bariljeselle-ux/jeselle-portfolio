@@ -96,6 +96,7 @@ select{font:15px Jost,sans-serif;min-height:42px;border:1px solid #C9BAAB;border
 .empty .serif{font-size:30px;margin:6px 0}
 .more{display:flex;justify-content:center;margin-top:18px}
 
+.phrow{display:flex;align-items:center;gap:16px}.phpick{position:relative;width:76px;height:76px;min-height:0;padding:0;border-radius:50%;border:1.5px dashed #C9BAAB;background:#F7F3EE;color:#7A4E3A;flex:none;letter-spacing:0;text-transform:none;transition:border-color .2s,transform .2s}.phpick:hover{border-color:#7A4E3A}.phpick.has{border:2px solid #E8C9B8}.phin{position:absolute;inset:0;border-radius:50%;overflow:hidden;display:grid;place-items:center}.phin img{width:100%;height:100%;object-fit:cover;display:block}.phplus{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;background:#7A4E3A;color:#fff;display:grid;place-items:center;font-size:17px;line-height:1;border:2px solid #fff}.phtx{display:flex;flex-direction:column;gap:2px;font-size:15px}.phtx b{font-weight:500}.phtx small{color:#6E625A;font-size:13px}.phrm{align-self:flex-start;min-height:30px;padding:0;border:0;background:none;color:#8A2E1E;font-size:13px;letter-spacing:0;text-transform:none;text-decoration:underline;transform:none!important}.av img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}.av.ph{background:#EFE8DF!important;overflow:hidden}
 /* form */
 .formsec{background:#EFE8DF;border-top:1px solid #D6CABD;margin-top:72px;padding:72px 0}
 .fhead{text-align:center;margin-bottom:30px}
@@ -257,6 +258,7 @@ footer a{color:#7A4E3A}
 <div class="step">
 <h3><span>06</span>About you</h3>
 <div style="display:flex;flex-direction:column;gap:14px">
+<div class="phrow"><button type="button" class="phpick" id="phpick" aria-label="Add your photo or business logo"><span class="phin" id="phin"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span><span class="phplus" aria-hidden="true">+</span></button><div class="phtx"><b>Add your photo or business logo</b><small>Optional · shows in a small circle on your review</small><button type="button" class="phrm" id="phrm" hidden>Remove photo</button></div><input type="file" id="phfile" accept="image/*" hidden></div>
 <div class="grid2">
 <label class="fl">Your name<input name="name" maxlength="80" autocomplete="name" required></label>
 <label class="fl">Business / brand <small>(optional)</small><input name="business" maxlength="100" autocomplete="organization"></label>
@@ -266,7 +268,7 @@ footer a{color:#7A4E3A}
 <label class="fl">Email <small>(optional, never shown)</small><input name="email" type="email" maxlength="120" autocomplete="email"></label>
 </div>
 <div class="consent">
-<label><input type="checkbox" name="canPublish" checked> You may show my review on this website as a testimonial.</label>
+<label><input type="checkbox" name="canPublish" checked> You may show my review (and photo, if added) on this website as a testimonial.</label>
 <label><input type="checkbox" name="showName" checked> Show my full name and business (otherwise first name and last initial only).</label>
 </div>
 </div>
@@ -322,7 +324,7 @@ function sumDraw(s){
 function card(r,i){
   const ini=(r.name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const d=new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  return `<article class="rv" style="animation-delay:${Math.min(i,6)*60}ms"><div class="rvh"><span class="av" style="background:${COLORS[(r.name||'').length%COLORS.length]}">${esc(ini)}</span><span><b>${esc(r.name)}</b><small>${r.business?esc(r.business)+' · ':''}${d}</small></span></div>
+  return `<article class="rv" style="animation-delay:${Math.min(i,6)*60}ms"><div class="rvh">${r.photo?`<span class="av ph"><img src="${esc(r.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent='${esc(ini)}';this.parentNode.classList.remove('ph')"></span>`:`<span class="av" style="background:${COLORS[(r.name||'').length%COLORS.length]}">${esc(ini)}</span>`}<span><b>${esc(r.name)}</b><small>${r.business?esc(r.business)+' · ':''}${d}</small></span></div>
   ${starsHTML(r.rating)}${r.title?`<h3>${esc(r.title)}</h3>`:''}${r.text?`<p>${esc(r.text)}</p>`:''}
   <div class="meta"><span class="tag" style="background:#fff;border:1px solid #E2D9CF">${r.source?'💬 via '+esc(r.source):'✍️ Posted by client'}</span>${r.service?`<span class="tag svc">${esc(r.service)}</span>`:''}${r.recommend==='Yes'?'<span class="tag rec">👍 Recommends</span>':''}${(r.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
   ${r.reply?`<div class="reply"><b>Reply from Jeselle</b>${esc(r.reply)}</div>`:''}</article>`;
@@ -340,6 +342,19 @@ $('sort').addEventListener('change',listDraw);
 $('more').addEventListener('click',()=>{SHOWN+=6;listDraw()});
 fetch('/api/reviews').then(r=>r.ok?r.json():Promise.reject()).then(j=>{ALL=j.reviews||[];sumDraw(j.summary||{});listDraw()}).catch(()=>{ALL=[];listDraw()});
 
+// ---- optional photo (resized in the browser to a small square JPEG; location data is removed) ----
+let PHOTO='';
+const pick=$('phpick'),pf=$('phfile');
+pick.addEventListener('click',()=>pf.click());
+$('phrm').addEventListener('click',()=>{PHOTO='';pf.value='';$('phin').innerHTML=PH0;pick.classList.remove('has');$('phrm').hidden=true});
+const PH0=$('phin').innerHTML;
+pf.addEventListener('change',async()=>{const f=pf.files[0];if(!f)return;$('err').hidden=true;
+  try{const url=URL.createObjectURL(f);const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});
+    const S=320,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');const m=Math.min(img.naturalWidth,img.naturalHeight);
+    x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,S,S);URL.revokeObjectURL(url);
+    let q=.85,d=c.toDataURL('image/jpeg',q);while(d.length>190000&&q>.4){q-=.15;d=c.toDataURL('image/jpeg',q)}
+    PHOTO=d;$('phin').innerHTML=`<img src="${d}" alt="Your photo">`;pick.classList.add('has');$('phrm').hidden=false}
+  catch(e){const er=$('err');er.textContent="That photo couldn't be opened. Please try a JPG or PNG.";er.hidden=false}});
 // ---- submit ----
 const f=$('rf');
 f.addEventListener('submit',async e=>{
@@ -350,7 +365,7 @@ f.addEventListener('submit',async e=>{
   if(!String(fd.get('text')||'').trim()&&!String(fd.get('improve')||'').trim())return show('Please write a few words about your experience.',f.text);
   if(!String(fd.get('name')||'').trim())return show('Please type your name.',f.name);
   const em=String(fd.get('email')||'').trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return show('Please check your email address.',f.email);
-  const body={action:'submit',rating,website:fd.get('website'),name:fd.get('name'),business:fd.get('business'),service:fd.get('service'),email:em,title:fd.get('title'),text:fd.get('text'),improve:fd.get('improve'),recommend:fd.get('recommend')||'',tags:fd.getAll('tags'),canPublish:!!fd.get('canPublish'),showName:!!fd.get('showName'),mood:MOOD[rating][1],scores:Object.fromEntries(CRIT.map(([k])=>[k,Number(fd.get('s_'+k)||0)]).filter(([,v])=>v))};
+  const body={action:'submit',rating,website:fd.get('website'),name:fd.get('name'),business:fd.get('business'),service:fd.get('service'),email:em,title:fd.get('title'),text:fd.get('text'),improve:fd.get('improve'),recommend:fd.get('recommend')||'',tags:fd.getAll('tags'),canPublish:!!fd.get('canPublish'),showName:!!fd.get('showName'),mood:MOOD[rating][1],photo:PHOTO,scores:Object.fromEntries(CRIT.map(([k])=>[k,Number(fd.get('s_'+k)||0)]).filter(([,v])=>v))};
   const btn=$('send');btn.disabled=true;btn.textContent='Sending…';
   try{const r=await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Something went wrong. Please try again.');
     f.hidden=true;$('done').hidden=false;
