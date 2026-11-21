@@ -2,6 +2,7 @@
 import { getStore } from "@netlify/blobs";
 import nodemailer from "nodemailer";
 import crypto from "node:crypto";
+import { scopeCheck, KIT_URL } from "./scope.mjs";
 
 export const OWNER = {
   name: "Jeselle Baril",
@@ -120,6 +121,12 @@ export const roomLink = (rec) => `https://meet.jit.si/JeselleBarilVA-${rec.id}`;
 const callName = (url) => (/meet\.google\.com/.test(url) ? "Google Meet" : "video call");
 const joinBox = (url) => `<div style="background:#F7F3EE;border:1px solid ${COLORS.line};border-radius:6px;padding:16px;margin:0 0 14px;text-align:center"><a href="${esc(url)}" style="display:inline-block;background:#1A73E8;color:#fff;text-decoration:none;padding:14px 26px;border-radius:6px;font-size:16px;font-weight:bold">🎥 Join ${callName(url)}</a><p style="margin:10px 0 0;font-size:13px;color:${COLORS.muted}">One click at call time · <a href="${esc(url)}" style="color:${COLORS.accent}">${esc(url.replace(/^https:\/\//, ""))}</a></p></div>`;
 const roomBox = (url, owner) => `<div style="background:#F7F3EE;border:1px solid ${COLORS.line};border-radius:6px;padding:14px;margin:0 0 14px"><p style="margin:0 0 8px;font-size:14px;line-height:1.5">🎥 <b>${owner ? `${callName(url)} link for this client` : `Your private ${callName(url)} link`}</b><br><span style="color:${COLORS.muted};font-size:13px">${owner ? "Use this link for any call with them." : "We'll use this link for our calls. I'll confirm the time with you first."}</span></p><a href="${esc(url)}" style="display:inline-block;background:#1A73E8;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-size:14px;font-weight:bold">Join ${callName(url)}</a> <span style="font-size:13px;color:${COLORS.muted}">${esc(url.replace(/^https:\/\//, ""))}</span></div>`;
+const scopeBox = (rec) => {
+  const f = rec.scopeFlags || [];
+  if (!f.length) return "";
+  const items = f.map((x) => `<li style="margin:0 0 10px">${x.emoji} <b>${esc(x.name)}</b> <span style="color:${COLORS.muted};font-size:13px">(${esc(x.label)})</span>${x.warn ? ` <b style="color:#8A2E1E">Against platform rules. Don't accept.</b>` : ""}<br><span style="font-size:13px;color:${COLORS.muted}">They wrote: "${esc(x.quote)}"</span><br><span style="font-size:14px">👉 ${esc(x.todo)}</span></li>`).join("");
+  return `<div style="background:#FBF3E4;border-left:3px solid #E0A526;padding:12px 14px;margin:0 0 14px;font-size:15px;line-height:1.5"><b>⚠️ Heads up: this may include work outside your listed services</b><ul style="margin:10px 0 6px;padding-left:18px">${items}</ul><span style="font-size:13px">Reply "Let me check and get back to you today." Templates: <a href="${KIT_URL}" style="color:${COLORS.accent}">Client Delivery Kit → "When a client asks for something not on your list"</a>. Not sure? Paste their message to Claude.</span></div>`;
+};
 const box = (html) => `<div style="background:${COLORS.bg};border-left:3px solid ${COLORS.accent};padding:12px 14px;margin:0 0 14px;font-size:15px;line-height:1.6">${html}</div>`;
 
 const LABELS = {
@@ -172,8 +179,8 @@ export function bookingEmails(rec) {
   };
   const owner = {
     to: OWNER.email(), replyTo: d.email,
-    subject: `📅 New booking: ${d.name} – ${fmt(start, OWNER.tz, false)}`,
-    html: layout("New booking", box(`<b>${esc(phTime)}</b> (your time)<br><span style="color:${COLORS.muted};font-size:13px">${esc(clientTime)} for the client</span>`) +
+    subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}📅 New booking: ${d.name} – ${fmt(start, OWNER.tz, false)}`,
+    html: layout("New booking", scopeBox(rec) + box(`<b>${esc(phTime)}</b> (your time)<br><span style="color:${COLORS.muted};font-size:13px">${esc(clientTime)} for the client</span>`) +
       (meet ? joinBox(meet) : "") +
       (rec.gcalEventId ? p(`✅ Added to your Google Calendar and the client was invited.`)
         : btn(gcalLink(start, title, details + `\nClient email: ${d.email}` + (meet ? `\nJoin: ${meet}` : "")), "Add to my Google Calendar") +
@@ -222,8 +229,8 @@ export function inquiryEmails(rec) {
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">Your message</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,
-    subject: `✉️ New inquiry: ${d.name}${d.business ? " – " + d.business : ""}`,
-    html: layout("New inquiry", (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
+    subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}✉️ New inquiry: ${d.name}${d.business ? " – " + d.business : ""}`,
+    html: layout("New inquiry", scopeBox(rec) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
       (rec.files ? p("📎 Uploaded files: open <b>Netlify → Forms → inquiry</b> to download.") : "") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
@@ -244,8 +251,8 @@ export function briefEmails(rec) {
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">A copy of your answers</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,
-    subject: `🗂️ New project brief: ${d.business || d.name}`,
-    html: layout("New project brief", (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
+    subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}🗂️ New project brief: ${d.business || d.name}`,
+    html: layout("New project brief", scopeBox(rec) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
       p("📎 Uploaded files (if any): open <b>Netlify → Forms → project-brief</b> to download.") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
@@ -286,6 +293,7 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
     if (isNaN(start)) return { skipped: "bad start time" };
     rec.start = start.toISOString();
   }
+  if (type !== "Payment") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
