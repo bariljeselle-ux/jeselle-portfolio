@@ -236,6 +236,16 @@ export function inquiryEmails(rec) {
   }];
 }
 
+function picksBox(d, owner) {
+  if (!d.selected_packages && !d.portfolio_permission && !d.budget) return "";
+  const rows = [];
+  if (d.selected_packages) rows.push(`<b>${owner ? "Picked on the website" : "Your picked services"}</b>${d.picks_confirmed && owner ? ` <span style="color:${/^Yes/.test(d.picks_confirmed) ? "#2F6B3F" : "#B5761A"}">(${esc(d.picks_confirmed)})</span>` : ""}<br>` +
+    esc(d.selected_packages).split("\n").map((l) => /^\s+Note:/.test(l) ? `<span style="display:block;margin:0 0 6px 14px;color:${COLORS.muted}">📝 ${l.trim().replace(/^Note:\s*/, "")}</span>` : `<span style="display:block;margin-top:4px">• ${l}</span>`).join(""));
+  if (d.estimated_total) rows.push(`<b>${owner ? "Website estimate" : "Estimate"}:</b> ${esc(d.estimated_total)}${owner ? "" : " (the final price is in your written quote)"}`);
+  if (owner && d.budget) rows.push(`<b>Budget:</b> ${esc(d.budget)}${d.timeline ? " · <b>Timeline:</b> " + esc(d.timeline) : ""}`);
+  if (owner && d.portfolio_permission) rows.push(`<b>Portfolio:</b> ${/^No/.test(d.portfolio_permission) ? "🔒 " : "📸 "}${esc(d.portfolio_permission)}`);
+  return box(rows.join(`<span style="display:block;height:10px"></span>`));
+}
 export function briefEmails(rec) {
   const d = rec.data, first = (d.name || "there").split(" ")[0];
   const privateLinks = (rec.links || []).filter((c) => c.status === "private");
@@ -244,6 +254,7 @@ export function briefEmails(rec) {
     subject: `Project brief received – thank you, ${first}!`,
     html: layout("Your project brief is in!",
       p(`Thank you for the details about <b>${esc(d.business || "your business")}</b>. I'll review everything and reply within 24 hours with a plan and quote.`) +
+      picksBox(d, false) +
       (d.payment_method ? p(`<b>Payment:</b> after you accept the quote, I'll email you a private payment link for <b>${esc(d.payment_method)}</b>.`) : "") +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
       (rec.meetLink ? roomBox(rec.meetLink) : "") +
@@ -252,7 +263,7 @@ export function briefEmails(rec) {
   }, {
     to: OWNER.email(), replyTo: d.email,
     subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}🗂️ New project brief: ${d.business || d.name}`,
-    html: layout("New project brief", scopeBox(rec) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
+    html: layout("New project brief", scopeBox(rec) + picksBox(d, true) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
       p("📎 Uploaded files (if any): open <b>Netlify → Forms → project-brief</b> to download.") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
