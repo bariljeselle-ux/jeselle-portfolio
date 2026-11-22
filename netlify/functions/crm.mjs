@@ -2,6 +2,11 @@
 import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
 import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
 import crypto from "node:crypto";
+import { getStore } from "@netlify/blobs";
+const receiptStore = () => getStore({ name: "receipts", consistency: "strong" });
+const RECEIPT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "application/pdf"];
+const MAX_RECEIPT = 4 * 1024 * 1024;
+const recKeyOk = (k) => /^(income|expense)\/[0-9]{8}-[0-9a-f]{8}$/.test(k);
 
 const ok = (req) => {
   const pass = process.env.ADMIN_PASSWORD || "";
@@ -62,6 +67,39 @@ export default async (req) => {
     }
     if (body.action === "google-disconnect") { await disconnect(store); return Response.json({ ok: true }); }
     // ----- Income records (for your own books and BIR) -----
+    if (body.action === "receipt-upload") {
+      const key = String(body.key || "");
+      if (!recKeyOk(key)) return Response.json({ error: "Save the entry first." }, { status: 400 });
+      const rec = await store.get(key, { type: "json" });
+      if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
+      const type = String(body.type || "");
+      if (!RECEIPT_TYPES.includes(type)) return Response.json({ error: "Attach a photo, screenshot or PDF." }, { status: 400 });
+      let buf;
+      try { buf = Buffer.from(String(body.data || ""), "base64"); } catch { return Response.json({ error: "Could not read the file." }, { status: 400 }); }
+      if (!buf.length) return Response.json({ error: "The file is empty." }, { status: 400 });
+      if (buf.length > MAX_RECEIPT) return Response.json({ error: "That file is over 4 MB. Please attach a smaller screenshot or PDF." }, { status: 400 });
+      const files = Array.isArray(rec.files) ? rec.files : [];
+      if (files.length >= 10) return Response.json({ error: "Up to 10 attachments per entry." }, { status: 400 });
+      const id = crypto.randomBytes(6).toString("hex");
+      const name = String(body.name || "receipt").replace(/[^\w .()\-]/g, "_").slice(0, 80) || "receipt";
+      await receiptStore().set(key + "/" + id, buf, { metadata: { type, name } });
+      rec.files = [...files, { id, name, type, size: buf.length, at: new Date().toISOString() }];
+      if (key.startsWith("expense/")) rec.receipt = true;
+      rec.updatedAt = new Date().toISOString();
+      await store.setJSON(key, rec);
+      return Response.json({ ok: true, rec });
+    }
+    if (body.action === "receipt-delete") {
+      const key = String(body.key || ""), id = String(body.id || "");
+      if (!recKeyOk(key) || !/^[0-9a-f]{12}$/.test(id)) return Response.json({ error: "Not found" }, { status: 404 });
+      const rec = await store.get(key, { type: "json" });
+      if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
+      await receiptStore().delete(key + "/" + id);
+      rec.files = (rec.files || []).filter((f) => f.id !== id);
+      rec.updatedAt = new Date().toISOString();
+      await store.setJSON(key, rec);
+      return Response.json({ ok: true, rec });
+    }
     if (body.action === "income-save") {
       const v = cleanIncome(body.entry || {});
       if (v.error) return Response.json({ error: v.error }, { status: 400 });
@@ -88,12 +126,14 @@ export default async (req) => {
     if (body.action === "expense-delete") {
       const key = String(body.key || "");
       if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
+      try { const r = await store.get(key, { type: "json" }); for (const f of (r?.files || [])) await receiptStore().delete(key + "/" + f.id); } catch {}
       await store.delete(key);
       return Response.json({ ok: true });
     }
     if (body.action === "income-delete") {
       const key = String(body.key || "");
       if (!key.startsWith("income/")) return Response.json({ error: "Not found" }, { status: 404 });
+      try { const r = await store.get(key, { type: "json" }); for (const f of (r?.files || [])) await receiptStore().delete(key + "/" + f.id); } catch {}
       await store.delete(key);
       return Response.json({ ok: true });
     }
@@ -154,13 +194,21 @@ export default async (req) => {
   income.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
   expenses.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
 
+  if (url.searchParams.get("receipt")) {
+    const key = String(url.searchParams.get("rec") || ""), id = String(url.searchParams.get("receipt") || "");
+    if (!recKeyOk(key) || !/^[0-9a-f]{12}$/.test(id)) return new Response("Not found", { status: 404 });
+    const got = await receiptStore().getWithMetadata(key + "/" + id, { type: "arrayBuffer" });
+    if (!got) return new Response("Not found", { status: 404 });
+    const type = RECEIPT_TYPES.includes(got.metadata?.type) ? got.metadata.type : "application/octet-stream";
+    return new Response(got.data, { headers: { "Content-Type": type, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff", "Content-Disposition": `inline; filename="${String(got.metadata?.name || "receipt").replace(/"/g, "")}"` } });
+  }
   if (url.searchParams.get("format") === "expense-csv") {
     const year = (url.searchParams.get("year") || "").slice(0, 4);
     const list = expenses.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Full bill (PHP)", "Work share %", "Paid with", "Receipt kept", "Notes"];
-    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.bill ?? "", r.workpct ?? "", r.method, r.receipt ? "Yes" : "No", r.notes].map(csvCell).join(","));
+    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Full bill (PHP)", "Work share %", "Paid with", "Receipt kept", "Attachments", "Notes"];
+    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.bill ?? "", r.workpct ?? "", r.method, r.receipt ? "Yes" : "No", (r.files || []).length, r.notes].map(csvCell).join(","));
     const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
-    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", "", "", ""].map(csvCell).join(","));
+    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", "", "", "", ""].map(csvCell).join(","));
     return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="expenses-${year || "all"}.csv"` },
     });
@@ -169,10 +217,10 @@ export default async (req) => {
   if (url.searchParams.get("format") === "income-csv") {
     const year = (url.searchParams.get("year") || "").slice(0, 4);
     const list = income.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    const head = ["Date", "Invoice no.", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Notes"];
-    const rows = list.map((r) => [r.date, r.invoice || "", r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, r.notes].map(csvCell).join(","));
+    const head = ["Date", "Invoice no.", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Attachments", "Notes"];
+    const rows = list.map((r) => [r.date, r.invoice || "", r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, (r.files || []).length, r.notes].map(csvCell).join(","));
     const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
-    rows.push(["", "", "", "", "TOTAL", "", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    rows.push(["", "", "", "", "TOTAL", "", "", total.toFixed(2), "", "", "", ""].map(csvCell).join(","));
     return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="income-${year || "all"}.csv"` },
     });
