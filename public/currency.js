@@ -1,5 +1,5 @@
 /* Prices in US$ for clients abroad and in PH ₱ for clients in the Philippines.
-   Picks pesos when the visitor's device time zone is Asia/Manila (no server call, no Netlify credits).
+   Picks pesos when the visitor's device time zone is Asia/Manila (no server call).
    Visitors can switch with the "Prices in" toggle; their choice is remembered on their device.
    Elements with data-php="..." show that text in peso mode. */
 (function(){

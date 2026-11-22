@@ -83,6 +83,8 @@ let _transport;
 export function transport() {
   if (_transport) return _transport;
   if (process.env.MAIL_TEST === "1") { _transport = nodemailer.createTransport({ jsonTransport: true }); return _transport; }
+  // On Cloudflare: Brevo's email API (same free 300 emails/day)
+  if (process.env.BREVO_API_KEY) { _transport = nodemailer.createTransport({ brevoApi: true }); return _transport; }
   // Option A (no 2-Step Verification needed): Brevo free email service, 300 emails/day
   if (process.env.BREVO_LOGIN && process.env.BREVO_SMTP_KEY) {
     _transport = nodemailer.createTransport({ host: "smtp-relay.brevo.com", port: 587, secure: false, auth: { user: process.env.BREVO_LOGIN.trim(), pass: process.env.BREVO_SMTP_KEY.trim() } });
@@ -93,7 +95,7 @@ export function transport() {
     _transport = nodemailer.createTransport({ service: "gmail", auth: { user: OWNER.email(), pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, "") } });
     return _transport;
   }
-  throw new Error("Email is not set up yet: add BREVO_LOGIN + BREVO_SMTP_KEY (or GMAIL_APP_PASSWORD) in Netlify environment variables");
+  throw new Error("Email is not set up yet: add BREVO_API_KEY in your website settings");
 }
 export const sent = [];
 export async function sendMail(msg) {
@@ -146,6 +148,7 @@ export function detailsTable(data) {
   }).join("");
   return `<table style="width:100%;border-collapse:collapse;margin:6px 0 14px">${rows}</table>`;
 }
+const fileLinks = (rec, label) => rec.files?.length ? p(`📎 <b>${label}:</b> ` + rec.files.map((u, i) => /^https:\/\//.test(u) ? `<a href="${esc(u)}" style="color:${COLORS.accent}">File ${i + 1}</a>` : esc(u)).join(" · ")) : "";
 const linkNote = (checks) => checks.filter((c) => c.status !== "none").map((c) =>
   `${c.status === "public" ? "✅ Public" : c.status === "private" ? "⚠️ PRIVATE (needs access)" : c.status === "broken" ? "❌ Broken link" : "❔ Couldn't check"} — <a href="${esc(c.url)}" style="color:${COLORS.accent}">${esc(c.url)}</a>`).join("<br>");
 
@@ -252,7 +255,7 @@ export function inquiryEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}✉️ New inquiry: ${d.name}${d.business ? " – " + d.business : ""}`,
     html: layout("New inquiry", scopeBox(rec) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
-      (rec.files ? p("📎 Uploaded files: open <b>Netlify → Forms → inquiry</b> to download.") : "") +
+      fileLinks(rec, "Uploaded files") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
 }
@@ -285,7 +288,7 @@ export function briefEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}🗂️ New project brief: ${d.business || d.name}`,
     html: layout("New project brief", scopeBox(rec) + picksBox(d, true) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
-      p("📎 Uploaded files (if any): open <b>Netlify → Forms → project-brief</b> to download.") +
+      fileLinks(rec, "Uploaded files") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
 }
@@ -304,7 +307,7 @@ export function paymentEmails(rec) {
     subject: `💰 Payment proof: ${d.amount} via ${d.payment_method} – ${d.name}`,
     html: layout("New payment proof", box(`<b>${esc(d.amount)}</b> via <b>${esc(d.payment_method)}</b>${d.reference ? "<br>Reference: " + esc(d.reference) : ""}`) +
       p("Check your GCash / Maya / Wise / Remitly app to confirm the money arrived, then reply to the client.") +
-      (rec.files ? p("📎 Receipt: open <b>Netlify → Forms → payment</b> to view it.") : "") + detailsTable(d) +
+      fileLinks(rec, "Receipt") + detailsTable(d) +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
 }

@@ -50,7 +50,7 @@ export function cleanIncome(e) {
 }
 
 export default async (req) => {
-  if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in Netlify environment variables first." }, { status: 503 });
+  if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in your website settings first." }, { status: 503 });
   if (!ok(req)) return Response.json({ error: "Wrong password" }, { status: 401 });
   const store = crmStore();
   const url = new URL(req.url);

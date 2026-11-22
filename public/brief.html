@@ -320,7 +320,7 @@ const ALERT_EMAIL='bariljeselle@gmail.com';
 // Thank-you pop-up after a form is sent
 window.showThanks=function(o){
   const m=document.createElement('div');m.className='tymask';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label',o.title);
-  m.innerHTML=`<div class="tybox"><div class="tyico">✓</div><h3>${o.title}</h3><p>${o.text}</p>${/claude|anthropic|usercontent/i.test(location.hostname)?'<p class="typrev">Preview only: this is exactly what clients see. The real emails and reminders are sent from your live Netlify site.</p>':''}<ul class="tysteps">${o.steps.map(s=>`<li><span>${s[0]}</span><span>${s[1]}</span></li>`).join('')}</ul><div class="tybtns">${(o.actions||[]).map(a=>a.href?`<a class="${a.solid?'solid':''}" href="${a.href}"${a.ext?' target="_blank" rel="noopener"':''}>${a.label}</a>`:'').join('')}<button type="button" class="${(o.actions||[]).some(a=>a.solid)?'':'solid'}" data-close>Close</button></div></div>`;
+  m.innerHTML=`<div class="tybox"><div class="tyico">✓</div><h3>${o.title}</h3><p>${o.text}</p>${/claude|anthropic|usercontent/i.test(location.hostname)?'<p class="typrev">Preview only: this is exactly what clients see. The real emails and reminders are sent from your live website.</p>':''}<ul class="tysteps">${o.steps.map(s=>`<li><span>${s[0]}</span><span>${s[1]}</span></li>`).join('')}</ul><div class="tybtns">${(o.actions||[]).map(a=>a.href?`<a class="${a.solid?'solid':''}" href="${a.href}"${a.ext?' target="_blank" rel="noopener"':''}>${a.label}</a>`:'').join('')}<button type="button" class="${(o.actions||[]).some(a=>a.solid)?'':'solid'}" data-close>Close</button></div></div>`;
   const close=()=>{m.remove();document.removeEventListener('keydown',esc)};const esc=e=>{if(e.key==='Escape')close()};
   m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-close]'))close()});document.addEventListener('keydown',esc);
   document.body.appendChild(m);m.querySelector('[data-close]').focus();
@@ -335,7 +335,7 @@ window.postWithTimeout=function(url,opts,ms=20000){const c=new AbortController()
 const BIG_UPLOAD_URL='';
 document.querySelectorAll('.upbig').forEach(a=>{a.hidden=false;if(/^https:\/\//.test(BIG_UPLOAD_URL)){a.href=BIG_UPLOAD_URL}else{a.removeAttribute('target');a.href='mailto:bariljeselle@gmail.com?subject='+encodeURIComponent('Large files / videos for my project')+'&body='+encodeURIComponent('Hi Jeselle,\n\nI have large files or videos to send for my project. Please send me an upload link.\n\nThank you!');a.querySelector('.upgo').textContent='Request link →';a.querySelector('small').textContent='Videos and large folders: I\'ll send you a private upload link'}});
 
-// File uploads (Netlify Forms stores them; download from Site > Forms)
+// File uploads (stored with the request; download links appear in the CRM and alert email)
 window.UP_MAX=8*1024*1024;
 document.querySelectorAll('.up').forEach(w=>{
   const pick=w.querySelector('.uppick'),list=w.querySelector('.uplist'),tot=w.querySelector('.uptot'),drop=w.querySelector('.updrop');

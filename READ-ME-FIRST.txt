@@ -185,3 +185,14 @@ Admin page: "Turn on notifications" subscribes this device to Web Push (keys aut
 == Monthly backup and follow-ups (Nov 22, 2026) ==
 netlify/functions/monthly-backup.mjs: 1st of each month 9 AM PH, emails last month income/expenses/clients CSVs.
 netlify/functions/nudges.mjs: daily 9 AM PH, one email + phone alert with follow-ups due.
+
+==========================================
+NOW HOSTED ON CLOUDFLARE (free, no credits)
+==========================================
+  cloudflare/        Cloudflare version of the backend (forms, CRM, emails, reminders, alerts)
+  wrangler.jsonc     Cloudflare settings (timed jobs, database, file storage)
+  Secrets to add in Cloudflare (your site > Settings > Variables and Secrets):
+    ADMIN_PASSWORD   your CRM password
+    BREVO_API_KEY    Brevo > SMTP & API > API Keys
+    GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET   (only for Google Meet links)
+  Uploaded files from forms are saved with each request; download links show in the CRM and alert emails.

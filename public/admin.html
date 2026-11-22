@@ -98,7 +98,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div id="app" hidden>
 <header>
 <p class="brand">Client CRM <span>· Jeselle Baril</span></p>
-<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://app.netlify.com" target="_blank" rel="noopener">Netlify (files)</a><a class="btn" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="out">Log out</button></div>
+<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="out">Log out</button></div>
 </header>
 <main>
 <div class="gbar" id="gbar"><p>Checking Google Meet connection…</p></div>
@@ -218,7 +218,7 @@ let KEY='',RECS=[],FILTER='all';
 try{KEY=sessionStorage.getItem('crmkey')||''}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(iso,tz)=>new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:tz,timeZoneName:'short'}).format(new Date(iso));
-const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:opts.body?'POST':'GET',headers:{'x-admin-key':KEY,...(opts.body?{'Content-Type':'application/json'}:{})},body:opts.body?JSON.stringify(opts.body):undefined});if(opts.raw)return r;const j=await r.json().catch(()=>({error:'Server not reachable. Is the site deployed on Netlify?'}));if(!r.ok)throw new Error(j.error||'Error');return j};
+const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:opts.body?'POST':'GET',headers:{'x-admin-key':KEY,...(opts.body?{'Content-Type':'application/json'}:{})},body:opts.body?JSON.stringify(opts.body):undefined});if(opts.raw)return r;const j=await r.json().catch(()=>({error:'Server not reachable. Check your internet and try again.'}));if(!r.ok)throw new Error(j.error||'Error');return j};
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
@@ -256,7 +256,7 @@ function card(r){
   const rows=Object.entries(d).filter(([k,v])=>v&&!['form-name','bot-field','type','start_utc','user_agent'].includes(k)).map(([k,v])=>`<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${esc(v).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')}</td></tr>`).join('');
   const links=(r.links||[]).filter(l=>l.status!=='none').map(l=>`<span class="chip ${l.status==='public'?'ok':'warn'}">${l.status==='public'?'✅ Public link':l.status==='private'?'⚠️ Private link (client was asked to fix)':l.status==='broken'?'❌ Broken link':'❔ Link not checked'}</span>`).join(' ');
   const rem=r.start?`<span class="chip">24h reminder: ${r.reminders?.['24h']?'sent':'pending'}</span> <span class="chip">1h reminder: ${r.reminders?.['1h']?'sent':'pending'}</span>`:'';
-  const files=r.files?`<span class="chip">📎 ${r.files.length} file(s): download in Netlify → Forms</span>`:'';
+  const files=r.files?r.files.map((u,i)=>/^https:\/\//.test(u)?`<a class="chip" href="${esc(u)}" target="_blank" rel="noopener">📎 File ${i+1}</a>`:`<span class="chip">📎 ${esc(u)}</span>`).join(' '):'';
   const sf=r.scopeFlags||[];
   const scope=sf.length?`<div class="scope"><b>⚠️ Heads up: may be outside your services</b><ul>${sf.map(x=>`<li>${x.emoji} <b>${esc(x.name)}</b> <small>(${esc(x.label)})</small>${x.warn?' <b class="warn">Against platform rules. Don\'t accept.</b>':''}<br><small>They wrote: "${esc(x.quote)}"</small><br>👉 ${esc(x.todo)}</li>`).join('')}</ul><small>Templates: <a href="https://claude.ai/artifact/8E7kS9BtnXJKM1bE4d7Pgp" target="_blank" rel="noopener">Client Delivery Kit</a>. Not sure? Paste their message to Claude.</small></div>`:'';
   const meetRow=r.type==='Payment'?'':`<tr><td>🎥 Meeting link</td><td>${r.meetLink?`<a href="${esc(r.meetLink)}" target="_blank" rel="noopener"><b>${esc(r.meetLink.replace(/^https:\/\//,''))}</b></a>${r.start?'':' <span style="color:#6E625A">(room, no time set)</span>'}`:`<span style="color:#6E625A">${r.meetError?'⚠️ '+esc(r.meetError):'No link yet'}</span>`}</td></tr>`;
@@ -284,7 +284,7 @@ $('upcoming').addEventListener('click',async e=>{const b=e.target.closest('.f-mk
 async function gload(){const g=$('gbar');try{const s=await api({body:{action:'google-status'}});
   g.innerHTML=s.connected?`<p>🎥 <b>Google Meet is on.</b> Every booking, inquiry and brief gets a Meet link automatically${s.email?' on '+esc(s.email):''}.</p><button id="gdis">Disconnect</button>`
   :s.keys?`<p>🎥 <b>Video call links are on</b> (free instant rooms). Connect Google Calendar to switch them to Google Meet.</p><button class="meet" id="gcon">Connect Google Calendar</button>`
-  :`<p>🎥 <b>Video call links are on</b> (free instant rooms, no setup). Optional: to use Google Meet instead, add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Netlify, then redeploy. Redirect URI to use in Google Cloud: <code>${esc(s.redirectUri)}</code></p>`}
+  :`<p>🎥 <b>Video call links are on</b> (free instant rooms, no setup). Optional: to use Google Meet instead, add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Cloudflare (your site → Settings → Variables and Secrets). Redirect URI to use in Google Cloud: <code>${esc(s.redirectUri)}</code></p>`}
   catch(e){g.innerHTML=`<p>${esc(e.message)}</p>`}}
 $('gbar').addEventListener('click',async e=>{
   if(e.target.id==='gcon'){try{const j=await api({body:{action:'google-connect'}});location.href=j.url}catch(err){note(err.message,1)}}

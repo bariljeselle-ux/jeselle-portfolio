@@ -7,7 +7,7 @@ const SUBS = "settings/push-subs";
 
 export async function vapidKeys(store = crmStore()) {
   let k = await store.get(VAPID, { type: "json" });
-  if (!k?.publicKey) { k = webpush.generateVAPIDKeys(); await store.setJSON(VAPID, k); }
+  if (!k?.publicKey) { k = await webpush.generateVAPIDKeys(); await store.setJSON(VAPID, k); }
   return k;
 }
 export async function listSubs(store = crmStore()) { return (await store.get(SUBS, { type: "json" })) || []; }

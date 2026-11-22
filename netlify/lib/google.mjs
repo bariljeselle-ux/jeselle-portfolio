@@ -1,6 +1,6 @@
 // Google Calendar + Google Meet: creates a calendar event with a Meet link for every booking.
-// Needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (Netlify env vars), then a one-time
-// "Connect Google Calendar" click in admin.html, which stores the refresh token in Netlify Blobs.
+// Needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (website settings), then a one-time
+// "Connect Google Calendar" click in admin.html, which stores the refresh token in the CRM database.
 import crypto from "node:crypto";
 import { OWNER, CALL_MINUTES, crmStore } from "./core.mjs";
 
@@ -16,7 +16,7 @@ export async function googleStatus(store = crmStore()) {
 }
 
 export async function authUrl(store = crmStore()) {
-  if (!hasKeys()) throw new Error("Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Netlify environment variables first, then redeploy.");
+  if (!hasKeys()) throw new Error("Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your website settings first, then redeploy.");
   const state = crypto.randomBytes(18).toString("hex");
   await store.setJSON(STATE, { state, at: Date.now() });
   const q = new URLSearchParams({
