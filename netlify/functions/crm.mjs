@@ -67,6 +67,10 @@ export default async (req) => {
     }
     if (body.action === "google-disconnect") { await disconnect(store); return Response.json({ ok: true }); }
     // ----- Income records (for your own books and BIR) -----
+    if (body.action === "push-key") { const { vapidKeys, listSubs } = await import("../lib/push.mjs"); const k = await vapidKeys(store); return Response.json({ publicKey: k.publicKey, devices: (await listSubs(store)).length }); }
+    if (body.action === "push-subscribe") { const { addSub } = await import("../lib/push.mjs"); try { const n = await addSub(body.sub, body.label, store); return Response.json({ ok: true, devices: n }); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); } }
+    if (body.action === "push-unsubscribe") { const { removeSub } = await import("../lib/push.mjs"); return Response.json({ ok: true, devices: await removeSub(String(body.endpoint || ""), store) }); }
+    if (body.action === "push-test") { const { sendPush } = await import("../lib/push.mjs"); const r = await sendPush({ title: "🔔 Notifications are on", body: "You'll get an alert here for every booking, inquiry, brief, payment and review.", url: "/admin.html", tag: "test" }, store); return Response.json({ ok: true, ...r }); }
     if (body.action === "receipt-upload") {
       const key = String(body.key || "");
       if (!recKeyOk(key)) return Response.json({ error: "Save the entry first." }, { status: 400 });

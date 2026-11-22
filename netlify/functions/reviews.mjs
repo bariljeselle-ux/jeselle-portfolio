@@ -109,6 +109,7 @@ export default async (req) => {
     if (photo) { await photoStore().set(id, photo); rec.hasPhoto = true; }
     await store.setJSON(rec.key, rec);
     try { await notify(rec); } catch (e) { console.log("review email failed:", e.message); }
+    try { const { sendPush } = await import("../lib/push.mjs"); await sendPush({ title: `⭐ New review: ${rec.name || "A client"} (${rec.rating}/5)`, body: String(rec.text || rec.improve || "Tap to read it.").slice(0, 120), url: "/admin.html#reviews", tag: rec.key }); } catch {}
     return Response.json({ ok: true });
   }
 

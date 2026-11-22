@@ -316,6 +316,16 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
   for (const m of mails) { try { await sendMail(m); results.push("sent:" + m.to); } catch (e) { results.push("failed:" + m.to + ":" + e.message); } }
   rec.emailLog = results;
   await store.setJSON(key, rec);
+  try {
+    const { sendPush } = await import("./push.mjs");
+    const icon = { Booking: "📅", Inquiry: "💬", "Project brief": "📝", Payment: "💰" }[type] || "🔔";
+    const who = data.name || data.email;
+    const body = type === "Booking" ? "Call on " + new Date(rec.start).toLocaleString("en-US", { timeZone: "Asia/Manila", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " (PH time)"
+      : type === "Payment" ? [data.amount, data.payment_method].filter(Boolean).join(" via ") || "Proof of payment uploaded"
+      : type === "Project brief" ? (data.service || "New project brief") + (data.estimated_total ? " · " + data.estimated_total : "")
+      : String(data.message || data.service || "New message").slice(0, 120);
+    await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}`, body, url: "/admin.html#" + key, tag: key }, store);
+  } catch {}
   return { ok: true, key, results };
 }
 

@@ -178,3 +178,6 @@ LABEL={'10-template pack (about $6â€“$15 per design)':'10-template pack (about â
 
 == Receipts (Nov 22, 2026) ==
 Income and expense entries can have photos/screenshots/PDFs attached (admin form "Attach receipt"). Files are stored privately in the Netlify Blobs store "receipts" and opened only through the admin page (needs the admin password).
+
+== Notifications (Nov 22, 2026) ==
+Admin page: "Turn on notifications" subscribes this device to Web Push (keys auto-created in the crm store: settings/vapid, devices in settings/push-subs). Alerts go out for every booking, inquiry, brief, payment and review (netlify/lib/push.mjs). Red dots/badges show unread items (stored per device). iPhone: add admin page to Home Screen first.
