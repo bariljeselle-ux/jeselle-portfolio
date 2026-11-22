@@ -9,7 +9,7 @@ export const OWNER = {
   title: "Digital Solutions & Creative Services",
   email: () => process.env.GMAIL_USER || "bariljeselle@gmail.com",
   tz: "Asia/Manila",
-  site: () => (process.env.SITE_URL || process.env.URL || "https://jeselleva.netlify.app").replace(/\/$/, ""),
+  site: () => (process.env.SITE_URL || process.env.URL || "https://jeselleva.com").replace(/\/$/, ""),
 };
 export const CALL_MINUTES = 15;
 
