@@ -65,6 +65,7 @@ small{color:#6E625A}
 .apps a{display:block;background:#F7F3EE;border:1px solid #E2D9CF;border-radius:8px;padding:10px 12px;text-decoration:none;color:#231E1B;font-size:14px}
 .apps a b{display:block;font-weight:500}.apps a span{font-size:12px;color:#6E625A}
 .note{background:#FBF3E4;border-radius:6px;padding:10px 14px;font-size:15px;margin:10px 0}
+.ok{margin:14px 0 -6px;color:#2F6B3F;font-weight:600;font-size:14px}.vf{color:#2F6B3F;font-size:13px;white-space:nowrap}
 .toc{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}.toc a{background:#fff;border:1px solid #E2D9CF;border-radius:99px;padding:5px 12px;font-size:13px;text-decoration:none;color:#231E1B}
 @media(max-width:620px){.apps{grid-template-columns:minmax(0,1fr)}.step{padding:16px 14px 10px}.step h2{font-size:21px}}
 </style>
@@ -115,24 +116,50 @@ small{color:#6E625A}
 </section>
 
 <section class="step" id="s6"><h2><span class="n">6</span>Verify your email and phone</h2>
-<ol><li>Open the email from Porkbun and tap the <b>verification link</b>. Do this within a few days, or your domain may be paused.</li><li>In <b>ACCOUNT → Account Settings</b>, verify your <b>phone number</b> with the code Porkbun texts you.</li></ol>
-<div class="note">🛡️ Watch out for fake "Porkbun" emails. Only click links in emails you were expecting, and when in doubt, open porkbun.com yourself and log in there.</div>
+<ol><li>Porkbun shows a <b>Verify Email Address</b> page. Open the email from Porkbun (check Spam too) and copy the <b>verification code</b>.</li><li>Paste it in the <b>Verification Code</b> box, tick the checkbox (it says you agree to Porkbun's terms and turns on auto-renew) and tap <b>Submit</b>.</li><li>Go to <b>ACCOUNT → Account Settings → Your details</b>. Scroll to <b>Phone Number</b>, choose <b>Philippines | 63</b> (or your country), type your number <b>without</b> the country code, and verify it with the code Porkbun texts you.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com · Verify Email Address</span></div><div class="in"><p style="margin:0 0 6px;font-size:14px">Verification Code</p><div class="mk"><div class="inp hl">Paste the code from your email</div></div><div class="row2" style="justify-content:flex-start"><span style="width:16px;height:16px;border:2px solid #2F6B3F;border-radius:3px;display:inline-grid;place-items:center;font-size:12px;color:#2F6B3F">✓</span><span style="font-size:13px">I acknowledge that I have read and agree…</span></div><div class="btn2" style="display:inline-block;margin-top:8px;background:#2D6A35">Submit</div></div><small class="cap">Drawing of the email check</small></div>
+<p class="ok">✅ Good when you see this</p>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account · Your details</span></div><div class="in"><div class="row2"><b>Primary Email Address</b><span class="vf">● verified</span></div><div class="row2"><b>Phone Number</b><span class="vf">● verified</span></div><div class="row2" style="opacity:.7"><b>ID Verification</b><span style="font-size:12px;color:#6E625A">optional</span></div></div><small class="cap">Green <b>verified</b> under email and phone means this step is done</small></div>
+<div class="note">🛡️ Watch out for fake "Porkbun" emails. Only use codes and links from emails you were expecting. When in doubt, open porkbun.com yourself.</div>
 </section>
 
 <section class="step" id="s7"><h2><span class="n">7</span>Turn on 2-step login (2FA)</h2>
-<p>This adds a 6-digit code from your phone each time you log in, so nobody can take your domain even if they guess your password. It's also required before you can give me access.</p>
-<p><b>First, install one free authenticator app:</b></p>
+<p>This adds a 6-digit code from your phone each time you log in, so nobody can take your domain even if they guess your password. It's <b>required</b> before you can give me access.</p>
+<p><b>7a. Install one free authenticator app on your phone</b> (there's no Porkbun app to install; Porkbun works in your browser):</p>
 <div class="apps"><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener"><b>Google Authenticator</b><span>Android (Google Play)</span></a><a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank" rel="noopener"><b>Google Authenticator</b><span>iPhone (App Store)</span></a><a href="https://www.microsoft.com/en-us/security/mobile-authenticator-app" target="_blank" rel="noopener"><b>Microsoft Authenticator</b><span>Android and iPhone</span></a></div>
-<ol><li>On Porkbun, go to <b>ACCOUNT → Account Settings</b> and find <b>two-factor authentication</b>. Turn on <b>app-based 2FA</b>.</li><li>A <b>QR code</b> appears. In your authenticator app, tap <b>+</b> → <b>Scan a QR code</b> and point your phone at it.</li><li>Your app now shows a <b>6-digit code</b> for Porkbun. Type it into <b>Verification Code</b> on Porkbun and tap <b>Submit</b>.</li><li>Save any <b>backup codes</b> Porkbun shows you somewhere safe (a notebook at home). You need them if you lose your phone.</li></ol>
-<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account</span></div><div class="in" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="qr" aria-hidden="true"></div><div style="flex:1;min-width:180px"><p style="margin:0 0 6px;font-size:14px">Scan with your app, then type the code:</p><div class="row2 hl" style="margin:0"><span style="color:#6E625A;font-size:13px">Verification Code</span><span class="code">482 913</span></div><p class="arrow" style="margin:6px 0 0">↑ The code from your phone (it changes every 30 seconds)</p></div></div><small class="cap">Drawing of the 2FA setup (your QR code will be different)</small></div>
+<div class="note">⚠️ Install the one made by <b>Google LLC</b> (or Microsoft). Skip "Sponsored" look-alike apps in search results.</div>
+<p><b>7b. Turn it on in Porkbun</b> (use a laptop or computer if you can, so your phone can scan the screen):</p>
+<ol><li>Go to <b>ACCOUNT → Account Settings → Security and sign-in</b> (in the menu on the left).</li><li>Turn on <b>Two-factor authentication with an app</b>.</li><li>Tap the blue <b>Show QR code and key</b>. <b>Don't</b> tap "Generate a new key" once it's set up, or your app's code will stop working.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account · Security and sign-in</span></div><div class="in"><div class="row2"><b>Two-factor authentication with an app</b><span class="tog hl">ON</span></div><div style="padding:10px 2px 0"><b style="font-size:14px;font-weight:500">Authenticator key</b><div class="mk" style="margin-top:6px"><div class="btn2 hl" style="background:#3B7BBF">Show QR code and key</div><div class="btn2" style="background:#fff;color:#6E625A;border:1px solid #D6CABD">Generate a new key ✕</div></div></div></div><small class="cap">Drawing of the Security and sign-in page</small></div>
+<p><b>7c. Scan the QR code from inside the app</b></p>
+<ol><li>Open <b>Google Authenticator</b> on your phone. Tap <b>Get started</b> (first time) or the colorful <b>+</b> at the bottom right.</li><li>Tap <b>Scan a QR code</b>, then point your phone at the QR code on your computer screen. It saves by itself.</li></ol>
+<div class="note">❌ <b>Don't</b> scan with your normal camera or Google Lens. That opens a Google search with your secret code instead of saving it. Always scan <b>inside</b> the Authenticator app. (Also skip "Import or export codes" in the menu; that's for moving to a new phone.)</div>
+<p class="ok">✅ Good when you see this</p>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>Google Authenticator app (on your phone)</span></div><div class="in"><div class="row2"><span><span style="font-size:12px;color:#6E625A">Porkbun: yourname</span><br><span class="code" style="color:#2F6B60">482 913</span></span><span style="width:22px;height:22px;border-radius:50%;border:3px solid #2F6B60;border-right-color:#E2D9CF"></span></div></div><small class="cap"><b>Porkbun</b> with 6 numbers that change every 30 seconds means it worked. The app blocks screenshots on purpose; that's normal.</small></div>
+<p><b>7d. Save your backup codes</b></p>
+<ol><li>On the same <b>Security and sign-in</b> page, scroll to <b>One time backup codes</b> and tap <b>Generate backup codes</b>.</li><li>Write them all in a notebook and keep it at home. Each code works once if you lose your phone.</li></ol>
+<p class="ok">✅ Good when you see this</p>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account · Security and sign-in</span></div><div class="in"><div class="row2"><b>Two-factor authentication with an app</b><span class="tog">ON</span></div><div class="row2"><b>Email me when a sign-in succeeds / fails</b><span class="tog">ON</span></div><div class="row2"><b>One time backup codes</b><span style="font-size:13px"><b>6</b> unused codes</span></div></div><small class="cap">Green <b>ON</b> for the app and some unused backup codes written down = 2FA done</small></div>
+<div class="note">🔒 <b>Never share your 6-digit codes or backup codes</b> with anyone, including me. I will never ask for them.</div>
 <p style="font-size:14px">Porkbun's own guide: <a href="https://kb.porkbun.com/article/19-how-to-enable-two-factor-authentication" target="_blank" rel="noopener">How to enable app-based two-factor authentication</a></p>
 </section>
 
 <section class="step" id="s8"><h2><span class="n">8</span>Give me access (no password needed)</h2>
-<ol><li>Go to <b>ACCOUNT → Account Settings → Authorized Users</b>.</li><li>Type my Porkbun username: <b>jeselleB</b>, and send the invite.</li><li>Message me "Done!" and I'll accept and connect your domain to your website.</li></ol>
-<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account</span></div><div class="in"><p style="margin:0 0 6px;font-size:14px"><b>Authorized Users</b> · Invite by Porkbun username</p><div class="mk"><div class="inp hl">jeselleB</div><div class="btn2" style="background:#3B7BBF">Invite</div></div></div><small class="cap">Drawing of the Authorized Users section</small></div>
+<ol><li>Go to <b>ACCOUNT → Authorized Users</b>.</li><li>Type my Porkbun username: <b>jeselleB</b>, and send the invite.</li><li>Message me "Done!" I'll accept from the email Porkbun sends me, then connect your domain to your website.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account · Authorized Users</span></div><div class="in"><p style="margin:0 0 6px;font-size:14px"><b>Authorized Users</b> · Invite by Porkbun username</p><div class="mk"><div class="inp hl">jeselleB</div><div class="btn2" style="background:#3B7BBF">Invite</div></div></div><small class="cap">Drawing of the Authorized Users section</small></div>
+<p class="ok">✅ Good when you see this</p>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account · Authorized Users</span></div><div class="in"><div class="row2"><b>jeselleB</b><span class="vf">● accepted</span></div></div><small class="cap">My username listed as accepted means I can now connect your domain</small></div>
 <div class="note">✅ As an authorized user I can set up your domain's settings, but I <b>can't</b> unlock it or move it out of your account. You can remove me anytime in the same place. <a href="https://kb.porkbun.com/article/220-how-to-grant-access-to-another-porkbun-user-as-an-authorized-account" target="_blank" rel="noopener">Porkbun's guide</a></div>
 </section>
+
+<h2>Final check: you're done when…</h2>
+<div class="tw"><table class="share"><tbody>
+<tr><td>Your domain is in <b>ACCOUNT → Domain Management</b> with <b>AUTO RENEW: ON</b></td><td>✅</td></tr>
+<tr><td><b>Primary email</b> and <b>phone</b> both say <b>verified</b></td><td>✅</td></tr>
+<tr><td><b>Two-factor authentication with an app</b> is <b>ON</b> and <b>Porkbun</b> shows in your Authenticator app</td><td>✅</td></tr>
+<tr><td>Backup codes are written down and kept at home</td><td>✅</td></tr>
+<tr><td>You invited <b>jeselleB</b> as an Authorized User and messaged me "Done!"</td><td>✅</td></tr>
+</tbody></table></div>
 
 <h2>What happens next</h2>
 <ol><li>I add 2 settings to your domain and connect it to your website (about 30 minutes of work).</li><li>Within a few hours, your website opens at your new domain with the 🔒 security lock.</li><li>Your old link keeps working and sends visitors to the new one.</li></ol>
