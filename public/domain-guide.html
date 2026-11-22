@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting Your Own Domain – Step-by-Step Guide – Jeselle Baril</title>
+<meta name="description" content="A simple step-by-step guide, with pictures, to buying your own domain on Porkbun, turning on 2-step verification and giving Jeselle access without sharing your password.">
+<link rel="canonical" href="https://jeselleva.com/domain-guide.html">
+<meta name="theme-color" content="#F7F3EE">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;background:#F7F3EE;color:#231E1B;font:16px/1.7 Jost,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:40px max(5vw,20px) 70px}
+h1{font-family:Georgia,'Cormorant Garamond',serif;font-weight:500;font-size:clamp(32px,6vw,44px);margin:0 0 6px}
+h2{font-family:Georgia,'Cormorant Garamond',serif;font-weight:500;font-size:24px;margin:28px 0 6px}
+p,li{color:#3A322D}
+a{color:#7A4E3A}
+.back{display:inline-block;margin-bottom:22px;text-decoration:none;font-size:14px}
+small{color:#6E625A}
+.sum{background:#fff;border:1px solid #E2D9CF;border-radius:8px;padding:18px 20px;margin:22px 0 8px}.sum ul{margin:6px 0 0;padding-left:20px}.sum b{color:#231E1B}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 8px}
+.opts a{display:block;background:#fff;border:1px solid #E2D9CF;border-radius:8px;padding:14px 16px;text-decoration:none;color:#231E1B}
+.opts a b{display:block;font-weight:500}.opts a span{font-size:14px;color:#6E625A}
+.opts a em{font-style:normal;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7A4E3A}
+.opt{background:#fff;border:1px solid #E2D9CF;border-radius:10px;padding:22px 22px 8px;margin:28px 0;scroll-margin-top:16px}
+.opt h2{margin-top:0}.tag{display:inline-block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:#E8C9B8;color:#5A3424;padding:3px 10px;border-radius:99px;margin-bottom:8px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.cols h3,.opt h3{font-family:Jost,system-ui,sans-serif;font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#7A4E3A;margin:16px 0 4px}
+.cols ul,.opt ul{padding-left:20px;margin:4px 0 8px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.facts div{background:#F7F3EE;border-radius:6px;padding:10px 12px;font-size:14px}.facts b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E625A;font-weight:500}
+.login{background:#FBF3E4;border-radius:6px;padding:12px 14px;margin:10px 0 14px;font-size:15px}
+.top{font-size:14px;text-decoration:none}
+.tw{overflow-x:auto;margin:12px 0}.share{width:100%;border-collapse:collapse;font-size:15px;background:#fff;border:1px solid #E2D9CF;border-radius:8px}.share th{text-align:left;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6E625A;font-weight:500;padding:10px 12px;border-bottom:1px solid #E2D9CF}.share td{padding:10px 12px;border-bottom:1px solid #F1ECE5;vertical-align:top}.share tr:last-child td{border-bottom:0}@media(max-width:620px){.share thead{display:none}.share,.share tbody,.share tr,.share td{display:block;width:100%}.share tr{border-bottom:1px solid #E2D9CF;padding:8px 0}.share td{border:0;padding:3px 12px}.share td:nth-child(2){font-size:13px;color:#7A4E3A}}
+
+@media(max-width:620px){.opts,.cols,.facts{grid-template-columns:minmax(0,1fr)}.opt{padding:18px 16px 6px}}
+
+.step{background:#fff;border:1px solid #E2D9CF;border-radius:10px;padding:20px 20px 14px;margin:22px 0;scroll-margin-top:12px}
+.step h2{margin:0 0 6px;display:flex;gap:12px;align-items:center;font-size:24px}
+.step h2 .n{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#7A4E3A;color:#fff;font:500 16px Jost,system-ui,sans-serif}
+.step ol,.step ul{padding-left:20px;margin:8px 0}
+.step li{margin:0 0 6px}
+.shot{margin:14px 0 8px;border:1px solid #D6CABD;border-radius:10px;overflow:hidden;background:#FBF8F4;box-shadow:0 10px 24px -18px rgba(35,30,27,.5)}
+.shot .bar{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#EFE8DF;font-size:12px;color:#6E625A}
+.shot .bar i{width:9px;height:9px;border-radius:50%;background:#C9BAAB;display:inline-block}
+.shot .bar span{margin-left:8px;background:#fff;border-radius:99px;padding:2px 10px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shot .in{padding:14px}
+.shot small.cap{display:block;padding:0 14px 10px;color:#8A7E75;font-size:12px}
+.mk{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mk .inp{flex:1;min-width:0;border:2px solid #E7A6A0;border-radius:6px;background:#fff;padding:10px 12px;font-size:15px;color:#231E1B}
+.mk .btn2{background:#E7837A;color:#fff;border-radius:6px;padding:10px 14px;font-size:14px;font-weight:500}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #E2D9CF;border-radius:6px;padding:10px 12px;margin-top:8px;font-size:14px}
+.row2 b{font-weight:500}
+.plus{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#E7837A;color:#fff;font-weight:600;flex:none}
+.tag2{font-size:11px;background:#555;color:#fff;border-radius:4px;padding:2px 6px}
+.hl{outline:3px solid #2F6B3F;outline-offset:3px;border-radius:6px}
+.arrow{color:#2F6B3F;font-weight:600;font-size:13px}
+.tog{display:inline-flex;align-items:center;width:52px;height:26px;border-radius:4px;background:#8BC34A;color:#fff;font-size:11px;font-weight:600;padding:0 6px;justify-content:flex-start}
+.tog.off{background:#777;justify-content:flex-end}
+.qr{width:96px;height:96px;background:repeating-conic-gradient(#231E1B 0 25%,#fff 0 50%) 0 0/16px 16px;border:6px solid #fff;outline:1px solid #D6CABD;flex:none}
+.code{font:600 26px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em;color:#231E1B}
+.apps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.apps a{display:block;background:#F7F3EE;border:1px solid #E2D9CF;border-radius:8px;padding:10px 12px;text-decoration:none;color:#231E1B;font-size:14px}
+.apps a b{display:block;font-weight:500}.apps a span{font-size:12px;color:#6E625A}
+.note{background:#FBF3E4;border-radius:6px;padding:10px 14px;font-size:15px;margin:10px 0}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}.toc a{background:#fff;border:1px solid #E2D9CF;border-radius:99px;padding:5px 12px;font-size:13px;text-decoration:none;color:#231E1B}
+@media(max-width:620px){.apps{grid-template-columns:minmax(0,1fr)}.step{padding:16px 14px 10px}.step h2{font-size:21px}}
+</style>
+<style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}body{padding-bottom:72px}</style>
+<script src="/currency.js" defer></script>
+</head>
+<body>
+<main>
+<h1>Getting your own domain</h1>
+<small>Step-by-step guide with pictures · About 20 minutes · Last updated: November 22, 2026</small>
+<p>Your domain (like <b>yourbusiness.com</b>) is your website's address. You buy it <b>in your own name</b>, so it always belongs to you. Then you give me access to connect it, <b>without sharing your password</b>. The pictures below are simple drawings to show you where to tap; the real pages may look slightly different.</p>
+<div class="sum"><b>What you need</b><ul><li>Your business email and your phone</li><li>A debit or credit card (about <b>₱700 a year</b> for a .com)</li><li>One valid government ID, in case Porkbun asks to verify you</li><li>An authenticator app on your phone (step 7, free)</li></ul></div>
+<h2 style="margin-top:22px">Who does what</h2>
+<div class="tw"><table class="share"><thead><tr><th>You do (about 20 minutes)</th><th>I do (about 30 minutes)</th></tr></thead><tbody>
+<tr><td>Buy the domain in your name and pay Porkbun (steps 1–5)</td><td>Accept your access invite</td></tr>
+<tr><td>Verify your email and phone (step 6)</td><td>Add the 2 settings that point your domain to your website</td></tr>
+<tr><td>Turn on 2-step login (step 7)</td><td>Connect the domain to your website and turn on the 🔒 security lock</td></tr>
+<tr><td>Invite me as an Authorized User (step 8)</td><td>Update your website links, Google listing and Facebook "Website" field</td></tr>
+<tr><td>Keep auto-renew on every year</td><td>Test everything and tell you when it's live</td></tr>
+</tbody></table></div>
+<div class="toc"><a href="#s1">1. Pick a name</a><a href="#s2">2. Search</a><a href="#s3">3. Cart</a><a href="#s4">4. Account</a><a href="#s5">5. Pay + auto-renew</a><a href="#s6">6. Verify</a><a href="#s7">7. 2-step login</a><a href="#s8">8. Give me access</a></div>
+
+<section class="step" id="s1"><h2><span class="n">1</span>Pick your domain name</h2>
+<ul><li>Use your business name, short and easy to spell: <b>bloomandbrew.com</b>, not <i>the-best-bloom-and-brew-cafe-2026.com</i>.</li><li>Choose <b>.com</b> if it's available. It's the one customers trust and remember. <b>.ph</b> is great for local businesses but costs more (about ₱1,500–₱2,500 a year).</li><li>Avoid numbers and dashes. Say it out loud: if someone can type it after hearing it once, it's good.</li></ul>
+</section>
+
+<section class="step" id="s2"><h2><span class="n">2</span>Search for it on Porkbun</h2>
+<ol><li>Open <a href="https://porkbun.com" target="_blank" rel="noopener">porkbun.com</a>.</li><li>Type your domain in the search box and tap the search button.</li><li>Find the line with your exact domain (for example <b>yourbusiness.com</b>) and tap the <b>pink +</b>.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com</span></div><div class="in"><div class="mk"><div class="inp">yourbusiness.com</div><div class="btn2">🔍</div></div>
+<div class="row2 hl"><b>yourbusiness.com</b><span>$11.81 / year<br><small style="color:#6E625A">renews at $11.81</small></span><span class="plus">+</span></div><p class="arrow" style="margin:6px 0 0">↑ Tap the + on your .com line</p>
+<div class="row2" style="opacity:.55"><b>yourbusiness.xyz</b><span class="tag2">1st Year Sale!</span><span>$1.29 / year</span><span class="plus">+</span></div></div><small class="cap">Drawing of the search results</small></div>
+<div class="note">⚠️ Skip the cheap "1st Year Sale" endings like .xyz or .lol. They cost much more when they renew. Look at <b>"renews at"</b>: it should be close to the first-year price.</div>
+</section>
+
+<section class="step" id="s3"><h2><span class="n">3</span>Check your cart</h2>
+<ol><li>Tap the <b>cart</b> at the top right.</li><li>Keep it at <b>1 year</b>.</li><li>Make sure <b>WHOIS Privacy</b> is on. It's free and hides your home address from the public.</li><li><b>Don't add extras</b>: no hosting, email, website builder or SSL. Your website and its security lock are already included with my setup.</li><li>Skip "bundle" offers for .net or other endings.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/checkout</span></div><div class="in"><div class="row2"><b>yourbusiness.com · 1 year</b><span>$11.81</span></div><div class="row2 hl"><b>WHOIS Privacy</b><span>Free · On ✓</span></div><div class="row2" style="opacity:.55"><b>Web hosting / Email / Builder</b><span>Skip</span></div></div><small class="cap">Drawing of the cart</small></div>
+</section>
+
+<section class="step" id="s4"><h2><span class="n">4</span>Create your Porkbun account</h2>
+<ol><li>Tap <b>Create Your Account</b>.</li><li>Use <b>your business email</b> and a strong password that only you know.</li><li>Type your <b>real name and address exactly as they appear on your ID</b>.</li></ol>
+<div class="note">🪪 Porkbun may ask some new accounts to verify with a photo of a government ID (passport, driver's license, UMID or PhilSys ID) and a selfie. Use the <b>actual card</b>, not a photo of a screen, and make sure your account name matches your ID. <a href="https://kb.porkbun.com/article/316-id-verification-declined-how-to-pass-on-your-next-try" target="_blank" rel="noopener">Porkbun's tips</a></div>
+</section>
+
+<section class="step" id="s5"><h2><span class="n">5</span>Pay, then turn on auto-renew</h2>
+<ol><li>Pay with your card.</li><li>Go to <b>ACCOUNT → Domain Management</b>, scroll down to your domain, and open <b>Details</b>.</li><li>Turn <b>AUTO RENEW</b> to <b>ON</b> (green), so your domain never expires. Leave <b>Domain Lock</b> on.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account/domainsSpeedy</span></div><div class="in"><div class="row2"><b>AUTO RENEW</b><span class="tog hl">ON</span></div><div class="row2"><b>DOMAIN LOCK</b><span class="tog">ON</span></div><div class="row2"><b>CONTACT PRIVACY</b><span>Using Privacy ✓</span></div></div><small class="cap">Drawing of your domain's details</small></div>
+</section>
+
+<section class="step" id="s6"><h2><span class="n">6</span>Verify your email and phone</h2>
+<ol><li>Open the email from Porkbun and tap the <b>verification link</b>. Do this within a few days, or your domain may be paused.</li><li>In <b>ACCOUNT → Account Settings</b>, verify your <b>phone number</b> with the code Porkbun texts you.</li></ol>
+<div class="note">🛡️ Watch out for fake "Porkbun" emails. Only click links in emails you were expecting, and when in doubt, open porkbun.com yourself and log in there.</div>
+</section>
+
+<section class="step" id="s7"><h2><span class="n">7</span>Turn on 2-step login (2FA)</h2>
+<p>This adds a 6-digit code from your phone each time you log in, so nobody can take your domain even if they guess your password. It's also required before you can give me access.</p>
+<p><b>First, install one free authenticator app:</b></p>
+<div class="apps"><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener"><b>Google Authenticator</b><span>Android (Google Play)</span></a><a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank" rel="noopener"><b>Google Authenticator</b><span>iPhone (App Store)</span></a><a href="https://www.microsoft.com/en-us/security/mobile-authenticator-app" target="_blank" rel="noopener"><b>Microsoft Authenticator</b><span>Android and iPhone</span></a></div>
+<ol><li>On Porkbun, go to <b>ACCOUNT → Account Settings</b> and find <b>two-factor authentication</b>. Turn on <b>app-based 2FA</b>.</li><li>A <b>QR code</b> appears. In your authenticator app, tap <b>+</b> → <b>Scan a QR code</b> and point your phone at it.</li><li>Your app now shows a <b>6-digit code</b> for Porkbun. Type it into <b>Verification Code</b> on Porkbun and tap <b>Submit</b>.</li><li>Save any <b>backup codes</b> Porkbun shows you somewhere safe (a notebook at home). You need them if you lose your phone.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account</span></div><div class="in" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="qr" aria-hidden="true"></div><div style="flex:1;min-width:180px"><p style="margin:0 0 6px;font-size:14px">Scan with your app, then type the code:</p><div class="row2 hl" style="margin:0"><span style="color:#6E625A;font-size:13px">Verification Code</span><span class="code">482 913</span></div><p class="arrow" style="margin:6px 0 0">↑ The code from your phone (it changes every 30 seconds)</p></div></div><small class="cap">Drawing of the 2FA setup (your QR code will be different)</small></div>
+<p style="font-size:14px">Porkbun's own guide: <a href="https://kb.porkbun.com/article/19-how-to-enable-two-factor-authentication" target="_blank" rel="noopener">How to enable app-based two-factor authentication</a></p>
+</section>
+
+<section class="step" id="s8"><h2><span class="n">8</span>Give me access (no password needed)</h2>
+<ol><li>Go to <b>ACCOUNT → Account Settings → Authorized Users</b>.</li><li>Type my Porkbun username: <b>jeselleB</b>, and send the invite.</li><li>Message me "Done!" and I'll accept and connect your domain to your website.</li></ol>
+<div class="shot"><div class="bar"><i></i><i></i><i></i><span>porkbun.com/account</span></div><div class="in"><p style="margin:0 0 6px;font-size:14px"><b>Authorized Users</b> · Invite by Porkbun username</p><div class="mk"><div class="inp hl">jeselleB</div><div class="btn2" style="background:#3B7BBF">Invite</div></div></div><small class="cap">Drawing of the Authorized Users section</small></div>
+<div class="note">✅ As an authorized user I can set up your domain's settings, but I <b>can't</b> unlock it or move it out of your account. You can remove me anytime in the same place. <a href="https://kb.porkbun.com/article/220-how-to-grant-access-to-another-porkbun-user-as-an-authorized-account" target="_blank" rel="noopener">Porkbun's guide</a></div>
+</section>
+
+<h2>What happens next</h2>
+<ol><li>I add 2 settings to your domain and connect it to your website (about 30 minutes of work).</li><li>Within a few hours, your website opens at your new domain with the 🔒 security lock.</li><li>Your old link keeps working and sends visitors to the new one.</li></ol>
+<p>Domain setup is <b>₱500–₱1,000 / $10–$20</b> one-time, or included in Website Maintenance. You pay Porkbun directly for the domain itself.</p>
+<p style="margin-top:28px"><small>Questions? <a href="/#book">Book a free call</a> · See also <a href="/hosting.html">hosting options</a></small></p>
+</main>
+<a href="/" class="homefab" aria-label="Back to homepage" title="Back to homepage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></a>
+</body>
+</html>
