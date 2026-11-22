@@ -414,3 +414,43 @@ export async function runNudges({ store = crmStore(), now = new Date() } = {}) {
   try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today }, store); } catch {}
   return { count: list.length };
 }
+
+// ---------- Monthly backup: on the 1st, email last month's income, expenses and clients as CSV files ----------
+const csvCell2 = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
+const toCsv = (head, rows) => "﻿" + [head, ...rows].map((r) => r.map(csvCell2).join(",")).join("\n");
+export async function runMonthlyBackup({ store = crmStore(), now = new Date() } = {}) {
+  const ph = new Date(now.getTime() + 8 * 3600000);
+  const prev = new Date(Date.UTC(ph.getUTCFullYear(), ph.getUTCMonth() - 1, 15));
+  const month = prev.toISOString().slice(0, 7);
+  const label = prev.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  const done = await store.get("settings/backup-sent", { type: "json" });
+  if (done?.month === month) return { skipped: "already sent", month };
+  const { blobs } = await store.list();
+  const income = [], expenses = [], clients = [];
+  for (const b of blobs) {
+    if (b.key.startsWith("settings/")) continue;
+    const r = await store.get(b.key, { type: "json" }); if (!r) continue;
+    if (b.key.startsWith("income/")) { if ((r.date || "").startsWith(month)) income.push(r); }
+    else if (b.key.startsWith("expense/")) { if ((r.date || "").startsWith(month)) expenses.push(r); }
+    else if (r.createdAt && new Date(new Date(r.createdAt).getTime() + 8 * 3600000).toISOString().startsWith(month)) clients.push(r);
+  }
+  const by = (a, b) => (a.date || a.createdAt || "").localeCompare(b.date || b.createdAt || "");
+  income.sort(by); expenses.sort(by); clients.sort(by);
+  const inTot = income.reduce((a, r) => a + (Number(r.php) || 0), 0), exTot = expenses.reduce((a, r) => a + (Number(r.php) || 0), 0);
+  const attachments = [
+    { filename: `income-${month}.csv`, content: toCsv(["Date", "Invoice no.", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Attachments", "Notes"],
+      [...income.map((r) => [r.date, r.invoice || "", r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, (r.files || []).length, r.notes]), ["", "", "", "", "TOTAL", "", "", inTot.toFixed(2), "", "", "", ""]]) },
+    { filename: `expenses-${month}.csv`, content: toCsv(["Date", "Category", "What", "Paid to", "Amount (PHP)", "Full bill (PHP)", "Work share %", "Paid with", "Receipt kept", "Attachments", "Notes"],
+      [...expenses.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.bill ?? "", r.workpct ?? "", r.method, r.receipt ? "Yes" : "No", (r.files || []).length, r.notes]), ["", "", "TOTAL", "", exTot.toFixed(2), "", "", "", "", "", ""]]) },
+    { filename: `clients-${month}.csv`, content: toCsv(["Received", "Type", "Status", "Name", "Email", "Business", "Service", "Picked on website", "Estimate", "Notes"],
+      clients.map((r) => { const d = r.data || {}; return [r.createdAt, r.type, r.status, d.name, d.email, d.business, d.service, d.selected_packages, d.estimated_total, r.notes]; })) },
+  ];
+  const peso = (n) => "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  await sendMail({ to: OWNER.email(), subject: `🗂️ Your ${label} backup: income, expenses and clients`, attachments,
+    html: layout(`${label} backup`, p(`Here are your records for <b>${label}</b>, attached as files you can open in Excel or Google Sheets.`) +
+      box(`<b>Income:</b> ${peso(inTot)} (${income.length} payment${income.length === 1 ? "" : "s"})<br><b>Expenses:</b> ${peso(exTot)} (${expenses.length})<br><b>Profit:</b> ${peso(inTot - exTot)}<br><b>New clients and requests:</b> ${clients.length}`) +
+      p("Tip: save these in your Google Drive folder \"Bookkeeping [year]\". Receipt photos stay safely in your CRM.") +
+      p(`<a href="${OWNER.site()}/admin.html#income" style="color:${COLORS.accent}">Open your CRM →</a>`)) });
+  await store.setJSON("settings/backup-sent", { month, at: now.toISOString() });
+  return { month, income: income.length, expenses: expenses.length, clients: clients.length };
+}
