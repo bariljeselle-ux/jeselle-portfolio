@@ -135,7 +135,7 @@ const LABELS = {
   main_goal: "Main goal", success_3_months: "Success in 3 months", reference_links: "Reference links",
   brand_assets: "Brand materials", assets_link: "Materials folder link", materials_link: "Materials folder link",
   business_link: "Business page / website", content_by: "Texts & photos by", accounts_needed: "Accounts needed",
-  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed", business_link: "Link to show", project: "Project", consent: "Consent given",
+  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed", business_link: "Link to show", show_items: "What may be shown", project: "Project", consent: "Consent given",
 };
 const SKIP = new Set(["form-name", "bot-field", "start_utc", "type", "ip", "user_agent", "referrer"]);
 export function detailsTable(data) {
@@ -220,7 +220,7 @@ export function permissionEmails(rec) {
   const yes = !/^No/.test(d.portfolio_permission || "");
   const when = new Date(rec.createdAt || Date.now()).toLocaleString("en-US", { timeZone: "Asia/Manila", dateStyle: "long", timeStyle: "short" }) + " (Philippine time)";
   const consent = d.consent ? `<br><br><b>✅ Consent given</b><br>${esc(d.name)}${d.business ? " of " + esc(d.business) : ""} agreed on ${when}:<br><i>“${esc(d.consent)}”</i>` : "";
-  const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
+  const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.show_items ? `<br><b>What may be shown:</b> ${esc(d.show_items)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
   return [{
     to: d.email, replyTo: OWNER.email(),
     subject: `Portfolio permission confirmed – thank you, ${first}!`,
@@ -382,4 +382,75 @@ export async function runReminders({ store = crmStore(), now = new Date() } = {}
     for (const m of reminderEmails(rec, label)) { try { await sendMail(m); out.push(`${label}:${m.to}`); } catch (e) { out.push(`fail:${m.to}:${e.message}`); } }
   }
   return out;
+}
+
+// ---------- Daily nudges: follow-ups due, quotes with no reply, new requests not answered ----------
+const DAY = 86400000;
+const phDate = (d) => new Date(new Date(d).getTime() + 8 * 3600000).toISOString().slice(0, 10);
+export function nudgeList(recs, now = new Date()) {
+  const today = phDate(now), out = [];
+  for (const r of recs) {
+    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid/i.test(r.status || "")) continue;
+    const who = (r.data && (r.data.business || r.data.name)) || "A client";
+    const since = new Date(r.statusAt || r.createdAt || now);
+    if (r.followUp && r.followUp <= today) out.push({ key: r.key, kind: "follow", text: `Follow up with ${who}${r.followUp < today ? " (was due " + r.followUp + ")" : " today"}` });
+    else if (r.status === "Proposal sent" && now - since >= 3 * DAY) out.push({ key: r.key, kind: "quote", text: `${who} hasn't replied to your quote in ${Math.floor((now - since) / DAY)} days. Send a friendly check-in.` });
+    else if (r.status === "New" && r.type !== "Payment" && now - since >= DAY) out.push({ key: r.key, kind: "new", text: `${who}'s ${String(r.type).toLowerCase()} is still marked New after ${Math.floor((now - since) / DAY)} day(s). Reply and set it to Contacted.` });
+    else if (r.status === "Payment to verify" && now - since >= DAY) out.push({ key: r.key, kind: "pay", text: `Check ${who}'s payment proof and record it as income.` });
+  }
+  return out;
+}
+export async function runNudges({ store = crmStore(), now = new Date() } = {}) {
+  const { blobs } = await store.list();
+  const recs = [];
+  for (const b of blobs) { if (/^(settings|income|expense)\//.test(b.key)) continue; const r = await store.get(b.key, { type: "json" }); if (r) recs.push(r); }
+  const list = nudgeList(recs, now);
+  const today = phDate(now);
+  const last = await store.get("settings/nudges-sent", { type: "json" });
+  if (!list.length || last?.date === today) return { count: list.length, skipped: !list.length ? "nothing due" : "already sent today" };
+  await store.setJSON("settings/nudges-sent", { date: today, count: list.length });
+  const items = list.map((n) => `<li style="margin:0 0 8px">${{ follow: "📅", quote: "⏳", new: "🆕", pay: "💰" }[n.kind]} ${esc(n.text)}</li>`).join("");
+  try { await sendMail({ to: OWNER.email(), subject: `☀️ ${list.length} thing${list.length > 1 ? "s" : ""} to follow up today`, html: layout("Today's follow-ups", `<ul style="padding-left:18px;margin:0 0 14px">${items}</ul>` + p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)) }); } catch {}
+  try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today }, store); } catch {}
+  return { count: list.length };
+}
+
+// ---------- Monthly backup: on the 1st, email last month's income, expenses and clients as CSV files ----------
+const csvCell2 = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
+const toCsv = (head, rows) => "﻿" + [head, ...rows].map((r) => r.map(csvCell2).join(",")).join("\n");
+export async function runMonthlyBackup({ store = crmStore(), now = new Date() } = {}) {
+  const ph = new Date(now.getTime() + 8 * 3600000);
+  const prev = new Date(Date.UTC(ph.getUTCFullYear(), ph.getUTCMonth() - 1, 15));
+  const month = prev.toISOString().slice(0, 7);
+  const label = prev.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  const done = await store.get("settings/backup-sent", { type: "json" });
+  if (done?.month === month) return { skipped: "already sent", month };
+  const { blobs } = await store.list();
+  const income = [], expenses = [], clients = [];
+  for (const b of blobs) {
+    if (b.key.startsWith("settings/")) continue;
+    const r = await store.get(b.key, { type: "json" }); if (!r) continue;
+    if (b.key.startsWith("income/")) { if ((r.date || "").startsWith(month)) income.push(r); }
+    else if (b.key.startsWith("expense/")) { if ((r.date || "").startsWith(month)) expenses.push(r); }
+    else if (r.createdAt && new Date(new Date(r.createdAt).getTime() + 8 * 3600000).toISOString().startsWith(month)) clients.push(r);
+  }
+  const by = (a, b) => (a.date || a.createdAt || "").localeCompare(b.date || b.createdAt || "");
+  income.sort(by); expenses.sort(by); clients.sort(by);
+  const inTot = income.reduce((a, r) => a + (Number(r.php) || 0), 0), exTot = expenses.reduce((a, r) => a + (Number(r.php) || 0), 0);
+  const attachments = [
+    { filename: `income-${month}.csv`, content: toCsv(["Date", "Invoice no.", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Attachments", "Notes"],
+      [...income.map((r) => [r.date, r.invoice || "", r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, (r.files || []).length, r.notes]), ["", "", "", "", "TOTAL", "", "", inTot.toFixed(2), "", "", "", ""]]) },
+    { filename: `expenses-${month}.csv`, content: toCsv(["Date", "Category", "What", "Paid to", "Amount (PHP)", "Full bill (PHP)", "Work share %", "Paid with", "Receipt kept", "Attachments", "Notes"],
+      [...expenses.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.bill ?? "", r.workpct ?? "", r.method, r.receipt ? "Yes" : "No", (r.files || []).length, r.notes]), ["", "", "TOTAL", "", exTot.toFixed(2), "", "", "", "", "", ""]]) },
+    { filename: `clients-${month}.csv`, content: toCsv(["Received", "Type", "Status", "Name", "Email", "Business", "Service", "Picked on website", "Estimate", "Notes"],
+      clients.map((r) => { const d = r.data || {}; return [r.createdAt, r.type, r.status, d.name, d.email, d.business, d.service, d.selected_packages, d.estimated_total, r.notes]; })) },
+  ];
+  const peso = (n) => "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  await sendMail({ to: OWNER.email(), subject: `🗂️ Your ${label} backup: income, expenses and clients`, attachments,
+    html: layout(`${label} backup`, p(`Here are your records for <b>${label}</b>, attached as files you can open in Excel or Google Sheets.`) +
+      box(`<b>Income:</b> ${peso(inTot)} (${income.length} payment${income.length === 1 ? "" : "s"})<br><b>Expenses:</b> ${peso(exTot)} (${expenses.length})<br><b>Profit:</b> ${peso(inTot - exTot)}<br><b>New clients and requests:</b> ${clients.length}`) +
+      p("Tip: save these in your Google Drive folder \"Bookkeeping [year]\". Receipt photos stay safely in your CRM.") +
+      p(`<a href="${OWNER.site()}/admin.html#income" style="color:${COLORS.accent}">Open your CRM →</a>`)) });
+  await store.setJSON("settings/backup-sent", { month, at: now.toISOString() });
+  return { month, income: income.length, expenses: expenses.length, clients: clients.length };
 }

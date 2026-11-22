@@ -181,3 +181,7 @@ Income and expense entries can have photos/screenshots/PDFs attached (admin form
 
 == Notifications (Nov 22, 2026) ==
 Admin page: "Turn on notifications" subscribes this device to Web Push (keys auto-created in the crm store: settings/vapid, devices in settings/push-subs). Alerts go out for every booking, inquiry, brief, payment and review (netlify/lib/push.mjs). Red dots/badges show unread items (stored per device). iPhone: add admin page to Home Screen first.
+
+== Monthly backup and follow-ups (Nov 22, 2026) ==
+netlify/functions/monthly-backup.mjs: 1st of each month 9 AM PH, emails last month income/expenses/clients CSVs.
+netlify/functions/nudges.mjs: daily 9 AM PH, one email + phone alert with follow-ups due.

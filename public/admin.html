@@ -80,6 +80,10 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .tabs button .tc{display:inline-block;min-width:18px;height:18px;line-height:18px;padding:0 5px;margin-left:6px;border-radius:99px;background:#D93A2B;color:#fff;font-size:11px;font-weight:600;text-align:center}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:90;background:#231E1B;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);font-size:14px;max-width:calc(100vw - 32px);cursor:pointer}
 .picks{background:#FFF8EE;border:1px solid #EAD9B8;border-radius:6px;padding:10px 14px;margin:0 0 12px;font-size:14px}.picks p{margin:4px 0}.picks ul{margin:4px 0 6px;padding-left:18px}.picks li.pn{list-style:none;margin:-2px 0 6px -4px;color:#6E625A}
+.todo{list-style:none;margin:0;padding:0}.todo li{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #E2D9CF;border-left:3px solid #C9853A;border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:14px}.todo li button{flex:none;min-height:36px}.todo .ok{border-left-color:#2F6B3F;color:#2F6B3F}
+.mhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.mhead select{min-height:40px;width:auto;max-width:100%}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#E2D9CF;border:1px solid #E2D9CF;border-radius:6px;overflow:hidden;margin-top:8px}.mgrid div{background:#fff;padding:12px 14px}.mgrid small{display:block;font-size:12px;color:#6E625A;letter-spacing:.04em}.mgrid b{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1.1}.mgrid i{display:block;font-style:normal;font-size:12px;margin-top:2px}.up{color:#2F6B3F}.dn{color:#8A2E1E}.mtop{margin:10px 0 0;font-size:14px}.mtop span{display:inline-block;background:#F7EDE6;border-radius:99px;padding:3px 10px;margin:4px 4px 0 0}
+@media(max-width:700px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -101,7 +105,9 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div class="nbar" id="nbar"><div><b>🔔 Notifications</b> <span id="nstate">Checking…</span><small id="nhelp"></small></div><div class="nbtns"><button class="pri" id="non">Turn on notifications</button><button id="ntest" hidden>Send a test</button><button id="noff" hidden>Turn off on this device</button></div></div>
 <div class="newbar" id="newbar" hidden><span id="newtxt"></span><button id="seeall">Mark all as read</button></div>
 <div class="stats" id="stats"></div>
+<section id="today"><h2>☀️ Today</h2><div id="todaylist"></div></section>
 <section><h2>Upcoming calls</h2><div class="up" id="upcoming"></div></section>
+<section id="month"><div class="mhead"><h2>📊 Monthly summary</h2><select id="mpick" aria-label="Month"></select></div><div id="msum"></div></section>
 <section>
 <div class="tools" style="justify-content:space-between;margin-bottom:12px">
 <div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment">Payments</button><button data-f="Portfolio permission">Permissions</button></div>
@@ -219,7 +225,7 @@ async function load(){
   try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];$('login').hidden=true;$('app').hidden=false;draw();idraw();edraw();gload();rload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
-function draw(){setTimeout(badges,0);
+function draw(){setTimeout(()=>{badges();try{tdraw();mdraw()}catch(e){}},0);
   const now=Date.now(),c=t=>RECS.filter(r=>r.type===t).length;
   const up=RECS.filter(r=>r.start&&new Date(r.start)>now&&!/cancel|lost/i.test(r.status)).sort((a,b)=>a.start.localeCompare(b.start));
   $('stats').innerHTML=[['Upcoming calls',up.length],['Bookings',c('Booking')],['Inquiries',c('Inquiry')],['Briefs',c('Project brief')],['Won',RECS.filter(r=>r.status==='Won').length]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
@@ -243,7 +249,7 @@ function meetBlock(r){
 
 function picksHtml(d){if(!d.selected_packages&&!d.portfolio_permission)return'';const ok=/^Yes/.test(d.picks_confirmed||'');
   const lines=String(d.selected_packages||'').split('\n').filter(Boolean).map(l=>/^\s+Note:/.test(l)?`<li class="pn">📝 ${esc(l.trim().replace(/^Note:\s*/,''))}</li>`:`<li>${esc(l)}</li>`).join('');
-  return `<div class="picks">${lines?`<p><b>🛒 Picked on the website</b>${d.picks_confirmed?` <span class="chip ${ok?'ok':'warn'}">${ok?'✓ Confirmed':'Not confirmed'}</span>`:''}</p><ul>${lines}</ul>`:''}${d.estimated_total?`<p><b>Estimate:</b> ${esc(d.estimated_total)}</p>`:''}${d.budget?`<p><b>Budget:</b> ${esc(d.budget)}${d.timeline?' · <b>Timeline:</b> '+esc(d.timeline):''}</p>`:''}${d.portfolio_permission?`<p><b>Portfolio:</b> ${/^No/.test(d.portfolio_permission)?'🔒':'📸'} ${esc(d.portfolio_permission)}</p>`:''}</div>`}
+  return `<div class="picks">${lines?`<p><b>🛒 Picked on the website</b>${d.picks_confirmed?` <span class="chip ${ok?'ok':'warn'}">${ok?'✓ Confirmed':'Not confirmed'}</span>`:''}</p><ul>${lines}</ul>`:''}${d.estimated_total?`<p><b>Estimate:</b> ${esc(d.estimated_total)}</p>`:''}${d.budget?`<p><b>Budget:</b> ${esc(d.budget)}${d.timeline?' · <b>Timeline:</b> '+esc(d.timeline):''}</p>`:''}${d.portfolio_permission?`<p><b>Portfolio:</b> ${/^No/.test(d.portfolio_permission)?'🔒':'📸'} ${esc(d.portfolio_permission)}</p>`:''}${d.show_items?`<p><b>May show:</b> ${esc(d.show_items)}</p>`:''}</div>`}
 function card(r){
   const d=r.data||{},cls=r.type==='Project brief'?'brief':r.type;
   const when=r.start?`📅 ${esc(fmt(r.start,'Asia/Manila'))}`:`Received ${esc(new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}`;
@@ -325,7 +331,7 @@ $('icsv').addEventListener('click',async()=>{try{const y=$('iyear').value;const 
 
 // ---------- Expenses ----------
 let EXP=[];
-function edraw(){
+function edraw(){setTimeout(()=>{try{mdraw()}catch(e){}},0);
   const y=$('iyear').value||String(new Date().getFullYear());
   const list=EXP.filter(r=>(r.date||'').startsWith(y));
   const spent=list.reduce((a,r)=>a+(Number(r.php)||0),0);
@@ -346,6 +352,34 @@ document.addEventListener('click',e=>{const g=e.target.closest('.glink');if(!g)r
   if(what==='icsv'){$('icsv').click();return}
   const t=$(what);if(t)t.scrollIntoView({behavior:'smooth',block:'center'})});
 
+
+
+// ---------- Today (follow-ups) and Monthly summary ----------
+const phDay=d=>new Date(new Date(d).getTime()+8*3600000).toISOString().slice(0,10);
+function nudges(){const now=new Date(),today=phDay(now),D=86400000,out=[];
+  for(const r of RECS){if(!r.type||r.type==='Portfolio permission'||/won|lost|cancel|paid/i.test(r.status||''))continue;const who=(r.data&&(r.data.business||r.data.name))||'A client';const since=new Date(r.statusAt||r.createdAt||now);
+    if(r.followUp&&r.followUp<=today)out.push([r.key,'📅','Follow up with '+who+(r.followUp<today?' (was due '+r.followUp+')':' today')]);
+    else if(r.status==='Proposal sent'&&now-since>=3*D)out.push([r.key,'⏳',who+" hasn't replied to your quote in "+Math.floor((now-since)/D)+' days. Send a friendly check-in.']);
+    else if(r.status==='New'&&r.type!=='Payment'&&now-since>=D)out.push([r.key,'🆕',who+"'s "+r.type.toLowerCase()+' is still New. Reply and set it to Contacted.']);
+    else if(r.status==='Payment to verify'&&now-since>=D)out.push([r.key,'💰','Check '+who+"'s payment proof and record it as income."])}
+  return out}
+function tdraw(){const n=nudges();$('todaylist').innerHTML=n.length?'<ul class="todo">'+n.map(([k,i,t])=>`<li><span>${i} ${esc(t)}</span><button type="button" data-open="${esc(k)}">Open</button></li>`).join('')+'</ul>':'<ul class="todo"><li class="ok">✓ Nothing to follow up today. Nice work!</li></ul>'}
+$('todaylist').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)openRec(b.dataset.open)});
+function mdraw(){const sel=$('mpick');const months=new Set([phDay(new Date()).slice(0,7)]);[...RECS,...INC,...EXP].forEach(r=>{const d=r.date||(r.createdAt&&phDay(r.createdAt));if(d)months.add(d.slice(0,7))});
+  const list=[...months].sort().reverse();const cur=sel.value&&list.includes(sel.value)?sel.value:list[0];
+  sel.innerHTML=list.map(m=>`<option value="${m}"${m===cur?' selected':''}>${new Date(m+'-15').toLocaleDateString('en-US',{month:'long',year:'numeric'})}</option>`).join('');
+  const prev=(()=>{const [y,m]=cur.split('-').map(Number);const d=new Date(Date.UTC(y,m-2,15));return d.toISOString().slice(0,7)})();
+  const stat=mo=>{const rs=RECS.filter(r=>r.createdAt&&phDay(r.createdAt).startsWith(mo));const leads=rs.filter(r=>['Inquiry','Project brief','Booking'].includes(r.type)).length;
+    const won=RECS.filter(r=>r.status==='Won'&&phDay(r.statusAt||r.createdAt).startsWith(mo)).length;
+    const inc=INC.filter(r=>(r.date||'').startsWith(mo)).reduce((a,r)=>a+(+r.php||0),0),exp=EXP.filter(r=>(r.date||'').startsWith(mo)).reduce((a,r)=>a+(+r.php||0),0);
+    const calls=rs.filter(r=>r.type==='Booking').length;const picks={};rs.forEach(r=>String((r.data||{}).selected_packages||'').split('\n').forEach(l=>{const m=l.match(/^([^:–]+?)(?:\s–|:)/);if(m&&!/^\s/.test(l)){const k=m[1].trim();picks[k]=(picks[k]||0)+1}}));
+    return {leads,won,calls,inc,exp,profit:inc-exp,picks}};
+  const a=stat(cur),b=stat(prev);const ch=(x,y,money)=>{if(!y&&!x)return'';const d=x-y;return `<i class="${d>=0?'up':'dn'}">${d>=0?'▲':'▼'} ${money?peso(Math.abs(d)):Math.abs(d)} vs last month</i>`};
+  const conv=a.leads?Math.round(a.won/a.leads*100)+'%':'–';
+  const top=Object.entries(a.picks).sort((x,y)=>y[1]-x[1]).slice(0,5);
+  $('msum').innerHTML=`<div class="mgrid"><div><small>New leads</small><b>${a.leads}</b>${ch(a.leads,b.leads)}</div><div><small>Calls booked</small><b>${a.calls}</b>${ch(a.calls,b.calls)}</div><div><small>Clients won</small><b>${a.won}</b><i>${conv} of leads</i></div><div><small>Income</small><b>${peso(a.inc)}</b>${ch(a.inc,b.inc,1)}</div><div><small>Expenses</small><b>${peso(a.exp)}</b>${ch(a.exp,b.exp,1)}</div><div><small>Profit</small><b style="color:${a.profit<0?'#8A2E1E':'#2F6B3F'}">${peso(a.profit)}</b>${ch(a.profit,b.profit,1)}</div></div>`+
+   `<p class="mtop"><b>Most picked services:</b> ${top.length?top.map(([k,v])=>`<span>${esc(k)} · ${v}</span>`).join(''):'<span style="background:none;padding:0;color:#6E625A">No picks yet this month</span>'}</p>`}
+$('mpick').addEventListener('change',mdraw);
 
 // ---------- New-item dots, badges and notifications ----------
 let SEEN=null;

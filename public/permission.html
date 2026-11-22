@@ -48,6 +48,7 @@ input:focus,textarea:focus{outline:2px solid #7A4E3A;outline-offset:1px}
 .done .ico{width:56px;height:56px;border-radius:50%;background:#E5F0E7;color:#2F6B3F;display:grid;place-items:center;font-size:28px;margin:0 auto 10px}
 .done h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px;margin:0 0 6px}
 @media(max-width:560px){.row{grid-template-columns:minmax(0,1fr)}}
+.ch.sm{padding:10px 14px;margin-bottom:8px}.ch.sm b{font-size:15px}.opts2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px}.what[hidden]{display:none}@media(max-width:560px){.opts2{grid-template-columns:minmax(0,1fr)}}
 </style>
 <style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}body{padding-bottom:72px}</style>
 </head>
@@ -72,6 +73,18 @@ input:focus,textarea:focus{outline:2px solid #7A4E3A;outline-offset:1px}
 </div>
 <label class="f">Business name *<input type="text" name="business" required maxlength="160"></label>
 <label class="f">Which project? <span>(optional)</span><input type="text" name="project" maxlength="200" placeholder="e.g. Business website, Facebook page graphics"></label>
+<fieldset class="what" id="what" hidden>
+<legend>What may I show? <b style="color:#B3402A">*</b> <span style="font-weight:400;color:#8A7E75;font-size:14px">(tick all that are okay)</span></legend>
+<label class="ch sm"><input type="checkbox" name="show_items" value="Let Jeselle choose what's best"><span><b>You choose what's best</b><small>I trust you to pick what to feature.</small></span></label>
+<div class="opts2">
+<label class="ch sm"><input type="checkbox" name="show_items" value="Website screenshots"><span><b>Website screenshots</b></span></label>
+<label class="ch sm"><input type="checkbox" name="show_items" value="Designs and graphics"><span><b>Designs and graphics</b></span></label>
+<label class="ch sm"><input type="checkbox" name="show_items" value="Social media posts and Reels"><span><b>Social media posts and Reels</b></span></label>
+<label class="ch sm"><input type="checkbox" name="show_items" value="Before and after"><span><b>Before and after</b></span></label>
+<label class="ch sm"><input type="checkbox" name="show_items" value="Results and numbers"><span><b>Results and numbers</b><small>e.g. more followers or bookings</small></span></label>
+<label class="ch sm"><input type="checkbox" name="show_items" value="My review or testimonial"><span><b>My review or testimonial</b></span></label>
+</div>
+</fieldset>
 <div class="links" id="links" hidden>
 <label class="f">Your website or page to link <span>(optional)</span><input type="url" name="business_link" maxlength="300" placeholder="https://"></label>
 </div>
@@ -94,15 +107,19 @@ if(q.get('p'))f.project.value=clean(q.get('p'));
 if(q.get('n'))f.name.value=clean(q.get('n'));
 if(q.get('b')||q.get('p')){const el=document.getElementById('proj');el.hidden=false;el.textContent='Project: '+[clean(q.get('b')),clean(q.get('p'))].filter(Boolean).join(' · ')}
 f.querySelectorAll('input[name=portfolio_permission]').forEach(r=>r.addEventListener('change',()=>{document.getElementById('links').hidden=!/with my business/.test(r.value)||!r.checked}));
+f.querySelectorAll('input[name=portfolio_permission]').forEach(r=>r.addEventListener('change',()=>{if(r.checked)document.getElementById('what').hidden=/^No/.test(r.value)}));
+{const all=[...f.querySelectorAll('input[name=show_items]')],pick=all[0];all.forEach(c=>c.addEventListener('change',()=>{if(!c.checked)return;if(c===pick)all.slice(1).forEach(x=>x.checked=false);else pick.checked=false}))}
+if(q.get('choice')==='yes'){const r=f.querySelector('input[name=portfolio_permission]');r.checked=true;r.dispatchEvent(new Event('change'))}
 f.addEventListener('submit',async e=>{e.preventDefault();err.hidden=true;
  const choice=f.querySelector('input[name=portfolio_permission]:checked');
  if(!choice){err.hidden=false;err.textContent='Please choose one option.';return}
  if(!f.name.value.trim()||!f.business.value.trim()){err.hidden=false;err.textContent='Please fill in your name and business name.';return}
+ if(!/^No/.test(choice.value)&&!f.querySelector('input[name=show_items]:checked')){err.hidden=false;err.textContent='Please tick what I may show, or “You choose what\'s best”.';document.getElementById('what').scrollIntoView({block:'center'});return}
  if(!f.consent.checked){err.hidden=false;err.textContent='Please tick “I agree and give my consent” to confirm.';f.consent.focus();return}
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())){err.hidden=false;err.textContent='Please enter a valid email.';return}
  if(f.business_link.value&&!/^https?:\/\//i.test(f.business_link.value.trim())){err.hidden=false;err.textContent='Please paste a full link starting with https://';return}
  btn.disabled=true;btn.textContent='Sending…';
- const o={type:'Portfolio permission'};new FormData(f).forEach((v,k)=>{if(v)o[k]=String(v).trim()});
+ const o={type:'Portfolio permission'};new FormData(f).forEach((v,k)=>{if(!v)return;v=String(v).trim();o[k]=o[k]?o[k]+', '+v:v});if(/^No/.test(o.portfolio_permission))delete o.show_items;
  if(!/with my business/.test(o.portfolio_permission))delete o.business_link;
  let ok=false;try{const r=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)});ok=r.ok}catch(x){}
  btn.disabled=false;btn.textContent='✓ Confirm my choice';
