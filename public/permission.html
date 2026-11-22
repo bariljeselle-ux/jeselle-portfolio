@@ -94,6 +94,7 @@ if(q.get('p'))f.project.value=clean(q.get('p'));
 if(q.get('n'))f.name.value=clean(q.get('n'));
 if(q.get('b')||q.get('p')){const el=document.getElementById('proj');el.hidden=false;el.textContent='Project: '+[clean(q.get('b')),clean(q.get('p'))].filter(Boolean).join(' · ')}
 f.querySelectorAll('input[name=portfolio_permission]').forEach(r=>r.addEventListener('change',()=>{document.getElementById('links').hidden=!/with my business/.test(r.value)||!r.checked}));
+if(q.get('choice')==='yes'){const r=f.querySelector('input[name=portfolio_permission]');r.checked=true;r.dispatchEvent(new Event('change'))}
 f.addEventListener('submit',async e=>{e.preventDefault();err.hidden=true;
  const choice=f.querySelector('input[name=portfolio_permission]:checked');
  if(!choice){err.hidden=false;err.textContent='Please choose one option.';return}
