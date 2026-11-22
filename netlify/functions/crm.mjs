@@ -1,5 +1,5 @@
 // Private CRM API for admin.html. Protected by the ADMIN_PASSWORD environment variable.
-import { isAdminReq, changeAdminPassword } from "../lib/auth.mjs";
+import { isAdminReq, changeAdminPassword, requestPasswordReset, resetPasswordWithToken } from "../lib/auth.mjs";
 import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
 import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
 import crypto from "node:crypto";
@@ -47,6 +47,15 @@ export function cleanIncome(e) {
 
 export default async (req) => {
   if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in your website settings first." }, { status: 503 });
+  {
+    const u = new URL(req.url);
+    if (req.method === "POST" && u.searchParams.get("forgot")) { try { await requestPasswordReset(); } catch (e) { console.log("reset email:", e.message); } return Response.json({ ok: true }); }
+    if (req.method === "POST" && u.searchParams.get("reset")) {
+      let b; try { b = await req.json(); } catch { return Response.json({ error: "Bad request" }, { status: 400 }); }
+      const r = await resetPasswordWithToken(b.token, b.next);
+      return Response.json(r.ok ? { ok: true } : { error: r.error }, { status: r.ok ? 200 : r.status });
+    }
+  }
   if (!(await ok(req))) return Response.json({ error: "Wrong password" }, { status: 401 });
   const store = crmStore();
   const url = new URL(req.url);

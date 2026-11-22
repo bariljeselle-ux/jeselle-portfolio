@@ -33,3 +33,32 @@ export async function changeAdminPassword(current, next, store = crmStore()) {
   await store.setJSON(PW_KEY, { salt, hash: await pbkdf2(next, salt), envHash: await sha(process.env.ADMIN_PASSWORD || ""), at: new Date().toISOString() });
   return { ok: true };
 }
+
+// ---------- Forgot password: a one-time reset link (30 minutes) emailed to the owner only ----------
+const RESET_KEY = "settings/password-reset";
+async function savePassword(next, store) {
+  const salt = hex(globalThis.crypto.getRandomValues(new Uint8Array(16)));
+  await store.setJSON(PW_KEY, { salt, hash: await pbkdf2(next, salt), envHash: await sha(process.env.ADMIN_PASSWORD || ""), at: new Date().toISOString() });
+}
+export async function requestPasswordReset(store = crmStore()) {
+  const { OWNER, sendMail, layout } = await import("./core.mjs");
+  const last = await store.get(RESET_KEY, { type: "json" });
+  if (last && Date.now() - (last.sentAt || 0) < 2 * 60000) return { ok: true }; // at most one email every 2 minutes
+  const token = hex(globalThis.crypto.getRandomValues(new Uint8Array(24)));
+  await store.setJSON(RESET_KEY, { hash: await sha(token), exp: Date.now() + 30 * 60000, sentAt: Date.now() });
+  const link = `${OWNER.site()}/admin.html#reset=${token}`;
+  if (process.env.MAIL_TEST === "1") console.log("RESET LINK", link);
+  await sendMail({ to: OWNER.email(), subject: "🔑 Reset your CRM password",
+    html: layout("Reset your password", `<p style="margin:0 0 12px;font-size:15px;line-height:1.6">Someone (hopefully you) asked to reset the password for your private CRM. Tap the button to choose a new one. The link works once and expires in 30 minutes.</p><a href="${link}" style="display:inline-block;background:#7A4E3A;color:#fff;text-decoration:none;padding:12px 20px;border-radius:4px;font-size:14px">Choose a new password</a><p style="margin:16px 0 0;font-size:13px;color:#6E625A">Didn't ask for this? Ignore this email. Your password stays the same.</p>`) });
+  return { ok: true };
+}
+export async function resetPasswordWithToken(token, next, store = crmStore()) {
+  const r = await store.get(RESET_KEY, { type: "json" });
+  if (!r || !r.hash || Date.now() > r.exp || !same(await sha(String(token || "")), r.hash)) return { status: 400, error: "This reset link has expired or was already used. Tap \"Forgot password?\" again." };
+  next = String(next || "");
+  if (next.length < 8) return { status: 400, error: "Use at least 8 characters." };
+  if (next.length > 200) return { status: 400, error: "That password is too long." };
+  await savePassword(next, store);
+  await store.setJSON(RESET_KEY, { used: true, sentAt: r.sentAt });
+  return { ok: true };
+}

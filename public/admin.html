@@ -93,6 +93,15 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <input type="password" id="pw" placeholder="Admin password" autocomplete="current-password">
 <button class="pri" id="go">Open CRM</button>
 <p class="msg" id="lmsg" hidden></p>
+<button type="button" id="forgot" style="background:none;border:0;color:#7A4E3A;text-decoration:underline;cursor:pointer;padding:4px;font-size:14px">Forgot password?</button>
+</section>
+<section class="login" id="resetbox" hidden>
+<h1>Choose a new password</h1>
+<p style="margin:0;color:#6E625A">At least 8 characters. Only you will know it.</p>
+<input type="password" id="rp1" placeholder="New password" autocomplete="new-password">
+<input type="password" id="rp2" placeholder="Type it again" autocomplete="new-password">
+<button class="pri" id="rgo">Save and open CRM</button>
+<p class="msg" id="rmsg"></p>
 </section>
 
 <div id="app" hidden>
@@ -502,6 +511,19 @@ $('pwbox').addEventListener('submit',async e=>{e.preventDefault();const m=$('pwm
  try{await api({body:{action:'change-password',current:$('pw0').value,next:$('pw1').value}});KEY=$('pw1').value;try{sessionStorage.setItem('crmkey',KEY)}catch(x){}$('pwbox').reset();m.style.color='#2F6B3F';m.textContent='✓ Password changed. Use your new password next time you log in.'}
  catch(x){m.style.color='#8A2E1E';m.textContent=x.message}});
 $('out').addEventListener('click',()=>{KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
+
+// ---------- FORGOT PASSWORD ----------
+addEventListener('hashchange',()=>{if(/^#reset=/.test(location.hash))location.reload()});
+$('forgot').addEventListener('click',async()=>{const m=$('lmsg');m.hidden=false;m.style.color='#6E625A';m.textContent='Sending…';
+ try{await fetch('/api/crm?forgot=1',{method:'POST'});m.style.color='#2F6B3F';m.textContent='✓ A reset link was sent to your email. It works for 30 minutes. Check Spam too.'}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}});
+{const t=(location.hash.match(/^#reset=([0-9a-f]{48})$/)||[])[1];if(t){$('login').hidden=true;$('resetbox').hidden=false;
+ const go=async()=>{const m=$('rmsg');m.style.color='#8A2E1E';const a=$('rp1').value,b=$('rp2').value;
+  if(a.length<8){m.textContent='Use at least 8 characters.';return}if(a!==b){m.textContent="The two passwords don't match.";return}
+  m.style.color='#6E625A';m.textContent='Saving…';
+  try{const r=await fetch('/api/crm?reset=1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:t,next:a})});const j=await r.json().catch(()=>({}));
+   if(!r.ok){m.style.color='#8A2E1E';m.textContent=j.error||'Could not save.';return}
+   history.replaceState(null,'',location.pathname);KEY=a;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}$('resetbox').hidden=true;load()}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}};
+ $('rgo').addEventListener('click',go);$('rp2').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}}
 const login=()=>{KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load()};
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 if(KEY)load();
