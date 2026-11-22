@@ -30,12 +30,12 @@ export async function sendPush(payload, store = crmStore()) {
     if (!subs.length) return { sent: 0 };
     const k = await vapidKeys(store);
     webpush.setVapidDetails("mailto:" + OWNER.email(), k.publicKey, k.privateKey);
-    let sent = 0; const dead = [];
+    let sent = 0; const dead = [], errors = [];
     await Promise.all(subs.map(async (s) => {
       try { await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, JSON.stringify(payload), { TTL: 86400, urgency: "high" }); sent++; }
-      catch (e) { if (e.statusCode === 404 || e.statusCode === 410) dead.push(s.endpoint); }
+      catch (e) { errors.push((new URL(s.endpoint).host) + ": " + (e.statusCode || "") + " " + String(e.body || e.message || "").slice(0, 160)); if (e.statusCode === 404 || e.statusCode === 410) dead.push(s.endpoint); }
     }));
     if (dead.length) await store.setJSON(SUBS, subs.filter((s) => !dead.includes(s.endpoint)));
-    return { sent };
+    return { sent, devices: subs.length, errors };
   } catch (e) { return { error: e.message }; }
 }

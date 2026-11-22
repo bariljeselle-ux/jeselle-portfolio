@@ -384,7 +384,12 @@ $('non').addEventListener('click',async()=>{try{const perm=await Notification.re
   const reg=await navigator.serviceWorker.register('/admin-sw.js');await navigator.serviceWorker.ready;const k=await api({body:{action:'push-key'}});
   const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(k.publicKey)});
   await api({body:{action:'push-subscribe',sub:sub.toJSON(),label:(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||''}});await nstatus();await api({body:{action:'push-test'}});note('Notifications are on ✓')}catch(err){note('Could not turn on notifications: '+err.message,1)}});
-$('ntest').addEventListener('click',async()=>{try{const r=await api({body:{action:'push-test'}});note(r.sent?'Test sent ✓':'No device received it. Turn notifications off and on again.',!r.sent)}catch(err){note(err.message,1)}});
+$('ntest').addEventListener('click',async()=>{
+  // 1) show one straight from this device (checks phone/computer settings)
+  let local=false;try{const reg=await navigator.serviceWorker.getRegistration('/admin-sw.js');if(reg&&Notification.permission==='granted'){await reg.showNotification('🔔 This device can show alerts',{body:'If you see this, your phone/computer settings are fine.',icon:'/images/apple-touch-icon.png',tag:'local-test'});local=true}}catch(e){}
+  // 2) ask the server to send one (checks the online part)
+  try{const r=await api({body:{action:'push-test'}});const msg=r.sent?'Server test sent to '+r.sent+' device(s) ✓':'Server could not send: '+(r.error||(r.errors||[]).join(' | ')||('devices saved: '+(r.devices||0)));
+    $('nhelp').textContent=(local?'Device check: alert shown. ':'Device check: could not show an alert on this device. ')+msg;note(msg,!r.sent)}catch(err){$('nhelp').textContent='Server check failed: '+err.message;note(err.message,1)}});
 $('noff').addEventListener('click',async()=>{try{const reg=await navigator.serviceWorker.getRegistration('/admin-sw.js');const sub=reg&&await reg.pushManager.getSubscription();if(sub){await api({body:{action:'push-unsubscribe',endpoint:sub.endpoint}});await sub.unsubscribe()}nstatus();note('Notifications off on this device')}catch(err){note(err.message,1)}});
 
 // ---------- Receipt attachments ----------
