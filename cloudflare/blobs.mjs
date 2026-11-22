@@ -4,7 +4,11 @@
 //   JSON records (bookings, inquiries, income, reviews, settings) -> D1 database (instant, reliable)
 //   Files (receipts, review photos, form uploads)                  -> KV storage (up to 25 MB each)
 let ENV = null;
-export function bindEnv(env) { ENV = env; }
+// The free plan allows 50 database queries per request, so list() loads all values in ONE query
+// and later get() calls are answered from this cache (reset for every new request).
+let CACHE = new Map();
+export function bindEnv(env) { ENV = env; CACHE = new Map(); }
+const ck = (store, key) => store + "\u0000" + key;
 const db = () => { if (!ENV?.DB) throw new Error("Database not connected (DB binding missing)"); return ENV.DB; };
 const kv = () => { if (!ENV?.FILES) throw new Error("File storage not connected (FILES binding missing)"); return ENV.FILES; };
 
@@ -21,6 +25,8 @@ class Store {
   async get(key, opts = {}) {
     const type = opts.type || "text";
     if (type === "json" || type === "text") {
+      const c = CACHE.get(ck(this.name, key));
+      if (c !== undefined) return c === null ? null : type === "json" ? JSON.parse(c) : c;
       await init();
       const row = await db().prepare("SELECT value FROM blobs WHERE store=? AND key=?").bind(this.name, key).first();
       if (row && row.value != null) return type === "json" ? JSON.parse(row.value) : row.value;
@@ -52,14 +58,18 @@ class Store {
     const now = new Date().toISOString();
     if (opts.onlyIfNew) {
       const r = await db().prepare("INSERT OR IGNORE INTO blobs (store,key,value,updated_at) VALUES (?,?,?,?)").bind(this.name, key, JSON.stringify(val), now).run();
-      return { modified: (r.meta?.changes || 0) > 0 };
+      const changed = (r.meta?.changes || 0) > 0;
+      if (changed) CACHE.set(ck(this.name, key), JSON.stringify(val));
+      return { modified: changed };
     }
+    CACHE.set(ck(this.name, key), JSON.stringify(val));
     await db().prepare("INSERT INTO blobs (store,key,value,updated_at) VALUES (?,?,?,?) ON CONFLICT(store,key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at").bind(this.name, key, JSON.stringify(val), now).run();
     return { modified: true };
   }
 
   async set(key, data, opts = {}) {
     if (typeof data === "string") {
+      CACHE.set(ck(this.name, key), data);
       await init();
       await db().prepare("INSERT INTO blobs (store,key,value,updated_at) VALUES (?,?,?,?) ON CONFLICT(store,key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at").bind(this.name, key, data, new Date().toISOString()).run();
       return { modified: true };
@@ -70,6 +80,7 @@ class Store {
   }
 
   async delete(key) {
+    CACHE.delete(ck(this.name, key));
     await init();
     await db().prepare("DELETE FROM blobs WHERE store=? AND key=?").bind(this.name, key).run();
     if (this.files) { try { await kv().delete(this.name + ":" + key); } catch {} }
@@ -78,7 +89,8 @@ class Store {
   async list(opts = {}) {
     await init();
     const prefix = opts.prefix || "";
-    const { results } = await db().prepare("SELECT key FROM blobs WHERE store=? AND substr(key,1,?)=? ORDER BY key").bind(this.name, prefix.length, prefix).all();
+    const { results } = await db().prepare("SELECT key, value FROM blobs WHERE store=? AND substr(key,1,?)=? ORDER BY key").bind(this.name, prefix.length, prefix).all();
+    for (const r of results) CACHE.set(ck(this.name, r.key), r.value);
     const blobs = results.map((r) => ({ key: r.key, etag: "" }));
     // files kept in KV (e.g. receipts) are listed too
     let cursor;
