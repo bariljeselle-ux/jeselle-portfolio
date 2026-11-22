@@ -94,9 +94,11 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 .plh{margin:0;font-weight:500;font-size:14px}.pln{margin:0;font-size:13px;color:#6E625A}
 .plbtns{display:flex;flex-wrap:wrap;gap:8px}.plbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:4px;background:#7A4E3A;color:#fff!important;text-decoration:none;font:500 13px Jost,sans-serif;letter-spacing:.06em}
 .plbtn:hover{background:#5C3828}
+.mypicks{background:#fff;border:1px solid #E2D9CF;border-left:3px solid #7A4E3A;border-radius:6px;padding:14px 16px;margin:0 0 18px;font-size:15px}.mypicks ul{margin:6px 0;padding-left:18px}.mph{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7A4E3A;font-weight:500}.mpt{margin:6px 0 0}.mpn{margin:4px 0 0;font-size:13px;color:#6E625A}.mypicks2{color:#7A4E3A!important}
 </style>
 <style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}:root{--hb:84px}</style>
 <script src="/currency.js" defer></script>
+<script src="/picks.js" defer></script>
 </head>
 <body>
 <header><a class="brand" href="index.html">Jeselle Baril</a><a class="back" href="index.html">← Back to site</a></header>
@@ -105,11 +107,13 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <div class="intro" id="intro">
 <h1>Project <i>brief</i></h1>
 <p>This helps me understand your business and plan your project properly, so we can start right away. It takes about 8–10 minutes.</p>
-<ul><li>25 short questions, one at a time</li><li>Your answers are saved to me privately</li><li>Please don't share passwords here</li></ul>
+<ul><li>26 short questions, one at a time</li><li>Your answers are saved to me privately</li><li>Please don't share passwords here</li></ul>
+<div class="mypicks" id="mypicks" hidden></div>
 <button type="button" class="btn" id="start">Start brief →</button>
 </div>
 <form id="brief" name="project-brief" method="POST" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field" hidden>
 <input type="hidden" name="form-name" value="project-brief">
+<input type="hidden" name="selected_packages"><input type="hidden" name="estimated_total">
 <input type="hidden" name="type" value="Project brief">
 <input type="hidden" name="client_time_zone" id="tz">
 <p hidden><label>Leave empty <input name="bot-field"></label></p>
@@ -179,7 +183,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <section class="tfq" data-q="service" hidden>
 <p class="tfsec">The project</p>
 <p class="tfn">10 → <span class="req">Required *</span></p>
-<h2 class="tft">Which services do you need?</h2><p class="tfh">Choose all that apply.</p>
+<h2 class="tft">Which services do you need?</h2><p class="tfh">Choose all that apply.</p><p class="tfh mypicks2" id="mypicks2" hidden></p>
 <div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Social media management"><span class="key">C</span>Social media management</label><label class="tfo"><input type="checkbox" name="service" value="AI automation & CRM"><span class="key">D</span>AI automation & CRM</label><label class="tfo"><input type="checkbox" name="service" value="Graphic design"><span class="key">E</span>Graphic design (lead magnets, ads)</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">F</span>Complete package</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">G</span>Not sure yet</label></div></div>
 <div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
 </section>
@@ -390,7 +394,7 @@ async function submit(){
  const fd=buildFormData(form);const json={};fd.forEach((v,k)=>{if(k==='bot-field'||k==='form-name'||v instanceof File)return;json[k]=json[k]?json[k]+', '+v:v});
  const IS_PREVIEW=/claude|anthropic|usercontent/i.test(location.hostname);const hasFile=[...fd.values()].some(v=>v instanceof File&&v.size);const x=IS_PREVIEW?await new Promise(r=>setTimeout(()=>r(true),700)):await postWithTimeout('/',{method:'POST',body:fd},hasFile?90000:20000).then(r=>r.ok).catch(()=>false);const x2=(!x&&!IS_PREVIEW)?await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({},json,{'form-name':undefined}))}).then(r=>r.ok).catch(()=>false):false;const y=false;
  b.disabled=false;b.textContent='Submit brief';
- if(x||x2||y){form.hidden=true;document.getElementById('foot').hidden=true;document.getElementById('done').hidden=false;prog.style.width='100%';const nm=(json.name||'').split(' ')[0].replace(/[<>&"]/g,'');showThanks({title:`Thank you${nm?', '+nm:''}!`,text:'Your project brief was sent successfully.',steps:[['📩','A copy of all your answers is on its way to <b>'+String(json.email||'').replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['🔍','I’ll review your brief, links and files.'],['💬','Within 24 hours I’ll reply with a plan, quote and next steps.'],['💳','After you accept the quote, I’ll email your private payment link'+(json.payment_method?' for <b>'+String(json.payment_method).replace(/[<>&"]/g,'')+'</b>':'')+'.']],actions:[{href:'index.html#book',label:'Book a free call',solid:true}].concat(json.payment_method?[{href:'pay.html'+(/remitly/i.test(json.payment_method)?'#remitly':/maya/i.test(json.payment_method)?'#maya':/gcash/i.test(json.payment_method)?'#gcash':''),label:'View payment page',ext:true}]:[])})}
+ if(x||x2||y){try{document.dispatchEvent(new Event('jb-brief-sent'))}catch(e){}form.hidden=true;document.getElementById('foot').hidden=true;document.getElementById('done').hidden=false;prog.style.width='100%';const nm=(json.name||'').split(' ')[0].replace(/[<>&"]/g,'');showThanks({title:`Thank you${nm?', '+nm:''}!`,text:'Your project brief was sent successfully.',steps:[['📩','A copy of all your answers is on its way to <b>'+String(json.email||'').replace(/[<>&"]/g,'')+'</b>. Check Spam if you don’t see it.'],['🔍','I’ll review your brief, links and files.'],['💬','Within 24 hours I’ll reply with a plan, quote and next steps.'],['💳','After you accept the quote, I’ll email your private payment link'+(json.payment_method?' for <b>'+String(json.payment_method).replace(/[<>&"]/g,'')+'</b>':'')+'.']],actions:[{href:'index.html#book',label:'Book a free call',solid:true}].concat(json.payment_method?[{href:'pay.html'+(/remitly/i.test(json.payment_method)?'#remitly':/maya/i.test(json.payment_method)?'#maya':/gcash/i.test(json.payment_method)?'#gcash':''),label:'View payment page',ext:true}]:[])})}
  else{const body=encodeURIComponent('Hi Jeselle,\n\nHere is my project brief:\n\n'+Object.entries(json).filter(([k])=>!k.startsWith('_')).map(([k,v])=>k.replace(/_/g,' ')+': '+v).join('\n'));
    const txt=decodeURIComponent(body);const pv=!/netlify\.app$|jeselle/i.test(location.hostname);err.hidden=false;err.innerHTML='<span>'+(pv?'<b>Preview mode:</b> the brief sends automatically on the live site. ':'<b>Couldn’t send automatically.</b> ')+'Send it in one tap instead, your answers are already filled in:</span><span class="fbbtns"><a class="btn" href="mailto:'+ALERT_EMAIL+'?subject='+encodeURIComponent('Project brief')+'&body='+body+'">Send by email</a><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/639311255454?text='+encodeURIComponent(txt)+'">Send on WhatsApp</a></span>';err.scrollIntoView({behavior:'smooth',block:'center'})}
 }

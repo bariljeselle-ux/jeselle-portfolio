@@ -135,7 +135,7 @@ const LABELS = {
   main_goal: "Main goal", success_3_months: "Success in 3 months", reference_links: "Reference links",
   brand_assets: "Brand materials", assets_link: "Materials folder link", materials_link: "Materials folder link",
   business_link: "Business page / website", content_by: "Texts & photos by", accounts_needed: "Accounts needed",
-  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission",
+  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate",
 };
 const SKIP = new Set(["form-name", "bot-field", "start_utc", "type", "ip", "user_agent", "referrer"]);
 export function detailsTable(data) {
