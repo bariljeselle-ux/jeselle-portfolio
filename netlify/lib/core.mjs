@@ -383,3 +383,34 @@ export async function runReminders({ store = crmStore(), now = new Date() } = {}
   }
   return out;
 }
+
+// ---------- Daily nudges: follow-ups due, quotes with no reply, new requests not answered ----------
+const DAY = 86400000;
+const phDate = (d) => new Date(new Date(d).getTime() + 8 * 3600000).toISOString().slice(0, 10);
+export function nudgeList(recs, now = new Date()) {
+  const today = phDate(now), out = [];
+  for (const r of recs) {
+    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid/i.test(r.status || "")) continue;
+    const who = (r.data && (r.data.business || r.data.name)) || "A client";
+    const since = new Date(r.statusAt || r.createdAt || now);
+    if (r.followUp && r.followUp <= today) out.push({ key: r.key, kind: "follow", text: `Follow up with ${who}${r.followUp < today ? " (was due " + r.followUp + ")" : " today"}` });
+    else if (r.status === "Proposal sent" && now - since >= 3 * DAY) out.push({ key: r.key, kind: "quote", text: `${who} hasn't replied to your quote in ${Math.floor((now - since) / DAY)} days. Send a friendly check-in.` });
+    else if (r.status === "New" && r.type !== "Payment" && now - since >= DAY) out.push({ key: r.key, kind: "new", text: `${who}'s ${String(r.type).toLowerCase()} is still marked New after ${Math.floor((now - since) / DAY)} day(s). Reply and set it to Contacted.` });
+    else if (r.status === "Payment to verify" && now - since >= DAY) out.push({ key: r.key, kind: "pay", text: `Check ${who}'s payment proof and record it as income.` });
+  }
+  return out;
+}
+export async function runNudges({ store = crmStore(), now = new Date() } = {}) {
+  const { blobs } = await store.list();
+  const recs = [];
+  for (const b of blobs) { if (/^(settings|income|expense)\//.test(b.key)) continue; const r = await store.get(b.key, { type: "json" }); if (r) recs.push(r); }
+  const list = nudgeList(recs, now);
+  const today = phDate(now);
+  const last = await store.get("settings/nudges-sent", { type: "json" });
+  if (!list.length || last?.date === today) return { count: list.length, skipped: !list.length ? "nothing due" : "already sent today" };
+  await store.setJSON("settings/nudges-sent", { date: today, count: list.length });
+  const items = list.map((n) => `<li style="margin:0 0 8px">${{ follow: "📅", quote: "⏳", new: "🆕", pay: "💰" }[n.kind]} ${esc(n.text)}</li>`).join("");
+  try { await sendMail({ to: OWNER.email(), subject: `☀️ ${list.length} thing${list.length > 1 ? "s" : ""} to follow up today`, html: layout("Today's follow-ups", `<ul style="padding-left:18px;margin:0 0 14px">${items}</ul>` + p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)) }); } catch {}
+  try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today }, store); } catch {}
+  return { count: list.length };
+}

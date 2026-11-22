@@ -146,6 +146,7 @@ export default async (req) => {
     if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
     if (body.action === "update") {
       if (typeof body.status === "string") {
+        if (rec.status !== body.status.slice(0, 40)) rec.statusAt = new Date().toISOString();
         rec.status = body.status.slice(0, 40);
         if (/cancel|lost/i.test(rec.status) && rec.gcalEventId) {
           try { if (await cancelMeet(rec, store)) { rec.gcalEventId = ""; rec.meetLink = ""; rec.meetCancelled = new Date().toISOString(); } } catch {}
