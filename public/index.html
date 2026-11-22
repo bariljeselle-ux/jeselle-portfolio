@@ -1077,10 +1077,11 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 {
 // Always open on the landing (hero) section
 try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
-const keepHash=location.hash==='#book';
+let hashEl=null;try{hashEl=location.hash.length>1?document.getElementById(decodeURIComponent(location.hash.slice(1))):null}catch(e){}
+const keepHash=!!hashEl;
 if(location.hash&&!keepHash){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
 if(!keepHash){window.scrollTo(0,0);addEventListener('load',()=>{window.scrollTo(0,0)})}
-else addEventListener('load',()=>document.getElementById('book').scrollIntoView())
+else{hashEl.scrollIntoView();addEventListener('load',()=>{hashEl.scrollIntoView();setTimeout(()=>hashEl.scrollIntoView(),400)})}
 
 // Clickable / swipeable carousels
 const keys=[...new Set([...document.querySelectorAll('[data-swipe]')].map(e=>e.dataset.swipe))];
