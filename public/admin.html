@@ -243,7 +243,7 @@ function meetBlock(r){
 
 function picksHtml(d){if(!d.selected_packages&&!d.portfolio_permission)return'';const ok=/^Yes/.test(d.picks_confirmed||'');
   const lines=String(d.selected_packages||'').split('\n').filter(Boolean).map(l=>/^\s+Note:/.test(l)?`<li class="pn">📝 ${esc(l.trim().replace(/^Note:\s*/,''))}</li>`:`<li>${esc(l)}</li>`).join('');
-  return `<div class="picks">${lines?`<p><b>🛒 Picked on the website</b>${d.picks_confirmed?` <span class="chip ${ok?'ok':'warn'}">${ok?'✓ Confirmed':'Not confirmed'}</span>`:''}</p><ul>${lines}</ul>`:''}${d.estimated_total?`<p><b>Estimate:</b> ${esc(d.estimated_total)}</p>`:''}${d.budget?`<p><b>Budget:</b> ${esc(d.budget)}${d.timeline?' · <b>Timeline:</b> '+esc(d.timeline):''}</p>`:''}${d.portfolio_permission?`<p><b>Portfolio:</b> ${/^No/.test(d.portfolio_permission)?'🔒':'📸'} ${esc(d.portfolio_permission)}</p>`:''}</div>`}
+  return `<div class="picks">${lines?`<p><b>🛒 Picked on the website</b>${d.picks_confirmed?` <span class="chip ${ok?'ok':'warn'}">${ok?'✓ Confirmed':'Not confirmed'}</span>`:''}</p><ul>${lines}</ul>`:''}${d.estimated_total?`<p><b>Estimate:</b> ${esc(d.estimated_total)}</p>`:''}${d.budget?`<p><b>Budget:</b> ${esc(d.budget)}${d.timeline?' · <b>Timeline:</b> '+esc(d.timeline):''}</p>`:''}${d.portfolio_permission?`<p><b>Portfolio:</b> ${/^No/.test(d.portfolio_permission)?'🔒':'📸'} ${esc(d.portfolio_permission)}</p>`:''}${d.show_items?`<p><b>May show:</b> ${esc(d.show_items)}</p>`:''}</div>`}
 function card(r){
   const d=r.data||{},cls=r.type==='Project brief'?'brief':r.type;
   const when=r.start?`📅 ${esc(fmt(r.start,'Asia/Manila'))}`:`Received ${esc(new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}`;

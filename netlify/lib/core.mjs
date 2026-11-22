@@ -135,7 +135,7 @@ const LABELS = {
   main_goal: "Main goal", success_3_months: "Success in 3 months", reference_links: "Reference links",
   brand_assets: "Brand materials", assets_link: "Materials folder link", materials_link: "Materials folder link",
   business_link: "Business page / website", content_by: "Texts & photos by", accounts_needed: "Accounts needed",
-  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed", business_link: "Link to show", project: "Project", consent: "Consent given",
+  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed", business_link: "Link to show", show_items: "What may be shown", project: "Project", consent: "Consent given",
 };
 const SKIP = new Set(["form-name", "bot-field", "start_utc", "type", "ip", "user_agent", "referrer"]);
 export function detailsTable(data) {
@@ -220,7 +220,7 @@ export function permissionEmails(rec) {
   const yes = !/^No/.test(d.portfolio_permission || "");
   const when = new Date(rec.createdAt || Date.now()).toLocaleString("en-US", { timeZone: "Asia/Manila", dateStyle: "long", timeStyle: "short" }) + " (Philippine time)";
   const consent = d.consent ? `<br><br><b>✅ Consent given</b><br>${esc(d.name)}${d.business ? " of " + esc(d.business) : ""} agreed on ${when}:<br><i>“${esc(d.consent)}”</i>` : "";
-  const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
+  const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.show_items ? `<br><b>What may be shown:</b> ${esc(d.show_items)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
   return [{
     to: d.email, replyTo: OWNER.email(),
     subject: `Portfolio permission confirmed – thank you, ${first}!`,
