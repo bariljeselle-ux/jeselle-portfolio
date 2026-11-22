@@ -38,6 +38,7 @@ small{color:#6E625A}
 @media(max-width:620px){.opts,.cols,.facts{grid-template-columns:minmax(0,1fr)}.opt{padding:18px 16px 6px}}
 </style>
 <style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}body{padding-bottom:72px}</style>
+<script src="/currency.js" defer></script>
 </head>
 <body>
 <main>
@@ -50,7 +51,23 @@ small{color:#6E625A}
 <a href="#option-3"><b>3. Transferred to you at the end</b><span>I build it, then move it to your accounts.</span></a>
 <a href="#option-4"><b>4. Files for your developer</b><span>For businesses with their own IT team.</span></a>
 </div>
-<p style="font-size:15px">Also on this page: <a href="#costs">costs you may pay</a> · <a href="#sharing">what you'll share with me</a></p>
+<p style="font-size:15px">Looking for another service? See <a href="/options.html">all service options</a>.</p>
+<p style="font-size:15px">Also on this page: <a href="#costs">costs you may pay</a> · <a href="#sharing">what you'll share with me</a> · <a href="#setup">getting ready for our setup call</a></p>
+<h2 id="setup">Getting ready for our setup call</h2>
+<p>For options 2 and 3, we do one short call (about 30 minutes on Google Meet) where you create a few free accounts in your name. You sign up yourself; I only guide you. Option 1 only needs step 1. Option 4 needs none.</p>
+<div class="tw"><table class="share">
+<thead><tr><th>Step</th><th>What it's for</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td><b>Before the call</b></td><td>Verification codes</td><td>Have your business email open and your phone nearby.</td></tr>
+<tr><td><b>1. Google</b></td><td>Your booking calendar and Meet links</td><td>Log in to your Google account (or create a free Gmail for your business) and turn on 2-step verification.</td></tr>
+<tr><td><b>2. GitHub</b></td><td>A safe backup of your website's code</td><td>Sign up free with your business email, confirm it, turn on 2-step verification, then accept my invite.</td></tr>
+<tr><td><b>3. Netlify</b></td><td>Puts your website online</td><td>Sign up with your GitHub account (no extra password) and choose the free plan.</td></tr>
+<tr><td><b>4. Brevo</b></td><td>Booking confirmations and reminders from your business name</td><td>Sign up free with your business email, confirm it, and add your business details and sender name.</td></tr>
+<tr><td><b>5. Connect</b></td><td>Links everything to your website</td><td>Click where I guide you. You type any password yourself.</td></tr>
+<tr><td><b>6. Finish</b></td><td>Keeping your accounts safe</td><td>Save your passwords somewhere safe and check 2-step verification is on for all accounts.</td></tr>
+</tbody></table></div>
+<p>Your customers never need to sign up for anything. You get one private password for your admin page.</p>
+
 <h2 id="sharing">What you'll share with me</h2>
 <p>Most things are shared with an <b>invite to my email, <a href="mailto:bariljeselle@gmail.com">bariljeselle@gmail.com</a></b>, so you never need to give me your password. You can remove my access any time.</p>
 <div class="tw"><table class="share">
@@ -85,7 +102,7 @@ small{color:#6E625A}
 <section class="opt" id="option-1">
 <span class="tag">Most popular</span><h2>Option 1: I host it for you</h2>
 <p>Your website runs on my hosting account. I take care of everything technical, and you pay a small monthly fee for maintenance.</p>
-<div class="facts"><div><b>Best for</b>Small businesses that want zero tech work</div><div><b>Cost</b>One-time project fee + $50–$150/month</div><div><b>Handover time</b>Same day</div></div>
+<div class="facts"><div><b>Best for</b>Small businesses that want zero tech work</div><div><b>Cost</b><span data-php="One-time project fee + ₱1,500–₱4,000/month">One-time project fee + $50–$150/month</span></div><div><b>Handover time</b>Same day</div></div>
 <div class="cols"><div><h3>What I do</h3><ul><li>Build your website and connect your domain</li><li>Host it on my account (Netlify) with free security (https)</li><li>Keep forms, bookings and emails working</li><li>Back up your site and fix problems</li><li>Make small updates each month (text, photos, prices)</li><li>Move it to your own account any time you ask</li></ul></div><div><h3>What you do</h3><ul><li>Buy your domain in your name (I'll guide you, about ₱600/year)</li><li>Share a Google Drive folder with your logo, photos and text (<a href="#sharing">how</a>)</li><li>Approve the preview</li><li>Pay the monthly maintenance fee</li></ul></div></div>
 <div class="login">🔑 <b>Logins you'll share:</b> No passwords for your files (Google Drive invite). Only your domain account, once, to connect your website. We can do this together on a short call so you never need to send me your password.</div>
 <div class="cols"><div><h3>Pros</h3><ul><li>Easiest option: nothing to set up or learn</li><li>Fast changes whenever you need them</li><li>Someone always looks after your site</li></ul></div><div><h3>Cons</h3><ul><li>You depend on me for changes</li><li>The monthly fee continues while I host it</li></ul></div></div>

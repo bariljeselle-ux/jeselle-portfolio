@@ -1,0 +1,10 @@
+{
+  "name": "Jeselle CRM",
+  "short_name": "My CRM",
+  "start_url": "/admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F3EE",
+  "theme_color": "#7A4E3A",
+  "icons": [{ "src": "/images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }]
+}
