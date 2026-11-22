@@ -133,6 +133,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <label>Currency<select name="currency"><option>PHP</option><option>USD</option><option>EUR</option><option>GBP</option><option>AUD</option><option>CAD</option><option>SGD</option><option>Other</option></select></label>
 <label>Received in pesos (₱)<input name="php" inputmode="decimal" required placeholder="what landed in GCash/Maya"></label>
 <label>Paid via<select name="method"><option>GCash</option><option>Maya</option><option>Remitly</option><option>Bank transfer</option><option>PayPal</option><option>Wise</option><option>Cash</option><option>Other</option></select></label>
+<label>Invoice no.<input name="invoice" maxlength="40" placeholder="e.g. INV-2026-001"></label>
 <label>Reference no.<input name="reference" maxlength="80"></label>
 <label>Notes<input name="notes" maxlength="500"></label>
 </div>
@@ -148,6 +149,8 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <ol>
 <li>Things you pay for <b>because of your work</b>: Canva Pro, your domain, internet or mobile load for work, a course, transfer fees, ads for your business, a new laptop or headset.</li>
 <li>Personal spending (food, clothes, family) does <b>not</b> go here.</li>
+<li><b>Bills you share with home</b> (electricity, internet, rent): record only the work part. Type the <b>full bill</b> and your <b>work share %</b>, and the amount fills in by itself. Example: you work about 6 hours a day at home, so use about 25–30% of the electric bill. Keep the same % every month and write how you got it in Notes.</li>
+<li><b>Devices</b> (laptop, phone, headset, ring light): record them on the day you buy them. If you also use them personally, use a work share % too.</li>
 </ol>
 <p class="ih">Every time you pay for something for work</p>
 <ol>
@@ -167,10 +170,12 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <p style="margin:0 0 10px;font-weight:500" id="etitle">Add expense</p>
 <div class="g">
 <label>Date paid<input type="date" name="date" required></label>
-<label>Category<select name="category"><option>Software &amp; subscriptions</option><option>Domain &amp; hosting</option><option>Internet &amp; mobile load</option><option>Equipment &amp; gadgets</option><option>Courses &amp; training</option><option>Transfer &amp; payment fees</option><option>Advertising &amp; promotion</option><option>Office supplies</option><option>Government &amp; registration fees</option><option>Other</option></select></label>
+<label>Category<select name="category"><option value="Electricity (work share)">Electricity (work share)</option><option value="Internet &amp; mobile load">Internet &amp; mobile load</option><option value="Devices &amp; equipment">Devices &amp; equipment (laptop, phone, headset, ring light)</option><option value="Software &amp; subscriptions">Software &amp; subscriptions</option><option value="Domain &amp; hosting">Domain &amp; hosting</option><option value="Courses &amp; training">Courses &amp; training</option><option value="Transfer &amp; payment fees">Transfer &amp; payment fees</option><option value="Advertising &amp; promotion">Advertising &amp; promotion</option><option value="Office supplies">Office supplies</option><option value="Repairs &amp; maintenance">Repairs &amp; maintenance</option><option value="Workspace rent (work share)">Workspace rent (work share)</option><option value="Transportation &amp; delivery">Transportation &amp; delivery (for work only)</option><option value="Professional fees">Professional fees (accountant, notary)</option><option value="Government &amp; registration fees">Government &amp; registration fees</option><option value="Other">Other</option></select></label>
 <label>What for<input name="description" required maxlength="200" placeholder="e.g. Canva Pro, 1 month"></label>
 <label>Paid to<input name="vendor" maxlength="120" placeholder="e.g. Canva, Globe, Porkbun"></label>
-<label>Amount (₱)<input name="php" inputmode="decimal" required></label>
+<label>Full bill (₱) <small style="color:#6E625A">optional</small><input name="bill" inputmode="decimal" placeholder="e.g. whole electric bill"></label>
+<label>Work share % <small style="color:#6E625A">optional</small><input name="workpct" inputmode="numeric" placeholder="e.g. 30"></label>
+<label>Amount (₱)<input name="php" inputmode="decimal" required placeholder="business part only"></label>
 <label>Paid with<select name="method"><option>GCash</option><option>Maya</option><option>Debit card</option><option>Credit card</option><option>Cash</option><option>Bank transfer</option><option>Wise</option><option>Other</option></select></label>
 <label>Notes<input name="notes" maxlength="500"></label>
 <label style="flex-direction:row;align-items:center;gap:8px;font-size:14px;color:#231E1B"><input type="checkbox" name="receipt" style="min-height:0;width:18px;height:18px"> Receipt kept</label>
@@ -282,10 +287,11 @@ function idraw(){
   const ym=today().slice(0,7);const mon=INC.filter(r=>(r.date||'').startsWith(ym)).reduce((a,r)=>a+(Number(r.php)||0),0);
   const pct=Math.min(100,tot/TAXFREE*100);
   $('isum').innerHTML=`<div><small>This month</small><b>${peso(mon)}</b></div><div><small>${esc(y)} total</small><b>${peso(tot)}</b><span style="font-size:13px;color:#6E625A">${list.length} payment${list.length===1?'':'s'}</span></div><div><small>Tax-free limit (₱250,000/yr)</small><div class="ibar"><span style="width:${pct}%;${tot>TAXFREE?'background:#C9853A':''}"></span></div><span style="font-size:13px;color:#6E625A">${tot>TAXFREE?`Over by ${peso(tot-TAXFREE)}. With the 8% option, tax is about ${peso((tot-TAXFREE)*0.08)}.`:`${peso(TAXFREE-tot)} left before income tax applies`}</span></div>`;
-  $('ilist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>Client</th><th>For</th><th>Via</th><th style="text-align:right">Charged</th><th style="text-align:right">Received</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.client)}</b></td><td>${esc([r.service,r.description].filter(Boolean).join(' · '))}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.method)}${r.reference?`<br><small style="color:#6E625A">Ref ${esc(r.reference)}</small>`:''}</td><td class="n">${r.amount?esc(r.currency+' '+Number(r.amount).toLocaleString('en-US')):''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="i-edit">Edit</button> <button class="i-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="5">Total ${esc(y)}</td><td class="n">${peso(tot)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No payments recorded for ${esc(y)} yet. When a client pays, tap <b>➕ Add payment received</b>, or open their payment proof below and tap <b>Record as income</b>.</div>`;
+  $('ilist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>Client</th><th>For</th><th>Via</th><th style="text-align:right">Charged</th><th style="text-align:right">Received</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.client)}</b>${r.invoice?`<br><small style="color:#6E625A">${esc(r.invoice)}</small>`:''}</td><td>${esc([r.service,r.description].filter(Boolean).join(' · '))}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.method)}${r.reference?`<br><small style="color:#6E625A">Ref ${esc(r.reference)}</small>`:''}</td><td class="n">${r.amount?esc(r.currency+' '+Number(r.amount).toLocaleString('en-US')):''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="i-edit">Edit</button> <button class="i-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="5">Total ${esc(y)}</td><td class="n">${peso(tot)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No payments recorded for ${esc(y)} yet. When a client pays, tap <b>➕ Add payment received</b>, or open their payment proof below and tap <b>Record as income</b>.</div>`;
 }
 function iopen(v={}){const f=$('iform');f.hidden=false;f.reset();$('ititle').textContent=v.key?'Edit payment':'Add payment received';
-  const d={date:today(),currency:'PHP',method:'GCash',...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(el&&val!=null)el.value=val}
+  const nextInv=()=>{const y=today().slice(0,4);const n=INC.map(r=>(String(r.invoice||'').match(new RegExp('^INV-'+y+'-(\\d+)$'))||[])[1]).filter(Boolean).map(Number);return 'INV-'+y+'-'+String((n.length?Math.max(...n):0)+1).padStart(3,'0')};
+  const d={date:today(),currency:'PHP',method:'GCash',...(v.key?{}:{invoice:nextInv()}),...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(el&&val!=null)el.value=val}
   f.scrollIntoView({behavior:'smooth',block:'center'});f.elements.client.focus()}
 $('iadd').addEventListener('click',()=>iopen());
 $('icancel').addEventListener('click',()=>{$('iform').hidden=true});
@@ -314,6 +320,8 @@ function eopen(v={}){const f=$('eform');f.hidden=false;f.reset();$('etitle').tex
   const d={date:today(),method:'GCash',...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(!el||val==null)continue;if(el.type==='checkbox')el.checked=!!val;else el.value=val}
   f.scrollIntoView({behavior:'smooth',block:'center'});f.elements.description.focus()}
 $('eadd').addEventListener('click',()=>eopen());
+{const f=$('eform'),calc=()=>{const b=parseFloat(String(f.elements.bill.value).replace(/[^0-9.]/g,'')),p=parseFloat(String(f.elements.workpct.value).replace(/[^0-9.]/g,''));if(b>0&&p>0)f.elements.php.value=(Math.round(b*Math.min(p,100))/100).toFixed(2)};f.elements.bill.addEventListener('input',calc);f.elements.workpct.addEventListener('input',calc);
+ f.elements.category.addEventListener('change',()=>{if(/work share/.test(f.elements.category.value)&&!f.elements.workpct.value)f.elements.workpct.value='30'})}
 $('ecancel').addEventListener('click',()=>{$('eform').hidden=true});
 $('eform').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,entry=Object.fromEntries(new FormData(f));entry.receipt=f.elements.receipt.checked;const key=entry.key;delete entry.key;
   try{const j=await api({body:{action:'expense-save',key,entry}});EXP=[j.rec,...EXP.filter(r=>r.key!==j.rec.key)].sort((a,b)=>(b.date||'').localeCompare(a.date||''));f.hidden=true;$('iyear').value=j.rec.date.slice(0,4);idraw();edraw();note('Expense saved ✓')}catch(err){note(err.message,1)}});

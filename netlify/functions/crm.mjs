@@ -12,7 +12,7 @@ const ok = (req) => {
 const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
 
 // Expense entry: what you spent for your business, in pesos.
-export const EXPENSE_CATEGORIES = ["Software & subscriptions", "Domain & hosting", "Internet & mobile load", "Equipment & gadgets", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Government & registration fees", "Other"];
+export const EXPENSE_CATEGORIES = ["Electricity (work share)", "Internet & mobile load", "Devices & equipment", "Software & subscriptions", "Domain & hosting", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Repairs & maintenance", "Workspace rent (work share)", "Transportation & delivery", "Professional fees", "Government & registration fees", "Other"];
 export function cleanExpense(e) {
   const s = (v, n) => String(v ?? "").trim().slice(0, n);
   const date = s(e.date, 10);
@@ -22,8 +22,12 @@ export function cleanExpense(e) {
   const n = Number(String(e.php ?? "").replace(/[^0-9.]/g, ""));
   const php = isFinite(n) ? Math.round(n * 100) / 100 : 0;
   if (!(php > 0)) return { error: "Type how much you paid in pesos (₱)." };
-  const category = EXPENSE_CATEGORIES.includes(e.category) ? e.category : "Other";
-  return { date, category, description, vendor: s(e.vendor, 120), php, method: s(e.method, 40), receipt: e.receipt === true || e.receipt === "on" || e.receipt === "yes", notes: s(e.notes, 500) };
+  const cat = e.category === "Equipment & gadgets" ? "Devices & equipment" : e.category;
+  const category = EXPENSE_CATEGORIES.includes(cat) ? cat : "Other";
+  const n2 = (v) => { const n = Number(String(v ?? "").replace(/[^0-9.]/g, "")); return isFinite(n) ? Math.round(n * 100) / 100 : 0; };
+  const bill = n2(e.bill);
+  const workpct = Math.min(100, Math.max(0, Math.round(n2(e.workpct))));
+  return { date, category, description, vendor: s(e.vendor, 120), php, bill: bill || null, workpct: workpct || null, method: s(e.method, 40), receipt: e.receipt === true || e.receipt === "on" || e.receipt === "yes", notes: s(e.notes, 500) };
 }
 
 // Income entry: what you actually received, in pesos, for your records and BIR.
@@ -37,7 +41,7 @@ export function cleanIncome(e) {
   const php = num(e.php);
   if (!(php > 0)) return { error: "Type how much you received in pesos (₱)." };
   const currency = ["PHP", "USD", "EUR", "GBP", "AUD", "CAD", "SGD", "Other"].includes(e.currency) ? e.currency : "PHP";
-  return { date, client, service: s(e.service, 80), description: s(e.description, 200), amount: num(e.amount) || (currency === "PHP" ? php : 0), currency, php, method: s(e.method, 40), reference: s(e.reference, 80), notes: s(e.notes, 500), sourceKey: s(e.sourceKey, 120) };
+  return { date, client, service: s(e.service, 80), description: s(e.description, 200), amount: num(e.amount) || (currency === "PHP" ? php : 0), currency, php, method: s(e.method, 40), reference: s(e.reference, 80), invoice: s(e.invoice, 40), notes: s(e.notes, 500), sourceKey: s(e.sourceKey, 120) };
 }
 
 export default async (req) => {
@@ -153,10 +157,10 @@ export default async (req) => {
   if (url.searchParams.get("format") === "expense-csv") {
     const year = (url.searchParams.get("year") || "").slice(0, 4);
     const list = expenses.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Paid with", "Receipt kept", "Notes"];
-    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.method, r.receipt ? "Yes" : "No", r.notes].map(csvCell).join(","));
+    const head = ["Date", "Category", "What", "Paid to", "Amount (PHP)", "Full bill (PHP)", "Work share %", "Paid with", "Receipt kept", "Notes"];
+    const rows = list.map((r) => [r.date, r.category, r.description, r.vendor, r.php, r.bill ?? "", r.workpct ?? "", r.method, r.receipt ? "Yes" : "No", r.notes].map(csvCell).join(","));
     const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
-    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    rows.push(["", "", "TOTAL", "", total.toFixed(2), "", "", "", "", ""].map(csvCell).join(","));
     return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="expenses-${year || "all"}.csv"` },
     });
@@ -165,10 +169,10 @@ export default async (req) => {
   if (url.searchParams.get("format") === "income-csv") {
     const year = (url.searchParams.get("year") || "").slice(0, 4);
     const list = income.filter((r) => !year || (r.date || "").startsWith(year)).sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    const head = ["Date", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Notes"];
-    const rows = list.map((r) => [r.date, r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, r.notes].map(csvCell).join(","));
+    const head = ["Date", "Invoice no.", "Client", "Service", "Description", "Amount", "Currency", "Received (PHP)", "Payment method", "Reference no.", "Notes"];
+    const rows = list.map((r) => [r.date, r.invoice || "", r.client, r.service, r.description, r.amount, r.currency, r.php, r.method, r.reference, r.notes].map(csvCell).join(","));
     const total = list.reduce((a, r) => a + (Number(r.php) || 0), 0);
-    rows.push(["", "", "", "TOTAL", "", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
+    rows.push(["", "", "", "", "TOTAL", "", "", total.toFixed(2), "", "", ""].map(csvCell).join(","));
     return new Response("\ufeff" + [head.map(csvCell).join(","), ...rows].join("\n"), {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="income-${year || "all"}.csv"` },
     });
