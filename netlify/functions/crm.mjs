@@ -1,4 +1,5 @@
 // Private CRM API for admin.html. Protected by the ADMIN_PASSWORD environment variable.
+import { isAdminReq, changeAdminPassword } from "../lib/auth.mjs";
 import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
 import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
 import crypto from "node:crypto";
@@ -8,12 +9,7 @@ const RECEIPT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "a
 const MAX_RECEIPT = 4 * 1024 * 1024;
 const recKeyOk = (k) => /^(income|expense)\/[0-9]{8}-[0-9a-f]{8}$/.test(k);
 
-const ok = (req) => {
-  const pass = process.env.ADMIN_PASSWORD || "";
-  const given = req.headers.get("x-admin-key") || "";
-  if (!pass || given.length !== pass.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(given), Buffer.from(pass));
-};
+const ok = (req) => isAdminReq(req);
 const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
 
 // Expense entry: what you spent for your business, in pesos.
@@ -51,12 +47,16 @@ export function cleanIncome(e) {
 
 export default async (req) => {
   if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in your website settings first." }, { status: 503 });
-  if (!ok(req)) return Response.json({ error: "Wrong password" }, { status: 401 });
+  if (!(await ok(req))) return Response.json({ error: "Wrong password" }, { status: 401 });
   const store = crmStore();
   const url = new URL(req.url);
 
   if (req.method === "POST") {
     const body = await req.json();
+    if (body.action === "change-password") {
+      const r = await changeAdminPassword(body.current, body.next);
+      return Response.json(r.ok ? { ok: true } : { error: r.error }, { status: r.ok ? 200 : r.status });
+    }
     if (body.action === "test-email") {
       await sendMail({ to: OWNER.email(), subject: "✅ Test email from your website CRM", html: "<p>Your website can send emails. Bookings, reminders and inquiries will arrive here.</p>" });
       return Response.json({ ok: true });

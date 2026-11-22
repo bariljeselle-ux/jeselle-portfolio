@@ -98,9 +98,17 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div id="app" hidden>
 <header>
 <p class="brand">Client CRM <span>· Jeselle Baril</span></p>
-<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="out">Log out</button></div>
+<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
 </header>
 <main>
+<form id="pwbox" hidden style="background:#fff;border:1px solid #E2D9CF;border-radius:8px;padding:20px;margin:0 0 18px;max-width:440px">
+<h2 style="margin:0 0 4px">Change your password</h2><p style="margin:0 0 12px;color:#6E625A;font-size:14px">Only you will know your new password. It's stored scrambled, so nobody can read it.</p>
+<label style="display:block;margin:0 0 10px;font-size:14px">Current password<input type="password" id="pw0" autocomplete="current-password" required style="display:block;width:100%;margin-top:4px"></label>
+<label style="display:block;margin:0 0 10px;font-size:14px">New password (at least 8 characters)<input type="password" id="pw1" autocomplete="new-password" minlength="8" required style="display:block;width:100%;margin-top:4px"></label>
+<label style="display:block;margin:0 0 10px;font-size:14px">Type the new password again<input type="password" id="pw2" autocomplete="new-password" minlength="8" required style="display:block;width:100%;margin-top:4px"></label>
+<p id="pwmsg" style="margin:6px 0 0;font-size:14px"></p>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="pri">Save new password</button><button type="button" id="pwx">Cancel</button></div>
+</form>
 <div class="gbar" id="gbar"><p>Checking Google Meet connection…</p></div>
 <div class="nbar" id="nbar"><div><b>🔔 Notifications</b> <span id="nstate">Checking…</span><small id="nhelp"></small></div><div class="nbtns"><button class="pri" id="non">Turn on notifications</button><button id="ntest" hidden>Send a test</button><button id="noff" hidden>Turn off on this device</button></div></div>
 <div class="newbar" id="newbar" hidden><span id="newtxt"></span><button id="seeall">Mark all as read</button></div>
@@ -483,6 +491,16 @@ $('rlist').addEventListener('click',async e=>{const c=e.target.closest('.rvw');i
     else if(b.classList.contains('r-rep')){upd(await rapi({action:'reply',key,reply:c.querySelector('.r-reply').value}));note('Reply saved ✓')}
     else if(b.classList.contains('r-del')){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete forever';return}await rapi({action:'delete',key});REVS=REVS.filter(r=>r.key!==key);rdraw();note('Review deleted')}
   }catch(err){note(err.message,1)}});
+
+// ---------- CHANGE PASSWORD ----------
+$('cpw').addEventListener('click',()=>{$('pwbox').hidden=false;$('pwbox').reset();$('pwmsg').textContent='';$('pwbox').scrollIntoView({behavior:'smooth'});$('pw0').focus()});
+$('pwx').addEventListener('click',()=>{$('pwbox').hidden=true});
+$('pwbox').addEventListener('submit',async e=>{e.preventDefault();const m=$('pwmsg');m.style.color='#8A2E1E';
+ if($('pw1').value.length<8){m.textContent='Use at least 8 characters.';return}
+ if($('pw1').value!==$('pw2').value){m.textContent="The two new passwords don't match.";return}
+ m.style.color='#6E625A';m.textContent='Saving…';
+ try{await api({body:{action:'change-password',current:$('pw0').value,next:$('pw1').value}});KEY=$('pw1').value;try{sessionStorage.setItem('crmkey',KEY)}catch(x){}$('pwbox').reset();m.style.color='#2F6B3F';m.textContent='✓ Password changed. Use your new password next time you log in.'}
+ catch(x){m.style.color='#8A2E1E';m.textContent=x.message}});
 $('out').addEventListener('click',()=>{KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
 const login=()=>{KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load()};
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});

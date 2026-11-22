@@ -3,6 +3,7 @@
 //          POST /api/reviews {action:"submit"...}  -> new review (shows right away if the client allowed it)
 // Private: POST /api/reviews with header x-admin-key = ADMIN_PASSWORD
 //          {action:"list"} | {action:"publish"|"hide"|"delete", key} | {action:"reply", key, reply} | {action:"add", ...collected testimonial}
+import { isAdminReq } from "../lib/auth.mjs";
 import { getStore } from "@netlify/blobs";
 import { sendMail, layout, OWNER } from "../lib/core.mjs";
 import crypto from "node:crypto";
@@ -24,12 +25,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const str = (v, n) => String(v ?? "").replace(/\s+$/g, "").slice(0, n);
 const star = (n) => "★".repeat(n) + "☆".repeat(5 - n);
 
-const isAdmin = (req) => {
-  const pass = process.env.ADMIN_PASSWORD || "";
-  const given = req.headers.get("x-admin-key") || "";
-  if (!pass || given.length !== pass.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(given), Buffer.from(pass));
-};
+const isAdmin = (req) => isAdminReq(req);
 
 // What visitors may see: never the email or the private "what to improve" note.
 export function publicView(r) {
@@ -115,7 +111,7 @@ export default async (req) => {
 
   // ----- admin only -----
   if (!process.env.ADMIN_PASSWORD) return Response.json({ error: "Set ADMIN_PASSWORD in your website settings first." }, { status: 503 });
-  if (!isAdmin(req)) return Response.json({ error: "Wrong password" }, { status: 401 });
+  if (!(await isAdmin(req))) return Response.json({ error: "Wrong password" }, { status: 401 });
   if (body.action === "list") {
     const all = await loadAll(store);
     return Response.json({ reviews: all, summary: summary(all.filter((r) => r.status === "Published")) }, { headers: { "Cache-Control": "no-store" } });
