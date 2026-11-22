@@ -135,7 +135,7 @@ const LABELS = {
   main_goal: "Main goal", success_3_months: "Success in 3 months", reference_links: "Reference links",
   brand_assets: "Brand materials", assets_link: "Materials folder link", materials_link: "Materials folder link",
   business_link: "Business page / website", content_by: "Texts & photos by", accounts_needed: "Accounts needed",
-  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed",
+  current_tools: "Current tools", payment_method: "Payment method", update_channel: "Updates via", portfolio_permission: "Portfolio permission", selected_packages: "Picked on website", estimated_total: "Website estimate", picks_confirmed: "Picks confirmed", business_link: "Link to show", project: "Project", consent: "Consent given",
 };
 const SKIP = new Set(["form-name", "bot-field", "start_utc", "type", "ip", "user_agent", "referrer"]);
 export function detailsTable(data) {
@@ -213,6 +213,27 @@ export function reminderEmails(rec, label) {
       (rec.meetLink ? joinBox(rec.meetLink) : "") + btn(`mailto:${encodeURIComponent(d.email)}`, "Email client") + detailsTable(d)),
   };
   return [client, owner];
+}
+
+export function permissionEmails(rec) {
+  const d = rec.data, first = (d.name || "there").split(" ")[0];
+  const yes = !/^No/.test(d.portfolio_permission || "");
+  const when = new Date(rec.createdAt || Date.now()).toLocaleString("en-US", { timeZone: "Asia/Manila", dateStyle: "long", timeStyle: "short" }) + " (Philippine time)";
+  const consent = d.consent ? `<br><br><b>✅ Consent given</b><br>${esc(d.name)}${d.business ? " of " + esc(d.business) : ""} agreed on ${when}:<br><i>“${esc(d.consent)}”</i>` : "";
+  const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
+  return [{
+    to: d.email, replyTo: OWNER.email(),
+    subject: `Portfolio permission confirmed – thank you, ${first}!`,
+    html: layout(`Thank you, ${first}!`,
+      p(yes ? "Thank you for letting me feature our work together. Here's what you chose:" : "Thank you for letting me know. I'll keep your project private. Here's what you chose:") + summary +
+      p("You can change your answer anytime. Just reply to this email, and I'll update or remove it within 7 days. I never show private details like customer information, logins or the prices you charge.")),
+  }, {
+    to: OWNER.email(), replyTo: d.email,
+    subject: `${yes ? "📸" : "🔒"} Portfolio permission: ${d.business || d.name}`,
+    html: layout("Portfolio permission received", summary + detailsTable(d) +
+      p(yes ? "Next: send Claude 2–5 images of the work and say \"add to selected works\"." : "Don't show this project anywhere.") +
+      p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
+  }];
 }
 
 export function inquiryEmails(rec) {
@@ -295,16 +316,17 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) return { skipped: "no valid email" };
   const type = data.type || (data.start_utc ? "Booking" : "Inquiry");
   data.type = type;
+  if (type === "Portfolio permission" && (!data.consent || !data.portfolio_permission)) return { skipped: "no consent" };
   const key = recordKey(data);
   const files = Object.keys(data).filter((k) => /^file_\d$/.test(k) && data[k]);
   const links = await Promise.all(linkFields.filter((f) => data[f]).map((f) => checkLink(data[f])));
-  const rec = { id: key.split("/")[1], key, type, status: type === "Booking" ? "Call booked" : type === "Payment" ? "Payment to verify" : "New", createdAt: new Date().toISOString(), data, links, files: files.length ? files.map((k) => data[k]) : null, notes: "", reminders: {} };
+  const rec = { id: key.split("/")[1], key, type, status: type === "Booking" ? "Call booked" : type === "Payment" ? "Payment to verify" : type === "Portfolio permission" ? "Permission received" : "New", createdAt: new Date().toISOString(), data, links, files: files.length ? files.map((k) => data[k]) : null, notes: "", reminders: {} };
   if (type === "Booking") {
     const start = new Date(data.start_utc);
     if (isNaN(start)) return { skipped: "bad start time" };
     rec.start = start.toISOString();
   }
-  if (type !== "Payment") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
+  if (type !== "Payment" && type !== "Portfolio permission") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
@@ -321,18 +343,19 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
       if (m) { rec.meetLink = m.meetLink; rec.meetRoom = true; }
     } catch (e) { rec.meetError = e.message; }
   }
-  if (type !== "Payment" && !rec.meetLink) { rec.meetLink = roomLink(rec); rec.meetFallback = true; }
-  const mails = type === "Booking" ? bookingEmails(rec) : type === "Project brief" ? briefEmails(rec) : type === "Payment" ? paymentEmails(rec) : inquiryEmails(rec);
+  if (type !== "Payment" && type !== "Portfolio permission" && !rec.meetLink) { rec.meetLink = roomLink(rec); rec.meetFallback = true; }
+  const mails = type === "Booking" ? bookingEmails(rec) : type === "Project brief" ? briefEmails(rec) : type === "Payment" ? paymentEmails(rec) : type === "Portfolio permission" ? permissionEmails(rec) : inquiryEmails(rec);
   const results = [];
   for (const m of mails) { try { await sendMail(m); results.push("sent:" + m.to); } catch (e) { results.push("failed:" + m.to + ":" + e.message); } }
   rec.emailLog = results;
   await store.setJSON(key, rec);
   try {
     const { sendPush } = await import("./push.mjs");
-    const icon = { Booking: "📅", Inquiry: "💬", "Project brief": "📝", Payment: "💰" }[type] || "🔔";
+    const icon = { Booking: "📅", Inquiry: "💬", "Project brief": "📝", Payment: "💰", "Portfolio permission": "📸" }[type] || "🔔";
     const who = data.name || data.email;
     const body = type === "Booking" ? "Call on " + new Date(rec.start).toLocaleString("en-US", { timeZone: "Asia/Manila", weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " (PH time)"
       : type === "Payment" ? [data.amount, data.payment_method].filter(Boolean).join(" via ") || "Proof of payment uploaded"
+      : type === "Portfolio permission" ? (data.portfolio_permission || "") + (data.business ? " · " + data.business : "")
       : type === "Project brief" ? (data.service || "New project brief") + (data.estimated_total ? " · " + data.estimated_total : "")
       : String(data.message || data.service || "New message").slice(0, 120);
     await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}`, body, url: "/admin.html#" + key, tag: key }, store);

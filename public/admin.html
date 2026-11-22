@@ -48,7 +48,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .card{background:#fff;border:1px solid #E2D9CF;border-radius:6px}
 .ch{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;cursor:pointer}
 .badge{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:99px;background:#EFE8DF;color:#7A4E3A;white-space:nowrap}
-.badge.Booking{background:#E8C9B8}.badge.Inquiry{background:#DCE3D2;color:#3E5230}.badge.Payment{background:#F2E3B3;color:#5C4A1E}.badge.brief{background:#E2D9CF;color:#231E1B}
+.badge.Booking{background:#E8C9B8}.badge.Inquiry{background:#DCE3D2;color:#3E5230}.badge.Payment{background:#F2E3B3;color:#5C4A1E}.badge.Portfolio{background:#E5F0E7;color:#2F6B3F}.badge.brief{background:#E2D9CF;color:#231E1B}
 .who b{font-weight:500}.who small{display:block;color:#6E625A;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .st{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid #C9BAAB;white-space:nowrap}
 .cb{border-top:1px solid #EFE8DF;padding:14px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
@@ -104,7 +104,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <section><h2>Upcoming calls</h2><div class="up" id="upcoming"></div></section>
 <section>
 <div class="tools" style="justify-content:space-between;margin-bottom:12px">
-<div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment">Payments</button></div>
+<div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment">Payments</button><button data-f="Portfolio permission">Permissions</button></div>
 <input type="search" id="q" placeholder="Search name, email, business…">
 </div>
 <div class="list" id="list"></div>
@@ -206,7 +206,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 
 <script>
 {
-const STATUSES=['New','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','Lost','Cancelled'];
+const STATUSES=['New','Permission received','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','Lost','Cancelled'];
 const $=id=>document.getElementById(id);
 let KEY='',RECS=[],FILTER='all';
 try{KEY=sessionStorage.getItem('crmkey')||''}catch(e){}
@@ -358,7 +358,7 @@ function badges(){const unread=RECS.filter(isNew);const by=t=>unread.filter(r=>r
   document.querySelectorAll('#tabs button').forEach(b=>{const f=b.dataset.f;const n=f==='all'?unread.length:by(f);let t=b.querySelector('.tc');if(n){if(!t){t=document.createElement('span');t.className='tc';b.appendChild(t)}t.textContent=n}else if(t)t.remove()});
   const n=unread.length;document.title=(n?'('+n+') ':'')+'CRM – Jeselle Baril';
   try{if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}
-  const nb=$('newbar');nb.hidden=!n;if(n)$('newtxt').textContent='🔴 '+n+' new: '+['Booking','Inquiry','Project brief','Payment'].map(t=>[t,by(t)]).filter(x=>x[1]).map(([t,c])=>c+' '+({Booking:'booking','Inquiry':'inquir','Project brief':'brief','Payment':'payment'}[t])+(t==='Inquiry'?(c>1?'ies':'y'):(c>1?'s':''))).join(', ')}
+  const nb=$('newbar');nb.hidden=!n;if(n)$('newtxt').textContent='🔴 '+n+' new: '+['Booking','Inquiry','Project brief','Payment','Portfolio permission'].map(t=>[t,by(t)]).filter(x=>x[1]).map(([t,c])=>c+' '+({Booking:'booking','Inquiry':'inquir','Project brief':'brief','Payment':'payment','Portfolio permission':'permission'}[t])+(t==='Inquiry'?(c>1?'ies':'y'):(c>1?'s':''))).join(', ')}
 $('seeall').addEventListener('click',()=>{RECS.forEach(r=>seenSet().add(r.key));saveSeen();draw()});
 function toast(t,key){const d=document.createElement('div');d.className='toast';d.textContent=t;d.addEventListener('click',()=>{d.remove();if(key)openRec(key)});document.body.appendChild(d);setTimeout(()=>d.remove(),8000)}
 function openRec(key){FILTER='all';document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.f==='all')));draw();
