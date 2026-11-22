@@ -4,4 +4,4 @@ Disallow: /admin.html
 Disallow: /pay.html
 Disallow: /api/
 
-Sitemap: https://jeselleva.netlify.app/sitemap.xml
+Sitemap: https://jeselleva.com/sitemap.xml
