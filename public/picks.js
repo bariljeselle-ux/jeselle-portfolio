@@ -41,19 +41,34 @@ function initHome(){
  document.addEventListener('currencychange',draw);addEventListener('storage',draw);draw();
 }
 
-/* ---------- Project brief: show picks, pre-tick services, fill hidden fields ---------- */
+/* ---------- Project brief: show picks (remove / confirm), pre-tick services, fill hidden fields ---------- */
 function initBrief(){
  var form=document.getElementById('brief');if(!form||!form.elements.selected_packages)return;
- function fill(){var a=load(),c=cur();
+ var OK='jb-picks-ok';
+ var sig=function(a){return a.map(function(p){return p.id}).join('|')};
+ var isOk=function(a){try{return a.length&&localStorage.getItem(OK)===sig(a)}catch(e){return false}};
+ var setOk=function(a,v){try{v?localStorage.setItem(OK,sig(a)):localStorage.removeItem(OK)}catch(e){}};
+ var st=document.createElement('style');st.textContent='.mypicks li{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:3px 0}.mypicks li button{flex:none;border:0;background:none;color:#8A7E75;font-size:18px;line-height:1;cursor:pointer;min-width:32px;min-height:28px}.mypicks li button:hover{color:#8A2E1E}.mypicks ul{list-style:disc}.mpbtns{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px}.mpok{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border:0;border-radius:3px;background:#2F6B3F;color:#fff;font:500 13px Jost,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}.mpok:focus-visible{outline:2px solid #2F6B3F;outline-offset:2px}.mpdone{display:inline-flex;align-items:center;gap:6px;color:#2F6B3F;font-weight:500}.mypicks.need{animation:mpflash 1s 2;border-left-color:#B3402A}@keyframes mpflash{50%{box-shadow:0 0 0 4px rgba(179,64,42,.25)}}.mpwarn{color:#B3402A;font-size:14px;margin:8px 0 0}@media(prefers-reduced-motion:reduce){.mypicks.need{animation:none}}';document.head.appendChild(st);
+ function fill(){var a=load(),c=cur(),ok=isOk(a);
   form.elements.selected_packages.value=a.map(function(p){return line(p,c)}).join('\n');
   form.elements.estimated_total.value=a.length?summary(a,c):'';
+  if(form.elements.picks_confirmed)form.elements.picks_confirmed.value=a.length?(ok?'Yes, client confirmed '+a.length+' item'+(a.length>1?'s':''):'Not confirmed'):'';
   var box=document.getElementById('mypicks');
-  if(box){box.hidden=!a.length;box.innerHTML=a.length?'<p class="mph">Your picked services</p><ul>'+a.map(function(p){return '<li>'+esc(line(p,c))+'</li>'}).join('')+'</ul><p class="mpt">Estimate: <b>'+esc(summary(a,c))+'</b></p><p class="mpn">Final price is in your written quote. <a href="/#rates">Change picks</a></p>':''}
+  if(box){box.hidden=!a.length;box.classList.remove('need');box.innerHTML=a.length?'<p class="mph">Your picked services</p><ul>'+a.map(function(p){return '<li><span>'+esc(line(p,c))+'</span>'+(ok?'':'<button type="button" data-rm="'+esc(p.id)+'" aria-label="Remove '+esc(p.svc)+'">×</button>')+'</li>'}).join('')+'</ul><p class="mpt">Estimate: <b>'+esc(summary(a,c))+'</b></p>'
+   +'<div class="mpbtns">'+(ok?'<span class="mpdone">✓ Confirmed</span><a href="#" data-edit="1">Edit picks</a>':'<button type="button" class="mpok">✓ Confirm my picks</button><a href="/#rates">Add more</a>')+'</div>'
+   +'<p class="mpn">'+(ok?'Thank you! I\'ll go through these with you on our call. The final price is in your written quote.':'Remove anything you don\'t need with ×, then confirm. The final price is in your written quote.')+'</p>':''}
   var svc=document.getElementById('mypicks2');if(svc){svc.hidden=!a.length;svc.innerHTML=a.length?'Already ticked from your picks: '+esc(a.map(function(p){return p.svc}).join(', '))+'. Add more if you need them.':''}}
  var a=load();
- a.forEach(function(p){(p.brief||'').split('|').forEach(function(v){var i=form.querySelector('input[name=service][value="'+v.replace(/"/g,'')+'"]');if(i&&!i.checked){i.checked=true;try{i.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){}}})});
+ a.forEach(function(p){(p.brief||'').split('|').forEach(function(v){if(!v)return;var i=form.querySelector('input[name=service][value="'+v.replace(/"/g,'')+'"]');if(i&&!i.checked){i.checked=true;try{i.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){}}})});
  fill();document.addEventListener('currencychange',fill);
- document.addEventListener('jb-brief-sent',function(){save([])});
+ document.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;var box=t.closest('#mypicks');
+  if(box){var rm=t.closest('[data-rm]');if(rm){var id=rm.getAttribute('data-rm');var b=load().filter(function(p){return p.id!==id});save(b);setOk(b,false);fill();return}
+   if(t.closest('.mpok')){setOk(load(),true);fill();return}
+   if(t.closest('[data-edit]')){e.preventDefault();setOk(load(),false);fill();return}}
+  // Start brief: picks must be confirmed first
+  if(t.closest('#start')){var cur2=load();if(cur2.length&&!isOk(cur2)){e.preventDefault();e.stopImmediatePropagation();var bx=document.getElementById('mypicks');bx.classList.add('need');if(!bx.querySelector('.mpwarn')){var w=document.createElement('p');w.className='mpwarn';w.textContent='Please confirm your picks (or remove what you don\'t need) before starting.';bx.appendChild(w)}bx.scrollIntoView({behavior:'smooth',block:'center'})}}
+ },true);
+ document.addEventListener('jb-brief-sent',function(){save([]);setOk([],false)});
 }
 function init(){initHome();initBrief()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
