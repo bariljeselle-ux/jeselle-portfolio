@@ -278,6 +278,7 @@ export function briefEmails(rec) {
     subject: `Project brief received – thank you, ${first}!`,
     html: layout("Your project brief is in!",
       p(`Thank you for the details about <b>${esc(d.business || "your business")}</b>. I'll review everything and reply within 1 working day with a plan and quote.`) +
+      (rec.status === "Waitlist" ? box(`🗓️ <b>You're on my waitlist.</b> I'm fully booked right now${rec.capacity?.earliestDelivery ? `, and my next project spot opens <b>${new Date((rec.capacity.earliestStart || rec.capacity.earliestDelivery) + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</b>` : ""}. Your brief keeps your place in line, and I'll contact you as soon as your spot opens. I take clients in the order they arrive so every project gets my full attention.`) : "") +
       picksBox(d, false) +
       (d.payment_method ? p(`<b>Payment:</b> after you accept the quote, I'll email you a private payment link for <b>${esc(d.payment_method)}</b>.`) : "") +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
@@ -287,7 +288,7 @@ export function briefEmails(rec) {
   }, {
     to: OWNER.email(), replyTo: d.email,
     subject: `${rec.scopeFlags?.length ? "⚠️ " : ""}🗂️ New project brief: ${d.business || d.name}`,
-    html: layout("New project brief", scopeBox(rec) + picksBox(d, true) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
+    html: layout("New project brief", (rec.status === "Waitlist" ? box(`🗓️ <b>Added to your waitlist</b> (you were fully booked). The client was told they're on the waitlist${rec.capacity?.earliestStart ? " and that your next spot opens " + rec.capacity.earliestStart : ""}.`) : rec.capacity?.tooSoon ? box(`⏳ <b>Wants it by ${rec.capacity.wanted}</b>, but your earliest delivery is ${rec.capacity.earliestDelivery}. Confirm a realistic date before accepting.`) : "") + scopeBox(rec) + picksBox(d, true) + (rec.meetLink ? roomBox(rec.meetLink, true) : "") + (rec.links?.length ? box("<b>Shared links</b><br>" + linkNote(rec.links)) : "") + detailsTable(d) +
       fileLinks(rec, "Uploaded files") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
@@ -331,7 +332,7 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
   }
   if (type !== "Payment" && type !== "Portfolio permission") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
   // Capacity: can she take this on, and by the date they asked? (shown in the CRM card)
-  if (type === "Project brief" || type === "Inquiry" || type === "Booking") { try { const c = await import("./capacity.mjs"); rec.capacity = c.checkRequest(data, await c.loadCapacity(store || crmStore())); rec.capacity.at = c.phDay(); } catch (e) { console.log("capacity:", e.message); } }
+  if (type === "Project brief" || type === "Inquiry" || type === "Booking") { try { const c = await import("./capacity.mjs"); rec.capacity = c.checkRequest(data, await c.loadCapacity(store || crmStore())); rec.capacity.at = c.phDay(); if (type === "Project brief" && rec.capacity.full) { rec.status = "Waitlist"; rec.statusAt = new Date().toISOString(); } } catch (e) { console.log("capacity:", e.message); } }
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
@@ -395,7 +396,7 @@ const phDate = (d) => new Date(new Date(d).getTime() + 8 * 3600000).toISOString(
 export function nudgeList(recs, now = new Date()) {
   const today = phDate(now), out = [];
   for (const r of recs) {
-    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid/i.test(r.status || "")) continue;
+    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid|waitlist|deliver|progress/i.test(r.status || "")) continue;
     const who = (r.data && (r.data.business || r.data.name)) || "A client";
     const since = new Date(r.statusAt || r.createdAt || now);
     if (r.followUp && r.followUp <= today) out.push({ key: r.key, kind: "follow", text: `Follow up with ${who}${r.followUp < today ? " (was due " + r.followUp + ")" : " today"}` });
@@ -410,11 +411,13 @@ export async function runNudges({ store = crmStore(), now = new Date() } = {}) {
   const recs = [];
   for (const b of blobs) { if (/^(settings|income|expense)\//.test(b.key)) continue; const r = await store.get(b.key, { type: "json" }); if (r) recs.push(r); }
   const list = nudgeList(recs, now);
+  // A project spot is open and someone is waiting: tell her who's next
+  try { const c = await import("./capacity.mjs"); const cap = c.computeCapacity(recs, await c.getSettings(store)); const w = recs.filter((r) => r.status === "Waitlist").sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || "")); if (!cap.full && w.length) list.unshift({ key: w[0].key, kind: "wait", text: `A project spot is open! Next on your waitlist: ${(w[0].data && (w[0].data.business || w[0].data.name)) || "a client"}${w.length > 1 ? ` (+${w.length - 1} more waiting)` : ""}. Contact them now.` }); } catch {}
   const today = phDate(now);
   const last = await store.get("settings/nudges-sent", { type: "json" });
   if (!list.length || last?.date === today) return { count: list.length, skipped: !list.length ? "nothing due" : "already sent today" };
   await store.setJSON("settings/nudges-sent", { date: today, count: list.length });
-  const items = list.map((n) => `<li style="margin:0 0 8px">${{ follow: "📅", quote: "⏳", new: "🆕", pay: "💰" }[n.kind]} ${esc(n.text)}</li>`).join("");
+  const items = list.map((n) => `<li style="margin:0 0 8px">${{ follow: "📅", quote: "⏳", new: "🆕", pay: "💰", wait: "🗓️" }[n.kind]} ${esc(n.text)}</li>`).join("");
   try { await sendMail({ to: OWNER.email(), subject: `☀️ ${list.length} thing${list.length > 1 ? "s" : ""} to follow up today`, html: layout("Today's follow-ups", `<ul style="padding-left:18px;margin:0 0 14px">${items}</ul>` + p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)) }); } catch {}
   try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today, perm: "bookings" }, store); } catch {}
   return { count: list.length };

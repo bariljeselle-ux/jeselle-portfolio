@@ -70,6 +70,36 @@ export function parseWanted(data, today = phDay()) {
 // For a new brief: can she make the date they asked for?
 export function checkRequest(data, cap) {
   const wanted = parseWanted(data);
-  if (cap.paused) return { wanted, tooSoon: !!wanted, full: true, earliestDelivery: null };
-  return { wanted, full: cap.full, earliestDelivery: cap.earliestDelivery, tooSoon: !!wanted && wanted < cap.earliestDelivery };
+  if (cap.paused) return { wanted, tooSoon: !!wanted, full: true, earliestStart: null, earliestDelivery: null };
+  return { wanted, full: cap.full, earliestStart: cap.earliestStart, earliestDelivery: cap.earliestDelivery, tooSoon: !!wanted && wanted < cap.earliestDelivery };
+}
+
+// ---------- Monthly check-in (1st of the month, 9 AM PH): open spots, deliveries due, waitlist ----------
+export async function runMonthlyCheckin({ store = crmStore(), now = new Date() } = {}) {
+  const { sendMail, layout, OWNER } = await import("./core.mjs");
+  const { blobs } = await store.list();
+  const recs = [];
+  for (const b of blobs) { if (/^(settings|income|expense)\//.test(b.key)) continue; const r = await store.get(b.key, { type: "json" }); if (r) recs.push(r); }
+  const settings = await getSettings(store), cap = computeCapacity(recs, settings, phDay(now));
+  const month = phDay(now).slice(0, 7);
+  const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const nice = (d) => d ? new Date(d + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "";
+  const who = (r) => esc((r.data && (r.data.business || r.data.name)) || "A client");
+  const active = recs.filter(isActiveProject).sort((a, b) => a.delivery.localeCompare(b.delivery));
+  const dueNow = active.filter((r) => r.delivery.slice(0, 7) <= month);
+  const wait = recs.filter((r) => r.status === "Waitlist").sort((a, b) => (a.createdAt || "").localeCompare(b.createdAt || ""));
+  const P = (t) => `<p style="margin:0 0 12px;font-size:15px;line-height:1.6">${t}</p>`;
+  const L = (items) => items.length ? `<ul style="margin:0 0 14px;padding-left:18px;font-size:15px;line-height:1.7">${items.join("")}</ul>` : "";
+  const head = cap.paused ? "⏸️ New projects are <b>paused</b>." : cap.full ? `🔴 You're <b>fully booked</b> (${cap.taken} of ${cap.max} spots). Next spot opens <b>${nice(cap.earliestStart)}</b>.` : `🟢 <b>${cap.slotsOpen} of ${cap.max} project spot${cap.max > 1 ? "s" : ""} open.</b> You can take ${cap.slotsOpen === 1 ? "1 new client" : cap.slotsOpen + " new clients"} now.`;
+  const html = layout("Your monthly check-in",
+    P(head) +
+    (dueNow.length ? P("<b>📦 Due this month</b>") + L(dueNow.map((r) => `<li>${nice(r.delivery)} · ${who(r)} <span style="color:#6E625A">(${esc(r.status)})</span></li>`)) : P("📦 No deliveries due this month.")) +
+    (wait.length ? P(`<b>🗓️ On your waitlist (${wait.length})</b>`) + L(wait.slice(0, 10).map((r) => `<li>${who(r)} <span style="color:#6E625A">· waiting since ${nice(phDay(r.createdAt))}</span></li>`)) + (cap.full ? "" : P("👉 You have an open spot: contact the first person on your waitlist.")) : "") +
+    P(`New clients currently see: earliest start <b>${nice(cap.earliestStart) || "paused"}</b>, earliest delivery <b>${nice(cap.earliestDelivery) || "paused"}</b>. Change your limit in CRM → ⚙️ Capacity settings.`) +
+    P(`<a href="${OWNER.site()}/admin.html" style="color:#7A4E3A">Open your CRM →</a>`));
+  const last = await store.get("settings/checkin-sent", { type: "json" });
+  if (last?.month === month) return { skipped: "already sent this month" };
+  await sendMail({ to: OWNER.email(), subject: `🗓️ Monthly check-in: ${cap.full ? "fully booked" : cap.slotsOpen + " spot" + (cap.slotsOpen === 1 ? "" : "s") + " open"}${wait.length ? `, ${wait.length} waiting` : ""}`, html });
+  await store.setJSON("settings/checkin-sent", { month, at: new Date().toISOString() });
+  return { sent: true, open: cap.slotsOpen, waiting: wait.length, due: dueNow.length };
 }

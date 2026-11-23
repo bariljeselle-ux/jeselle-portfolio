@@ -8,6 +8,7 @@ import submit from "../netlify/functions/submit.mjs";
 import googleCallback from "../netlify/functions/google-callback.mjs";
 import capacity from "../netlify/functions/capacity.mjs";
 import { handleSubmission, runReminders, runNudges, runMonthlyBackup, OWNER } from "../netlify/lib/core.mjs";
+import { runMonthlyCheckin } from "../netlify/lib/capacity.mjs";
 
 const ROUTES = { "/api/booked": booked, "/api/crm": crm, "/api/reviews": reviews, "/api/submit": submit, "/api/google/callback": googleCallback, "/api/capacity": capacity };
 const FORM_TYPES = { booking: "Booking", "project-brief": "Project brief", payment: "Payment", inquiry: "Inquiry", permission: "Portfolio permission", "portfolio-permission": "Portfolio permission" };
@@ -83,7 +84,7 @@ export default {
   // Timed jobs (times are UTC: 01:00 UTC = 9 AM Philippine time)
   async scheduled(event, env, ctx) {
     bindEnv(env);
-    const job = event.cron === "*/15 * * * *" ? runReminders : event.cron === "0 1 * * *" ? runNudges : event.cron === "0 1 1 * *" ? runMonthlyBackup : null;
+    const job = event.cron === "*/15 * * * *" ? runReminders : event.cron === "0 1 * * *" ? runNudges : event.cron === "0 1 1 * *" ? () => Promise.allSettled([runMonthlyBackup(), runMonthlyCheckin()]).then((r) => r.map((x) => x.value || x.reason?.message)) : null;
     if (job) ctx.waitUntil(job().then((r) => console.log(event.cron, JSON.stringify(r))).catch((e) => console.log(event.cron, "failed:", e.message)));
   },
 };

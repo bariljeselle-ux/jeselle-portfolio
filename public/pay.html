@@ -57,6 +57,7 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 .tybox p{margin:0 0 12px;font-size:15px;color:#4A413B}
 .typrev{font-size:13px!important;background:#FFF4D6;border-left:3px solid #C99A2E;padding:8px 10px}
 @media(max-width:640px){.steps,.row{grid-template-columns:minmax(0,1fr)}form{padding:20px}}
+label.agree{flex-direction:row!important;display:flex!important}label.agree span{flex:1;color:#231E1B}
 </style>
 <style>.homefab{position:fixed;left:16px;bottom:calc(var(--hb,18px) + env(safe-area-inset-bottom,0px));z-index:40;height:44px;min-width:44px;padding:0 13px;display:inline-flex;align-items:center;gap:0;border-radius:99px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid #E2D9CF;color:#7A4E3A;text-decoration:none;font:500 12px Jost,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 4px 14px rgba(35,30,27,.10);opacity:.9;transition:opacity .2s,transform .2s,gap .25s,box-shadow .2s}.homefab span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}.homefab:hover,.homefab:focus-visible{opacity:1;transform:translateY(-2px);gap:8px;box-shadow:0 8px 20px rgba(35,30,27,.16)}.homefab:hover span,.homefab:focus-visible span{max-width:60px}.homefab:focus-visible{outline:2px solid #7A4E3A;outline-offset:3px}@media print{.homefab{display:none}}body{padding-bottom:72px}</style>
 </head>
@@ -130,8 +131,9 @@ input,select,textarea{font:16px Jost,sans-serif;padding:11px 12px;border:1px sol
 <label><i class="lt">Receipt screenshot <b class="ast">*</b></i><input type="file" name="file_1" accept="image/*,.pdf" required></label>
 <label><i class="lt">Note <span>(optional)</span></i><textarea name="message" rows="3"></textarea></label>
 <p class="err" id="err" hidden></p>
+<label class="agree" style="display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;font-size:14px;line-height:1.5;color:#231E1B;cursor:pointer"><input type="checkbox" name="agreed_terms" value="Yes, agreed to what's included and the Terms" required style="width:20px;height:20px;min-height:20px;flex:none;margin-top:2px"><span>I've read what's included in my quote or package (deliverables, revisions, turnaround and working hours Mon–Fri) and I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a>. <b class="ast">*</b></span></label>
 <button type="submit" class="btn solid" id="send">Send proof of payment</button>
-<p style="margin:10px 0 0;font-size:13px;color:#6E625A">By sending a payment you agree to my <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a>.</p>
+
 </form>
 </main>
 <script>
@@ -152,8 +154,8 @@ function thanks(name,email){
 f.addEventListener('submit',async e=>{
   e.preventDefault();err.hidden=true;
   const file=f.file_1.files[0];
-  const miss=[...f.querySelectorAll('[required]')].find(i=>i.type==='file'?!i.files.length:!i.value.trim());
-  if(miss){err.hidden=false;err.textContent='Please fill in all required fields and attach your receipt.';miss.focus();return}
+  const miss=[...f.querySelectorAll('[required]')].find(i=>i.type==='file'?!i.files.length:i.type==='checkbox'?!i.checked:!i.value.trim());
+  if(miss){err.hidden=false;err.textContent=miss.type==='checkbox'?'Please tick the box to confirm you agree to what\'s included and the Terms.':'Please fill in all required fields and attach your receipt.';miss.focus();return}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email.value.trim())){err.hidden=false;err.textContent='Please enter a valid email.';return}
   if(file.size>8*1024*1024){err.hidden=false;err.textContent='The receipt is over 8 MB. Please send a smaller screenshot.';return}
   btn.disabled=true;btn.textContent='Sending…';
