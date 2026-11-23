@@ -10,7 +10,10 @@ import capacity from "../netlify/functions/capacity.mjs";
 import { handleSubmission, runReminders, runNudges, runMonthlyBackup, OWNER } from "../netlify/lib/core.mjs";
 import { runMonthlyCheckin } from "../netlify/lib/capacity.mjs";
 
-const ROUTES = { "/api/booked": booked, "/api/crm": crm, "/api/reviews": reviews, "/api/submit": submit, "/api/google/callback": googleCallback, "/api/capacity": capacity };
+const ROUTES = { "/api/booked": booked, "/api/crm": crm, "/api/reviews": reviews, "/api/submit": submit, "/api/google/callback": googleCallback, "/api/capacity": capacity,
+  // Easy-to-share link to the JB Creates VA Facebook Page
+  "/facebook": () => Response.redirect("https://www.facebook.com/profile.php?id=61596950876603", 302),
+  "/messenger": () => Response.redirect("https://m.me/61596950876603", 302) };
 const FORM_TYPES = { booking: "Booking", "project-brief": "Project brief", payment: "Payment", inquiry: "Inquiry", permission: "Portfolio permission", "portfolio-permission": "Portfolio permission" };
 const MAX_FILE = 20 * 1024 * 1024; // 20 MB per uploaded file
 const seen = new Map(); // simple flood guard
