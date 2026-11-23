@@ -246,7 +246,7 @@ export function inquiryEmails(rec) {
     to: d.email, replyTo: OWNER.email(),
     subject: `Thanks for your inquiry, ${first}!`,
     html: layout(`Thank you, ${first}!`,
-      p(`I received your message about <b>${esc(d.service || "your project")}</b> and will reply within 24 hours with next steps.`) +
+      p(`I received your message about <b>${esc(d.service || "your project")}</b> and will reply within 1 working day with next steps.`) +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
       (rec.meetLink ? roomBox(rec.meetLink) : "") +
       btn(`${OWNER.site()}/#book`, "Book a free call") + btn(`${OWNER.site()}/brief.html`, "Fill in project brief") +
@@ -277,7 +277,7 @@ export function briefEmails(rec) {
     to: d.email, replyTo: OWNER.email(),
     subject: `Project brief received – thank you, ${first}!`,
     html: layout("Your project brief is in!",
-      p(`Thank you for the details about <b>${esc(d.business || "your business")}</b>. I'll review everything and reply within 24 hours with a plan and quote.`) +
+      p(`Thank you for the details about <b>${esc(d.business || "your business")}</b>. I'll review everything and reply within 1 working day with a plan and quote.`) +
       picksBox(d, false) +
       (d.payment_method ? p(`<b>Payment:</b> after you accept the quote, I'll email you a private payment link for <b>${esc(d.payment_method)}</b>.`) : "") +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
@@ -300,7 +300,7 @@ export function paymentEmails(rec) {
     to: d.email, replyTo: OWNER.email(),
     subject: `Proof of payment received – thank you, ${first}!`,
     html: layout(`Thank you, ${first}!`,
-      p(`I received your proof of payment of <b>${esc(d.amount)}</b> via <b>${esc(d.payment_method)}</b>. I'll verify it and confirm by email within 24 hours, then we'll get started.`) +
+      p(`I received your proof of payment of <b>${esc(d.amount)}</b> via <b>${esc(d.payment_method)}</b>. I'll verify it and confirm by email within 1 working day (Mon–Fri), then we'll get started.`) +
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">Your payment details</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,
