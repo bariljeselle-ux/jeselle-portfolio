@@ -84,20 +84,28 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .mhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.mhead select{min-height:40px;width:auto;max-width:100%}
 .mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#E2D9CF;border:1px solid #E2D9CF;border-radius:6px;overflow:hidden;margin-top:8px}.mgrid div{background:#fff;padding:12px 14px}.mgrid small{display:block;font-size:12px;color:#6E625A;letter-spacing:.04em}.mgrid b{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1.1}.mgrid i{display:block;font-style:normal;font-size:12px;margin-top:2px}.up{color:#2F6B3F}.dn{color:#8A2E1E}.mtop{margin:10px 0 0;font-size:14px}.mtop span{display:inline-block;background:#F7EDE6;border-radius:99px;padding:3px 10px;margin:4px 4px 0 0}
 @media(max-width:700px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.teamrow{background:#fff;border:1px solid #E2D9CF;border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.teamrow .top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline}.teamrow small{color:#6E625A}
+.perms{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}.perms label{display:flex;gap:6px;align-items:center}.perms input{width:18px;min-height:18px}
+.acts{list-style:none;margin:0;padding:0;font-size:14px}.acts li{padding:7px 0;border-bottom:1px solid #F1ECE5}.acts small{color:#6E625A}
+.whoami{font-size:13px;color:#6E625A}.linkbtn{background:none;border:0;color:#7A4E3A;text-decoration:underline;cursor:pointer;padding:4px;font-size:14px;min-height:0}
+.chip.asg{background:#E9E1F3;color:#4A3570}
 </style>
 </head>
 <body>
 <section class="login" id="login">
 <h1>Your CRM</h1>
 <p style="margin:0;color:#6E625A">Bookings, inquiries and project briefs from your website.</p>
+<input type="email" id="lemail" placeholder="Your email" autocomplete="username" hidden>
 <input type="password" id="pw" placeholder="Admin password" autocomplete="current-password">
 <button class="pri" id="go">Open CRM</button>
 <p class="msg" id="lmsg" hidden></p>
 <button type="button" id="forgot" style="background:none;border:0;color:#7A4E3A;text-decoration:underline;cursor:pointer;padding:4px;font-size:14px">Forgot password?</button>
+<button type="button" id="teamtog" class="linkbtn">I'm a team member</button>
 </section>
 <section class="login" id="resetbox" hidden>
-<h1>Choose a new password</h1>
-<p style="margin:0;color:#6E625A">At least 8 characters. Only you will know it.</p>
+<h1 id="rtitle">Choose a new password</h1>
+<p style="margin:0;color:#6E625A" id="rsub">At least 8 characters. Only you will know it.</p>
 <input type="password" id="rp1" placeholder="New password" autocomplete="new-password">
 <input type="password" id="rp2" placeholder="Type it again" autocomplete="new-password">
 <button class="pri" id="rgo">Save and open CRM</button>
@@ -106,8 +114,8 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 
 <div id="app" hidden>
 <header>
-<p class="brand">Client CRM <span>· Jeselle Baril</span></p>
-<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test">Send test email</button><a class="btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
+<p class="brand">Client CRM <span>· Jeselle Baril</span> <span class="whoami" id="whoami"></span></p>
+<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test" class="own">Send test email</button><button id="teambtn" class="own">👥 Team</button><a class="btn own" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn pay" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
 </header>
 <main>
 <form id="pwbox" hidden style="background:#fff;border:1px solid #E2D9CF;border-radius:8px;padding:20px;margin:0 0 18px;max-width:440px">
@@ -124,15 +132,15 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div class="stats" id="stats"></div>
 <section id="today"><h2>☀️ Today</h2><div id="todaylist"></div></section>
 <section><h2>Upcoming calls</h2><div class="up" id="upcoming"></div></section>
-<section id="month"><div class="mhead"><h2>📊 Monthly summary</h2><select id="mpick" aria-label="Month"></select></div><div id="msum"></div></section>
+<section id="month" class="pay"><div class="mhead"><h2>📊 Monthly summary</h2><select id="mpick" aria-label="Month"></select></div><div id="msum"></div></section>
 <section>
 <div class="tools" style="justify-content:space-between;margin-bottom:12px">
-<div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment">Payments</button><button data-f="Portfolio permission">Permissions</button></div>
+<div class="tabs" id="tabs"><button data-f="all" aria-pressed="true">All</button><button data-f="mine" id="minetab" hidden>Assigned to me</button><button data-f="Booking">Bookings</button><button data-f="Inquiry">Inquiries</button><button data-f="Project brief">Briefs</button><button data-f="Payment" class="pay">Payments</button><button data-f="Portfolio permission">Permissions</button></div>
 <input type="search" id="q" placeholder="Search name, email, business…">
 </div>
 <div class="list" id="list"></div>
 </section>
-<section id="income"><h2>💰 Income records</h2>
+<section id="income" class="pay"><h2>💰 Income records</h2>
 <p style="margin:-4px 0 12px;font-size:14px;color:#6E625A">Every payment you receive, in pesos. Use this for your own books and your BIR filing.</p>
 <details class="iguide" open><summary>📝 What you must do here</summary>
 <p class="ih">Every time you get paid</p>
@@ -178,7 +186,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </form>
 <div id="ilist"></div>
 </section>
-<section id="expenses"><h2>🧾 Business expenses</h2>
+<section id="expenses" class="pay"><h2>🧾 Business expenses</h2>
 <p style="margin:-4px 0 12px;font-size:14px;color:#6E625A">What you spend to run your business, in pesos. Together with your income, this shows your real profit.</p>
 <details class="iguide eguide" open><summary>📝 What you must do here</summary>
 <p class="ih">What counts as a business expense</p>
@@ -222,6 +230,16 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </form>
 <div id="elist"></div>
 </section>
+<section id="team" class="own" hidden><h2>👥 Team accounts</h2>
+<p style="margin:0 0 12px;color:#6E625A;font-size:14px">Let helpers log in with <b>their own email and password</b>. They only see what you tick. You can turn someone off any time, and nobody ever needs your password.</p>
+<div class="list" id="tlist"></div>
+<details class="card" id="tadd" style="padding:14px;margin-top:12px"><summary style="cursor:pointer;font-weight:500">➕ Add a team member</summary>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px;margin-top:10px"><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Name<input id="t-name" maxlength="80"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Email<input id="t-email" type="email" maxlength="120"></label></div>
+<p style="margin:10px 0 6px;font-size:13px;color:#6E625A">They can help with:</p><div class="perms" id="t-perms"></div>
+<div class="row" style="margin-top:12px"><button class="pri" id="t-save">Add and email their invite</button></div>
+<p style="margin:8px 0 0;font-size:13px;color:#6E625A">They get an email with a link to choose their own password (works for 7 days). Then they log in here with "I'm a team member".</p></details>
+<details class="card" id="tact" style="padding:14px;margin-top:12px"><summary style="cursor:pointer;font-weight:500">🕘 Activity log (who did what)</summary><ul class="acts" id="actlist"><li>Loading…</li></ul></details>
+</section>
 <section id="reviews"><h2>Reviews &amp; feedback</h2><div class="rsum" id="rsum"></div><div class="tools" style="margin-bottom:12px"><div class="tabs" id="rtabs"><button data-f="all" aria-pressed="true">All</button><button data-f="Published" aria-pressed="false">Live</button><button data-f="Private" aria-pressed="false">Private</button><button data-f="Hidden" aria-pressed="false">Hidden</button></div><a class="btn" href="/reviews.html" target="_blank" rel="noopener">Open reviews page ↗</a><button id="rlink">Copy review link for clients</button></div><details class="card" id="radd" style="padding:14px;margin-bottom:12px"><summary style="cursor:pointer;font-weight:500">➕ Add a testimonial you collected (Messenger, email, Google…)</summary><p style="font-size:13px;color:#6E625A;margin:8px 0">Only add real feedback a client actually sent you, in their words. It shows "via [where you got it]" on your page.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px"><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Client name<input id="a-name"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Business<input id="a-biz"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Stars<select id="a-rate"><option value="5">★★★★★ 5</option><option value="4">★★★★☆ 4</option><option value="3">★★★☆☆ 3</option><option value="2">★★☆☆☆ 2</option><option value="1">★☆☆☆☆ 1</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Service<select id="a-svc"><option value="">—</option><option>Website design</option><option>SEO</option><option>Social media management</option><option>Graphic design</option><option>CRM &amp; automation</option><option>Complete package</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Where they sent it<select id="a-src"><option>Facebook Messenger</option><option>Email</option><option>Google review</option><option>Text message</option><option>Facebook comment</option><option>Other</option></select></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Date received<input type="date" id="a-date"></label><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px">Their photo or logo (optional)<input type="file" id="a-photo" accept="image/*" style="padding:7px"></label></div><label style="font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px;margin-top:10px">Their words<textarea id="a-text" rows="3"></textarea></label><div class="row" style="margin-top:10px"><button class="pri" id="a-save">Add to my reviews page</button></div></details><div class="list" id="rlist"></div></section>
 <p class="msg" id="amsg" hidden></p>
 </main>
@@ -231,7 +249,8 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 {
 const STATUSES=['New','Permission received','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','Lost','Cancelled'];
 const $=id=>document.getElementById(id);
-let KEY='',RECS=[],FILTER='all';
+let KEY='',RECS=[],FILTER='all',ME={role:'owner',perms:['bookings','payments','reviews']},TEAM=[];
+const can=p=>ME.role==='owner'||(ME.perms||[]).includes(p);
 try{KEY=sessionStorage.getItem('crmkey')||''}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(iso,tz)=>new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:tz,timeZoneName:'short'}).format(new Date(iso));
@@ -239,19 +258,24 @@ const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
-  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];$('login').hidden=true;$('app').hidden=false;draw();idraw();edraw();gload();rload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
+  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];ME=j.me||ME;TEAM=j.team||[];access();$('login').hidden=true;$('app').hidden=false;draw();if(can('payments')){idraw();edraw()}gload();if(can('reviews'))rload();if(ME.role==='owner')tload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
+function access(){const own=ME.role==='owner';
+  document.querySelectorAll('.own').forEach(x=>{if(x.id!=='team')x.hidden=!own});document.querySelectorAll('.pay').forEach(x=>x.hidden=!can('payments'));
+  $('reviews').hidden=!can('reviews');if(!own)$('team').hidden=true;$('minetab').hidden=!TEAM.length&&own;$('minetab').textContent=own?'Not assigned':'Assigned to me';
+  $('whoami').textContent=own?'':'· Logged in as '+ME.name;$('cpw').textContent=own?'Change password':'Change my password'}
+const teamFor=r=>TEAM.filter(m=>(m.perms||[]).includes(r.type==='Payment'?'payments':'bookings'));
 function draw(){setTimeout(()=>{badges();try{tdraw();mdraw()}catch(e){}},0);
   const now=Date.now(),c=t=>RECS.filter(r=>r.type===t).length;
   const up=RECS.filter(r=>r.start&&new Date(r.start)>now&&!/cancel|lost/i.test(r.status)).sort((a,b)=>a.start.localeCompare(b.start));
   $('stats').innerHTML=[['Upcoming calls',up.length],['Bookings',c('Booking')],['Inquiries',c('Inquiry')],['Briefs',c('Project brief')],['Won',RECS.filter(r=>r.status==='Won').length]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
   $('upcoming').innerHTML=up.length?up.slice(0,6).map(r=>`<div class="upc"><span class="t">${esc(fmt(r.start,'Asia/Manila'))}<small>Client: ${esc(fmt(r.start,r.data.client_time_zone||'UTC'))}</small></span><span><b>${esc(r.data.name)}</b> · ${esc(r.data.business||'')}<small>${esc(r.data.service||'')}</small></span><span class="row">${r.meetLink?`<a class="btn meet" href="${esc(r.meetLink)}" target="_blank" rel="noopener">🎥 Join call</a>`:`<button class="meet f-mkup" data-key="${esc(r.key)}">Create meeting link</button>`}</span></div>`).join(''):'<div class="empty">No upcoming calls yet.</div>';
   const q=$('q').value.trim().toLowerCase();
-  const list=RECS.filter(r=>(FILTER==='all'||r.type===FILTER)&&(!q||JSON.stringify(r.data).toLowerCase().includes(q)));
+  const list=RECS.filter(r=>(FILTER==='all'||(FILTER==='mine'?(ME.role==='owner'?!r.assignee:r.assignee&&r.assignee.id===ME.id):r.type===FILTER))&&(!q||JSON.stringify(r.data).toLowerCase().includes(q)));
   $('list').innerHTML=list.length?list.map(card).join(''):'<div class="empty">Nothing here yet. New bookings, inquiries and briefs appear automatically.</div>';
 }
-function payBtn(r){const d=r.data||{};if(r.type==='Payment')return '';
+function payBtn(r){const d=r.data||{};if(r.type==='Payment'||!can('payments'))return '';
   const m=String(d.payment_method||'').toLowerCase();const key=m.includes('wise')?'wise':m.includes('remitly')?'remitly':m.includes('maya')?'maya':m.includes('gcash')?'gcash':'';
   const link=location.origin+'/pay.html'+(key?'#'+key:'');const first=String(d.name||'').split(' ')[0];
   const body=`Hi ${first},\n\nThank you for accepting the quote! Here is your private payment page${key?' ('+d.payment_method+')':''}:\n${link}\n\nAmount: [amount]\n\nAfter paying, please upload your receipt on the same page so I can confirm it and start your project.\n\nThank you!\nJeselle`;
@@ -278,18 +302,19 @@ function card(r){
   const scope=sf.length?`<div class="scope"><b>⚠️ Heads up: may be outside your services</b><ul>${sf.map(x=>`<li>${x.emoji} <b>${esc(x.name)}</b> <small>(${esc(x.label)})</small>${x.warn?' <b class="warn">Against platform rules. Don\'t accept.</b>':''}<br><small>They wrote: "${esc(x.quote)}"</small><br>👉 ${esc(x.todo)}</li>`).join('')}</ul><small>Templates: <a href="https://claude.ai/artifact/8E7kS9BtnXJKM1bE4d7Pgp" target="_blank" rel="noopener">Client Delivery Kit</a>. Not sure? Paste their message to Claude.</small></div>`:'';
   const meetRow=r.type==='Payment'?'':`<tr><td>🎥 Meeting link</td><td>${r.meetLink?`<a href="${esc(r.meetLink)}" target="_blank" rel="noopener"><b>${esc(r.meetLink.replace(/^https:\/\//,''))}</b></a>${r.start?'':' <span style="color:#6E625A">(room, no time set)</span>'}`:`<span style="color:#6E625A">${r.meetError?'⚠️ '+esc(r.meetError):'No link yet'}</span>`}</td></tr>`;
   const incBtn=r.type==='Payment'?(r.incomeKey?'<span class="chip ok">💰 Recorded in income</span>':'<button class="pri f-inc">💰 Record as income</button>'):'';
-  return `<article class="card${isNew(r)?' unread':''}" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${isNew(r)?'<span class="rdot" aria-label="New"></span>':''}${sf.length?'⚠️ ':''}${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}${d.portfolio_permission?` <span title="Portfolio permission: ${esc(d.portfolio_permission)}">${/^No/.test(d.portfolio_permission)?'🔒':/without/.test(d.portfolio_permission)?'📸 no name':'📸'}</span>`:''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${esc(r.status)}</span></div>
+  return `<article class="card${isNew(r)?' unread':''}" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${isNew(r)?'<span class="rdot" aria-label="New"></span>':''}${sf.length?'⚠️ ':''}${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}${d.portfolio_permission?` <span title="Portfolio permission: ${esc(d.portfolio_permission)}">${/^No/.test(d.portfolio_permission)?'🔒':/without/.test(d.portfolio_permission)?'📸 no name':'📸'}</span>`:''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${r.assignee?`<span class="chip asg" title="Assigned">👤 ${esc(r.assignee.name)}</span> `:''}${esc(r.status)}</span></div>
   <div class="cb" hidden><div>${scope}${picksHtml(d)}<div class="row" style="margin-bottom:8px">${incBtn} ${links} ${rem} ${files}</div><table class="kv">${meetRow}${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
   <div class="side">${meetBlock(r)}<label>Status<select class="f-status">${STATUSES.map(s=>`<option${s===r.status?' selected':''}>${s}</option>`).join('')}</select></label>
+  ${teamFor(r).length||r.assignee?`<label>Assigned to<select class="f-assign"><option value="">${ME.role==='owner'?'Me (owner)':'The owner'}</option>${teamFor(r).map(m=>`<option value="${esc(m.id)}"${r.assignee&&r.assignee.id===m.id?' selected':''}>${esc(m.name)}${m.id===ME.id?' (me)':''}</option>`).join('')}</select><small style="font-size:11px">They get an email${r.gcalEventId?' and a calendar invite with the Meet link':''}.</small></label>`:''}
   <label>Next follow-up<input type="date" class="f-follow" value="${esc(r.followUp||'')}"></label>
   <label>Notes<textarea class="f-notes" rows="4" placeholder="Private notes">${esc(r.notes||'')}</textarea></label>
-  <div class="row"><button class="pri f-save">Save</button><a class="btn" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Re: your '+(r.type||'inquiry').toLowerCase())}">Email</a>${d.phone?`<a class="btn" href="https://wa.me/${esc(String(d.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">WhatsApp</a>`:''}${payBtn(r)}<button class="f-del">Delete</button></div></div></div></article>`;
+  <div class="row"><button class="pri f-save">Save</button><a class="btn" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Re: your '+(r.type||'inquiry').toLowerCase())}">Email</a>${d.phone?`<a class="btn" href="https://wa.me/${esc(String(d.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">WhatsApp</a>`:''}${payBtn(r)}${ME.role==='owner'?'<button class="f-del">Delete</button>':''}</div></div></div></article>`;
 }
 $('list').addEventListener('click',async e=>{
   const c=e.target.closest('.card');if(!c)return;const key=c.dataset.key;
   if(e.target.closest('.f-inc')){const r=RECS.find(x=>x.key===key),d=r.data||{};const raw=String(d.amount||'');const cur=/\$|usd/i.test(raw)?'USD':'PHP';const num=raw.replace(/[^0-9.]/g,'');iopen({client:d.name||'',description:d.what_for||d.project||'Payment',amount:num,currency:cur,php:cur==='PHP'?num:'',method:/maya/i.test(d.payment_method)?'Maya':/remitly/i.test(d.payment_method)?'Remitly':/gcash/i.test(d.payment_method)?'GCash':'Other',reference:d.reference||'',date:(r.createdAt||'').slice(0,10),sourceKey:key});return}
   if(e.target.closest('.ch')){const b=c.querySelector('.cb');b.hidden=!b.hidden;c.querySelector('.ch').setAttribute('aria-expanded',!b.hidden);if(!b.hidden&&markSeen(key)){c.classList.remove('unread');const d=c.querySelector('.rdot');if(d)d.remove();badges()}return}
-  if(e.target.closest('.f-save')){try{const j=await api({body:{action:'update',key,status:c.querySelector('.f-status').value,notes:c.querySelector('.f-notes').value,followUp:c.querySelector('.f-follow').value}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');draw()}catch(err){note(err.message,1)}}
+  if(e.target.closest('.f-save')){try{const j=await api({body:{action:'update',key,status:c.querySelector('.f-status').value,notes:c.querySelector('.f-notes').value,followUp:c.querySelector('.f-follow').value,...(c.querySelector('.f-assign')?{assignedTo:c.querySelector('.f-assign').value}:{})}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');draw()}catch(err){note(err.message,1)}}
   if(e.target.closest('.f-copy')){try{await navigator.clipboard.writeText(e.target.dataset.link);note('Meet link copied ✓')}catch(err){note(e.target.dataset.link)}return}
   if(e.target.closest('.f-room')){const b=e.target;b.disabled=true;b.textContent='Creating…';try{const j=await api({body:{action:'make-room',key}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Meeting link created ✓');draw()}catch(err){note(err.message,1);b.disabled=false;b.textContent='Try again'}return}
   if(e.target.closest('.f-meet')){const w=c.querySelector('.f-when');let start='';if(w){if(!w.value){note('Pick a date and time first',1);return}start=new Date(w.value+':00+08:00').toISOString()}
@@ -299,6 +324,7 @@ $('list').addEventListener('click',async e=>{
 $('list').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('ch')){e.preventDefault();e.target.click()}});
 $('upcoming').addEventListener('click',async e=>{const b=e.target.closest('.f-mkup');if(!b)return;b.disabled=true;b.textContent='Creating…';try{const j=await api({body:{action:'make-meet',key:b.dataset.key}});RECS=RECS.map(r=>r.key===b.dataset.key?j.rec:r);note('Meeting link created and client emailed ✓');draw()}catch(err){note(err.message,1);b.disabled=false;b.textContent='Try again'}});
 async function gload(){const g=$('gbar');try{const s=await api({body:{action:'google-status'}});
+  if(ME.role!=='owner'){g.innerHTML=`<p>🎥 ${s.connected?'<b>Google Meet is on.</b> Calls get a Google Meet link automatically. You\'re added to the calls assigned to you.':'<b>Video call links are on.</b>'}</p>`;return}
   g.innerHTML=s.connected?`<p>🎥 <b>Google Meet is on.</b> Every booking, inquiry and brief gets a Meet link automatically${s.email?' on '+esc(s.email):''}.</p><button id="gdis">Disconnect</button>`
   :s.keys?`<p>🎥 <b>Video call links are on</b> (free instant rooms). Connect Google Calendar to switch them to Google Meet.</p><button class="meet" id="gcon">Connect Google Calendar</button>`
   :`<p>🎥 <b>Video call links are on</b> (free instant rooms, no setup). Optional: to use Google Meet instead, add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Cloudflare (your site → Settings → Variables and Secrets). Redirect URI to use in Google Cloud: <code>${esc(s.redirectUri)}</code></p>`}
@@ -508,14 +534,38 @@ $('pwbox').addEventListener('submit',async e=>{e.preventDefault();const m=$('pwm
  if($('pw1').value.length<8){m.textContent='Use at least 8 characters.';return}
  if($('pw1').value!==$('pw2').value){m.textContent="The two new passwords don't match.";return}
  m.style.color='#6E625A';m.textContent='Saving…';
- try{await api({body:{action:'change-password',current:$('pw0').value,next:$('pw1').value}});KEY=$('pw1').value;try{sessionStorage.setItem('crmkey',KEY)}catch(x){}$('pwbox').reset();m.style.color='#2F6B3F';m.textContent='✓ Password changed. Use your new password next time you log in.'}
+ try{await api({body:{action:'change-password',current:$('pw0').value,next:$('pw1').value}});if(ME.role==='owner'){KEY=$('pw1').value;try{sessionStorage.setItem('crmkey',KEY)}catch(x){}}$('pwbox').reset();m.style.color='#2F6B3F';m.textContent='✓ Password changed. Use your new password next time you log in.'}
  catch(x){m.style.color='#8A2E1E';m.textContent=x.message}});
-$('out').addEventListener('click',()=>{KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
+$('out').addEventListener('click',async()=>{if(KEY.startsWith('staff:')){try{await api({body:{action:'logout'}})}catch(e){}}KEY='';try{sessionStorage.removeItem('crmkey')}catch(e){}location.reload()});
+
+// ---------- TEAM ACCOUNTS (owner) ----------
+let PERMS={};
+const permBoxes=(cls,on)=>Object.entries(PERMS).map(([k,l])=>`<label><input type="checkbox" class="${cls}" value="${esc(k)}"${on.includes(k)?' checked':''}> ${esc(l)}</label>`).join('');
+async function tload(){try{const j=await api({body:{action:'team-list'}});PERMS=j.perms||{};$('t-perms').innerHTML=permBoxes('tp',['bookings']);tdrawTeam(j.team||[])}catch(e){$('tlist').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+function tdrawTeam(list){$('tlist').innerHTML=list.length?list.map(m=>`<div class="teamrow" data-id="${esc(m.id)}"><div class="top"><span><b>${esc(m.name)}</b> <small>${esc(m.email)}</small></span><small>${!m.active?'⏸️ Turned off':m.invited?'✉️ Invited, waiting for them to set a password':'✅ Active'+(m.lastLogin?' · last login '+esc(new Date(m.lastLogin).toLocaleDateString('en-US',{month:'short',day:'numeric'})):'')}</small></div><div class="perms">${permBoxes('mp',m.perms||[])}</div><div class="row"><button class="pri m-save">Save access</button><button class="m-resend">${m.invited?'Resend invite':'New password link'}</button><button class="m-active" data-on="${m.active?1:0}">${m.active?'Turn off access':'Turn access back on'}</button><button class="m-del">Remove</button></div></div>`).join(''):'<div class="empty">No team members yet. Add one below when your helper is ready.</div>'}
+$('teambtn').addEventListener('click',()=>{$('team').hidden=false;$('team').scrollIntoView({behavior:'smooth'})});
+$('t-save').addEventListener('click',async e=>{const b=e.target;b.disabled=true;try{const perms=[...document.querySelectorAll('.tp:checked')].map(x=>x.value);const j=await api({body:{action:'team-save',member:{name:$('t-name').value,email:$('t-email').value,perms}}});$('t-name').value='';$('t-email').value='';$('tadd').open=false;note(j.mailError?'Added, but the invite email failed: '+j.mailError:'Added ✓ '+j.member.name+' will get an email to set a password.',!!j.mailError);await tload();load()}catch(err){note(err.message,1)}b.disabled=false});
+$('tlist').addEventListener('click',async e=>{const row=e.target.closest('.teamrow'),b=e.target.closest('button');if(!row||!b)return;const id=row.dataset.id;
+  try{if(b.classList.contains('m-save')||b.classList.contains('m-active')){const perms=[...row.querySelectorAll('.mp:checked')].map(x=>x.value);const name=row.querySelector('b').textContent,email=row.querySelector('small').textContent;
+      const body={id,name,email,perms};if(b.classList.contains('m-active'))body.active=b.dataset.on!=='1';await api({body:{action:'team-save',member:body}});note('Saved ✓')}
+    else if(b.classList.contains('m-resend')){await api({body:{action:'team-resend',id}});note('Email sent ✓ They choose a new password from the link.')}
+    else if(b.classList.contains('m-del')){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to remove';return}await api({body:{action:'team-remove',id}});note('Removed')}
+    await tload();load()}catch(err){note(err.message,1)}});
+$('tact').addEventListener('toggle',async()=>{if(!$('tact').open)return;try{const j=await api({body:{action:'activity'}});$('actlist').innerHTML=(j.activity||[]).length?j.activity.slice(0,100).map(a=>`<li><b>${esc(a.who)}</b> ${esc(a.text)}${a.key?` <button type="button" class="linkbtn" data-open="${esc(a.key)}">Open</button>`:''}<br><small>${esc(new Date(a.at).toLocaleString('en-US',{timeZone:'Asia/Manila',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))}</small></li>`).join(''):'<li>Nothing yet.</li>'}catch(e){$('actlist').innerHTML=`<li>${esc(e.message)}</li>`}});
+$('actlist').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b&&RECS.some(r=>r.key===b.dataset.open))openRec(b.dataset.open)});
 
 // ---------- FORGOT PASSWORD ----------
-addEventListener('hashchange',()=>{if(/^#reset=/.test(location.hash))location.reload()});
-$('forgot').addEventListener('click',async()=>{const m=$('lmsg');m.hidden=false;m.style.color='#6E625A';m.textContent='Sending…';
+addEventListener('hashchange',()=>{if(/^#(reset|invite)=/.test(location.hash))location.reload()});
+$('forgot').addEventListener('click',async()=>{const m=$('lmsg');m.hidden=false;if(TEAMLOGIN){m.style.color='#6E625A';m.textContent='Ask the owner to send you a new set-password link (Team → New password link).';return}m.style.color='#6E625A';m.textContent='Sending…';
  try{await fetch('/api/crm?forgot=1',{method:'POST'});m.style.color='#2F6B3F';m.textContent='✓ A reset link was sent to your email. It works for 30 minutes. Check Spam too.'}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}});
+{const inv=(location.hash.match(/^#invite=([0-9a-f]{48})$/)||[])[1];if(inv){$('login').hidden=true;$('resetbox').hidden=false;$('rtitle').textContent='Welcome to the team!';$('rsub').textContent='Choose your own password (at least 8 characters). You\'ll log in with your email and this password.';
+ const go=async()=>{const m=$('rmsg');m.style.color='#8A2E1E';const a=$('rp1').value,b=$('rp2').value;
+  if(a.length<8){m.textContent='Use at least 8 characters.';return}if(a!==b){m.textContent="The two passwords don't match.";return}
+  m.style.color='#6E625A';m.textContent='Saving…';
+  try{const r=await fetch('/api/crm?invite=1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:inv,next:a})});const j=await r.json().catch(()=>({}));
+   if(!r.ok){m.style.color='#8A2E1E';m.textContent=j.error||'Could not save.';return}
+   history.replaceState(null,'',location.pathname);KEY='staff:'+j.token;TEAMLOGIN=true;try{sessionStorage.setItem('crmkey',KEY);localStorage.setItem('crm-team','1')}catch(e){}$('resetbox').hidden=true;load()}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}};
+ $('rgo').addEventListener('click',go);$('rp2').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}}
 {const t=(location.hash.match(/^#reset=([0-9a-f]{48})$/)||[])[1];if(t){$('login').hidden=true;$('resetbox').hidden=false;
  const go=async()=>{const m=$('rmsg');m.style.color='#8A2E1E';const a=$('rp1').value,b=$('rp2').value;
   if(a.length<8){m.textContent='Use at least 8 characters.';return}if(a!==b){m.textContent="The two passwords don't match.";return}
@@ -524,7 +574,15 @@ $('forgot').addEventListener('click',async()=>{const m=$('lmsg');m.hidden=false;
    if(!r.ok){m.style.color='#8A2E1E';m.textContent=j.error||'Could not save.';return}
    history.replaceState(null,'',location.pathname);KEY=a;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}$('resetbox').hidden=true;load()}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}};
  $('rgo').addEventListener('click',go);$('rp2').addEventListener('keydown',e=>{if(e.key==='Enter')go()})}}
-const login=()=>{KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load()};
+let TEAMLOGIN=false;try{TEAMLOGIN=localStorage.getItem('crm-team')==='1'}catch(e){}
+const tmode=()=>{$('lemail').hidden=!TEAMLOGIN;$('pw').placeholder=TEAMLOGIN?'Your password':'Admin password';$('teamtog').textContent=TEAMLOGIN?'I\'m the owner':'I\'m a team member';$('lmsg').hidden=true};tmode();
+$('teamtog').addEventListener('click',()=>{TEAMLOGIN=!TEAMLOGIN;try{localStorage.setItem('crm-team',TEAMLOGIN?'1':'0')}catch(e){}tmode();(TEAMLOGIN?$('lemail'):$('pw')).focus()});
+const login=async()=>{if(!TEAMLOGIN){KEY=$('pw').value;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}load();return}
+  const m=$('lmsg');m.hidden=false;m.style.color='#6E625A';m.textContent='Logging in…';
+  try{const r=await fetch('/api/crm?login=1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('lemail').value,password:$('pw').value})});const j=await r.json().catch(()=>({}));
+   if(!r.ok){m.style.color='#8A2E1E';m.textContent=j.error||'Could not log in.';return}
+   KEY='staff:'+j.token;try{sessionStorage.setItem('crmkey',KEY)}catch(e){}m.hidden=true;$('pw').value='';load()}catch(e){m.style.color='#8A2E1E';m.textContent='Could not connect. Please try again.'}};
+$('lemail').addEventListener('keydown',e=>{if(e.key==='Enter')$('pw').focus()});
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 if(KEY)load();
 }

@@ -65,7 +65,7 @@ export async function createMeet(rec, store = crmStore()) {
     summary: `Free call: ${d.name || "Client"} × Jeselle Baril`,
     description: `${CALL_MINUTES}-minute discovery call.\nBusiness: ${d.business || "-"}\nService: ${d.service || "-"}\nClient: ${d.name || ""} <${d.email}>\n\nBooked via ${OWNER.site()}`,
     start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() },
-    attendees: [{ email: d.email, displayName: d.name || undefined }],
+    attendees: [{ email: d.email, displayName: d.name || undefined }, ...(rec.assignee?.email ? [{ email: rec.assignee.email, displayName: rec.assignee.name || undefined }] : [])],
     conferenceData: { createRequest: { requestId: rec.id, conferenceSolutionKey: { type: "hangoutsMeet" } } },
     reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 60 }, { method: "popup", minutes: 10 }] },
     guestsCanModify: false,
@@ -133,4 +133,19 @@ export async function backfillMeet(store = crmStore()) {
     } catch (e) { rec.meetError = e.message; await store.setJSON(b.key, rec); }
   }
   return done;
+}
+
+// Team accounts: add the assigned team member as a guest on an existing call, so it's in their calendar
+// with the Meet link. The owner stays the host (organizer).
+export async function addGuest(rec, guest, store = crmStore()) {
+  if (!rec.gcalEventId || !guest?.email) return false;
+  const token = await accessToken(store);
+  if (!token) return false;
+  const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(rec.gcalEventId)}`;
+  const ev = await (await fetch(url, { headers: { Authorization: `Bearer ${token}` } })).json();
+  if (!ev || ev.error) return false;
+  const keep = (ev.attendees || []).filter((a) => a.email && !(rec.assigneePrev && a.email === rec.assigneePrev));
+  if (!keep.some((a) => a.email.toLowerCase() === guest.email.toLowerCase())) keep.push({ email: guest.email, displayName: guest.name || undefined });
+  const r = await fetch(`${url}?sendUpdates=all`, { method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ attendees: keep }) });
+  return r.ok;
 }

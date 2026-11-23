@@ -1,7 +1,9 @@
-// Private CRM API for admin.html. Protected by the ADMIN_PASSWORD environment variable.
-import { isAdminReq, changeAdminPassword, requestPasswordReset, resetPasswordWithToken } from "../lib/auth.mjs";
+// Private CRM API for admin.html. The owner logs in with her password (ADMIN_PASSWORD or the one she set);
+// team members log in with their own email + password and only see what the owner allowed (see lib/team.mjs).
+import { changeAdminPassword, requestPasswordReset, resetPasswordWithToken } from "../lib/auth.mjs";
+import { actorFor, can, permForRecord, logActivity, listActivity, listTeam, publicMember, staffLogin, acceptInvite, staffChangePassword, saveMember, resendInvite, removeMember, logoutStaff, assignable, PERMS } from "../lib/team.mjs";
 import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
-import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace } from "../lib/google.mjs";
+import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace, addGuest } from "../lib/google.mjs";
 import crypto from "node:crypto";
 import { getStore } from "@netlify/blobs";
 const receiptStore = () => getStore({ name: "receipts", consistency: "strong" });
@@ -9,7 +11,8 @@ const RECEIPT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "a
 const MAX_RECEIPT = 4 * 1024 * 1024;
 const recKeyOk = (k) => /^(income|expense)\/[0-9]{8}-[0-9a-f]{8}$/.test(k);
 
-const ok = (req) => isAdminReq(req);
+const NO = () => Response.json({ error: "You don't have access to this. Ask the owner." }, { status: 403 });
+const who = (rec) => rec?.data?.name || rec?.data?.email || "a client";
 const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
 
 // Expense entry: what you spent for your business, in pesos.
@@ -55,17 +58,39 @@ export default async (req) => {
       const r = await resetPasswordWithToken(b.token, b.next);
       return Response.json(r.ok ? { ok: true } : { error: r.error }, { status: r.ok ? 200 : r.status });
     }
+    // Team members: log in with email + password, or accept an invite (choose a password)
+    if (req.method === "POST" && (u.searchParams.get("login") || u.searchParams.get("invite"))) {
+      let b; try { b = await req.json(); } catch { return Response.json({ error: "Bad request" }, { status: 400 }); }
+      const r = u.searchParams.get("login") ? await staffLogin(b.email, b.password) : await acceptInvite(b.token, b.next);
+      return Response.json(r.ok ? { ok: true, token: r.token, name: r.name } : { error: r.error }, { status: r.ok ? 200 : r.status });
+    }
   }
-  if (!(await ok(req))) return Response.json({ error: "Wrong password" }, { status: 401 });
+  const me = await actorFor(req);
+  if (!me) return Response.json({ error: "Wrong password" }, { status: 401 });
+  const owner = me.role === "owner";
   const store = crmStore();
   const url = new URL(req.url);
 
   if (req.method === "POST") {
     const body = await req.json();
+    if (body.action === "logout") { await logoutStaff(req); return Response.json({ ok: true }); }
     if (body.action === "change-password") {
-      const r = await changeAdminPassword(body.current, body.next);
+      const r = owner ? await changeAdminPassword(body.current, body.next) : await staffChangePassword(me, body.current, body.next);
       return Response.json(r.ok ? { ok: true } : { error: r.error }, { status: r.ok ? 200 : r.status });
     }
+    // ----- Team accounts (owner only) -----
+    if (/^team-|^activity$/.test(body.action || "")) {
+      if (!owner) return NO();
+      if (body.action === "activity") return Response.json({ activity: await listActivity(store) });
+      if (body.action === "team-list") return Response.json({ team: (await listTeam(store)).map(publicMember), perms: PERMS });
+      const r = body.action === "team-save" ? await saveMember(me, body.member || {}, store)
+        : body.action === "team-resend" ? await resendInvite(me, String(body.id || ""), store)
+        : body.action === "team-remove" ? await removeMember(me, String(body.id || ""), store)
+        : { status: 400, error: "Unknown action" };
+      return Response.json(r.ok ? r : { error: r.error }, { status: r.ok ? 200 : r.status });
+    }
+    if (["test-email", "google-connect", "google-disconnect"].includes(body.action) && !owner) return NO();
+    if (/^(receipt-|income-|expense-)/.test(body.action || "") && !can(me, "payments")) return NO();
     if (body.action === "test-email") {
       await sendMail({ to: OWNER.email(), subject: "✅ Test email from your website CRM", html: "<p>Your website can send emails. Bookings, reminders and inquiries will arrive here.</p>" });
       return Response.json({ ok: true });
@@ -77,7 +102,7 @@ export default async (req) => {
     if (body.action === "google-disconnect") { await disconnect(store); return Response.json({ ok: true }); }
     // ----- Income records (for your own books and BIR) -----
     if (body.action === "push-key") { const { vapidKeys, listSubs } = await import("../lib/push.mjs"); const k = await vapidKeys(store); return Response.json({ publicKey: k.publicKey, devices: (await listSubs(store)).length }); }
-    if (body.action === "push-subscribe") { const { addSub } = await import("../lib/push.mjs"); try { const n = await addSub(body.sub, body.label, store); return Response.json({ ok: true, devices: n }); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); } }
+    if (body.action === "push-subscribe") { const { addSub } = await import("../lib/push.mjs"); try { const n = await addSub(body.sub, (owner ? "" : me.name + " · ") + String(body.label || ""), store, me.id); return Response.json({ ok: true, devices: n }); } catch (e) { return Response.json({ error: e.message }, { status: 400 }); } }
     if (body.action === "push-unsubscribe") { const { removeSub } = await import("../lib/push.mjs"); return Response.json({ ok: true, devices: await removeSub(String(body.endpoint || ""), store) }); }
     if (body.action === "push-test") { const { sendPush } = await import("../lib/push.mjs"); const r = await sendPush({ title: "🔔 Notifications are on", body: "You'll get an alert here for every booking, inquiry, brief, payment and review.", url: "/admin.html", tag: "test" }, store); return Response.json({ ok: true, ...r }); }
     if (body.action === "receipt-upload") {
@@ -122,6 +147,7 @@ export default async (req) => {
       else key = "income/" + v.date.replace(/-/g, "") + "-" + crypto.randomBytes(4).toString("hex");
       const rec = { ...(prev || { createdAt: new Date().toISOString() }), ...v, key, id: key.slice(7), updatedAt: new Date().toISOString() };
       await store.setJSON(key, rec);
+      await logActivity(me, `${prev ? "edited" : "added"} income: ${rec.client} ₱${rec.php}`, key, store);
       // mark the linked payment proof as Paid
       if (v.sourceKey && !prev) { try { const src = await store.get(v.sourceKey, { type: "json" }); if (src) { src.status = "Paid"; src.incomeKey = key; await store.setJSON(v.sourceKey, src); } } catch {} }
       return Response.json({ ok: true, rec });
@@ -134,6 +160,7 @@ export default async (req) => {
       else key = "expense/" + v.date.replace(/-/g, "") + "-" + crypto.randomBytes(4).toString("hex");
       const rec = { ...(prev || { createdAt: new Date().toISOString() }), ...v, key, id: key.slice(8), updatedAt: new Date().toISOString() };
       await store.setJSON(key, rec);
+      await logActivity(me, `${prev ? "edited" : "added"} expense: ${rec.description} ₱${rec.php}`, key, store);
       return Response.json({ ok: true, rec });
     }
     if (body.action === "expense-delete") {
@@ -141,6 +168,7 @@ export default async (req) => {
       if (!key.startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
       try { const r = await store.get(key, { type: "json" }); for (const f of (r?.files || [])) await receiptStore().delete(key + "/" + f.id); } catch {}
       await store.delete(key);
+      await logActivity(me, "deleted an expense entry", "", store);
       return Response.json({ ok: true });
     }
     if (body.action === "income-delete") {
@@ -153,7 +181,24 @@ export default async (req) => {
     if (String(body.key || "").startsWith("settings/") || String(body.key || "").startsWith("income/") || String(body.key || "").startsWith("expense/")) return Response.json({ error: "Not found" }, { status: 404 });
     const rec = await store.get(String(body.key || ""), { type: "json" });
     if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
+    if (!can(me, permForRecord(rec))) return NO();
     if (body.action === "update") {
+      const was = { status: rec.status, notes: rec.notes || "", followUp: rec.followUp || "", assignee: rec.assignee?.id || "" };
+      // Assign to a team member (or back to the owner with "")
+      if (typeof body.assignedTo === "string" && body.assignedTo !== was.assignee) {
+        if (body.assignedTo) {
+          const m = (await assignable(permForRecord(rec), store)).find((x) => x.id === body.assignedTo);
+          if (!m) return Response.json({ error: "That team member can't handle this kind of record." }, { status: 400 });
+          rec.assigneePrev = rec.assignee?.email || "";
+          rec.assignee = { id: m.id, name: m.name, email: m.email, at: new Date().toISOString(), by: me.name };
+          try { if (await addGuest(rec, rec.assignee, store)) rec.assignee.onCall = true; } catch {}
+          try {
+            const d = rec.data || {};
+            await sendMail({ to: m.email, replyTo: OWNER.email(), subject: `👤 Assigned to you: ${who(rec)} (${rec.type})`,
+              html: `<p style="font:15px/1.6 Arial,sans-serif">Hi ${String(m.name).replace(/[<>&]/g, "")}, ${String(me.name).replace(/[<>&]/g, "")} assigned you a ${String(rec.type || "record").toLowerCase()} from <b>${String(who(rec)).replace(/[<>&]/g, "")}</b>${d.business ? " (" + String(d.business).replace(/[<>&]/g, "") + ")" : ""}.${rec.start ? "<br>Call: <b>" + new Date(rec.start).toLocaleString("en-US", { timeZone: OWNER.tz, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " (PH time)</b>" : ""}${rec.meetLink ? `<br>Meeting link: <a href="${rec.meetLink}">${rec.meetLink}</a>` : ""}</p><p style="font:15px/1.6 Arial,sans-serif"><a href="${OWNER.site()}/admin.html#${encodeURIComponent(body.key)}">Open it in the CRM →</a></p>` });
+          } catch (e) { console.log("assign email:", e.message); }
+        } else { rec.assigneePrev = rec.assignee?.email || ""; rec.assignee = null; }
+      }
       if (typeof body.status === "string") {
         if (rec.status !== body.status.slice(0, 40)) rec.statusAt = new Date().toISOString();
         rec.status = body.status.slice(0, 40);
@@ -164,6 +209,12 @@ export default async (req) => {
       if (typeof body.notes === "string") rec.notes = body.notes.slice(0, 4000);
       if (typeof body.followUp === "string") rec.followUp = body.followUp.slice(0, 20);
       await store.setJSON(body.key, rec);
+      const did = [];
+      if (rec.status !== was.status) did.push(`status → ${rec.status}`);
+      if ((rec.assignee?.id || "") !== was.assignee) did.push(rec.assignee ? `assigned to ${rec.assignee.name}` : "unassigned");
+      if ((rec.notes || "") !== was.notes) did.push("notes");
+      if ((rec.followUp || "") !== was.followUp) did.push(rec.followUp ? `follow-up ${rec.followUp}` : "follow-up cleared");
+      if (did.length) await logActivity(me, `updated ${who(rec)} (${rec.type}): ${did.join(", ")}`, body.key, store);
       return Response.json({ ok: true, rec });
     }
     if (body.action === "make-room") {
@@ -172,6 +223,7 @@ export default async (req) => {
       try { m = await createSpace(store); } catch (e) { m = null; }
       rec.meetLink = m ? m.meetLink : roomLink(rec); rec.meetFallback = !m; rec.meetRoom = true; rec.meetError = "";
       await store.setJSON(body.key, rec);
+      await logActivity(me, `created a meeting link for ${who(rec)}`, body.key, store);
       return Response.json({ ok: true, rec });
     }
     if (body.action === "make-meet") {
@@ -190,9 +242,14 @@ export default async (req) => {
       for (const msg of bookingEmails(rec)) { try { await sendMail(msg); log.push("sent:" + msg.to); } catch (e) { log.push("failed:" + msg.to + ":" + e.message); } }
       rec.emailLog = [...(rec.emailLog || []), ...log];
       await store.setJSON(body.key, rec);
+      await logActivity(me, `scheduled a call with ${who(rec)} for ${new Date(rec.start).toLocaleString("en-US", { timeZone: OWNER.tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`, body.key, store);
       return Response.json({ ok: true, rec });
     }
-    if (body.action === "delete") { await store.delete(body.key); return Response.json({ ok: true }); }
+    if (body.action === "delete") {
+      if (!owner) return Response.json({ error: "Only the owner can delete records. Set the status to Lost or Cancelled instead." }, { status: 403 });
+      await store.delete(body.key); await logActivity(me, `deleted ${who(rec)} (${rec.type})`, "", store);
+      return Response.json({ ok: true });
+    }
     return Response.json({ error: "Unknown action" }, { status: 400 });
   }
 
@@ -202,12 +259,14 @@ export default async (req) => {
     if (b.key.startsWith("settings/")) continue;
     const r = await store.get(b.key, { type: "json" });
     if (!r) continue;
-    (b.key.startsWith("income/") ? income : b.key.startsWith("expense/") ? expenses : recs).push(r);
+    if (b.key.startsWith("income/") || b.key.startsWith("expense/")) { if (can(me, "payments")) (b.key.startsWith("income/") ? income : expenses).push(r); }
+    else if (can(me, permForRecord(r))) recs.push(r);
   }
   recs.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
   income.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
   expenses.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
 
+  if ((url.searchParams.get("receipt") || /^(income|expense)-csv$/.test(url.searchParams.get("format") || "")) && !can(me, "payments")) return NO();
   if (url.searchParams.get("receipt")) {
     const key = String(url.searchParams.get("rec") || ""), id = String(url.searchParams.get("receipt") || "");
     if (!recKeyOk(key) || !/^[0-9a-f]{12}$/.test(id)) return new Response("Not found", { status: 404 });
@@ -249,7 +308,9 @@ export default async (req) => {
       headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="crm-${new Date().toISOString().slice(0, 10)}.csv"` },
     });
   }
-  return Response.json({ records: recs, income, expenses }, { headers: { "Cache-Control": "no-store" } });
+  // Who's logged in, and who records can be assigned to (names only for team members)
+  const team = (await listTeam(store)).filter((m) => m.active !== false && m.pwHash || owner && m.active !== false).map((m) => ({ id: m.id, name: m.name, perms: m.perms }));
+  return Response.json({ records: recs, income, expenses, me: { role: me.role, id: me.id, name: me.name, perms: me.perms }, team }, { headers: { "Cache-Control": "no-store" } });
 };
 
 export const config = { path: "/api/crm" };

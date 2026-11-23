@@ -361,7 +361,7 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
       : type === "Portfolio permission" ? (data.portfolio_permission || "") + (data.business ? " · " + data.business : "")
       : type === "Project brief" ? (data.service || "New project brief") + (data.estimated_total ? " · " + data.estimated_total : "")
       : String(data.message || data.service || "New message").slice(0, 120);
-    await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}`, body, url: "/admin.html#" + key, tag: key }, store);
+    await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}`, body, url: "/admin.html#" + key, tag: key, perm: type === "Payment" ? "payments" : "bookings" }, store);
   } catch {}
   return { ok: true, key, results };
 }
@@ -414,7 +414,7 @@ export async function runNudges({ store = crmStore(), now = new Date() } = {}) {
   await store.setJSON("settings/nudges-sent", { date: today, count: list.length });
   const items = list.map((n) => `<li style="margin:0 0 8px">${{ follow: "📅", quote: "⏳", new: "🆕", pay: "💰" }[n.kind]} ${esc(n.text)}</li>`).join("");
   try { await sendMail({ to: OWNER.email(), subject: `☀️ ${list.length} thing${list.length > 1 ? "s" : ""} to follow up today`, html: layout("Today's follow-ups", `<ul style="padding-left:18px;margin:0 0 14px">${items}</ul>` + p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)) }); } catch {}
-  try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today }, store); } catch {}
+  try { const { sendPush } = await import("./push.mjs"); await sendPush({ title: `☀️ ${list.length} follow-up${list.length > 1 ? "s" : ""} today`, body: list.slice(0, 2).map((n) => n.text).join(" · "), url: "/admin.html#today", tag: "nudges-" + today, perm: "bookings" }, store); } catch {}
   return { count: list.length };
 }
 

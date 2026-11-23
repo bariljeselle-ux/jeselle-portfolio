@@ -3,7 +3,7 @@
 //          POST /api/reviews {action:"submit"...}  -> new review (shows right away if the client allowed it)
 // Private: POST /api/reviews with header x-admin-key = ADMIN_PASSWORD
 //          {action:"list"} | {action:"publish"|"hide"|"delete", key} | {action:"reply", key, reply} | {action:"add", ...collected testimonial}
-import { isAdminReq } from "../lib/auth.mjs";
+import { actorFor, can } from "../lib/team.mjs";
 import { getStore } from "@netlify/blobs";
 import { sendMail, layout, OWNER } from "../lib/core.mjs";
 import crypto from "node:crypto";
@@ -25,7 +25,8 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const str = (v, n) => String(v ?? "").replace(/\s+$/g, "").slice(0, n);
 const star = (n) => "★".repeat(n) + "☆".repeat(5 - n);
 
-const isAdmin = (req) => isAdminReq(req);
+// The owner, or a team member allowed to manage reviews
+const isAdmin = async (req) => can(await actorFor(req), "reviews");
 
 // What visitors may see: never the email or the private "what to improve" note.
 export function publicView(r) {
@@ -105,7 +106,7 @@ export default async (req) => {
     if (photo) { await photoStore().set(id, photo); rec.hasPhoto = true; }
     await store.setJSON(rec.key, rec);
     try { await notify(rec); } catch (e) { console.log("review email failed:", e.message); }
-    try { const { sendPush } = await import("../lib/push.mjs"); await sendPush({ title: `⭐ New review: ${rec.name || "A client"} (${rec.rating}/5)`, body: String(rec.text || rec.improve || "Tap to read it.").slice(0, 120), url: "/admin.html#reviews", tag: rec.key }); } catch {}
+    try { const { sendPush } = await import("../lib/push.mjs"); await sendPush({ title: `⭐ New review: ${rec.name || "A client"} (${rec.rating}/5)`, body: String(rec.text || rec.improve || "Tap to read it.").slice(0, 120), url: "/admin.html#reviews", tag: rec.key, perm: "reviews" }); } catch {}
     return Response.json({ ok: true });
   }
 
