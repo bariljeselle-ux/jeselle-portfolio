@@ -90,6 +90,12 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .acts{list-style:none;margin:0;padding:0;font-size:14px}.acts li{padding:7px 0;border-bottom:1px solid #F1ECE5}.acts small{color:#6E625A}
 .whoami{font-size:13px;color:#6E625A}.linkbtn{background:none;border:0;color:#7A4E3A;text-decoration:underline;cursor:pointer;padding:4px;font-size:14px;min-height:0}
 .chip.asg{background:#E9E1F3;color:#4A3570}
+.capbar{background:#fff;border:1px solid #E2D9CF;border-left:4px solid #2F6B3F;border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.capbar.full{border-left-color:#B3261E;background:#FCEAE6}.capbar.near{border-left-color:#C9853A;background:#FBF3E4}
+.capbar .ct{font-size:16px}.capbar small{color:#6E625A}.capbar ul{margin:4px 0 0;padding-left:18px;font-size:14px}
+.capset{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:8px}.capset label{font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px}.capset input[type=number]{width:110px}
+.capset .ck{flex-direction:row;align-items:center;gap:6px;font-size:14px;color:#231E1B}.capset .ck input{width:18px;min-height:18px}
+.capwarn{background:#FBF3E4;border-left:3px solid #E0A526;padding:10px 12px;margin:0 0 10px;font-size:14px;border-radius:4px}
 </style>
 </head>
 <body>
@@ -130,6 +136,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div class="nbar" id="nbar"><div><b>🔔 Notifications</b> <span id="nstate">Checking…</span><small id="nhelp"></small></div><div class="nbtns"><button class="pri" id="non">Turn on notifications</button><button id="ntest" hidden>Send a test</button><button id="noff" hidden>Turn off on this device</button></div></div>
 <div class="newbar" id="newbar" hidden><span id="newtxt"></span><button id="seeall">Mark all as read</button></div>
 <div class="stats" id="stats"></div>
+<div class="capbar" id="capbar" hidden></div>
 <section id="today"><h2>☀️ Today</h2><div id="todaylist"></div></section>
 <section><h2>Upcoming calls</h2><div class="up" id="upcoming"></div></section>
 <section id="month" class="pay"><div class="mhead"><h2>📊 Monthly summary</h2><select id="mpick" aria-label="Month"></select></div><div id="msum"></div></section>
@@ -247,9 +254,9 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 
 <script>
 {
-const STATUSES=['New','Permission received','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','Lost','Cancelled'];
+const STATUSES=['New','Permission received','Contacted','Call booked','Proposal sent','Payment to verify','Paid','Won','In progress','Delivered','Lost','Cancelled'];
 const $=id=>document.getElementById(id);
-let KEY='',RECS=[],FILTER='all',ME={role:'owner',perms:['bookings','payments','reviews']},TEAM=[];
+let CAP=null,KEY='',RECS=[],FILTER='all',ME={role:'owner',perms:['bookings','payments','reviews']},TEAM=[];
 const can=p=>ME.role==='owner'||(ME.perms||[]).includes(p);
 try{KEY=sessionStorage.getItem('crmkey')||''}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -258,18 +265,29 @@ const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
-  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];ME=j.me||ME;TEAM=j.team||[];access();$('login').hidden=true;$('app').hidden=false;draw();if(can('payments')){idraw();edraw()}gload();if(can('reviews'))rload();if(ME.role==='owner')tload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
+  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];ME=j.me||ME;TEAM=j.team||[];CAP=j.capacity||null;access();$('login').hidden=true;$('app').hidden=false;draw();if(can('payments')){idraw();edraw()}gload();if(can('reviews'))rload();if(ME.role==='owner')tload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
 function access(){const own=ME.role==='owner';
   document.querySelectorAll('.own').forEach(x=>{if(x.id!=='team')x.hidden=!own});document.querySelectorAll('.pay').forEach(x=>x.hidden=!can('payments'));
   $('reviews').hidden=!can('reviews');if(!own)$('team').hidden=true;$('minetab').hidden=!TEAM.length&&own;$('minetab').textContent=own?'Not assigned':'Assigned to me';
   $('whoami').textContent=own?'':'· Logged in as '+ME.name;$('cpw').textContent=own?'Change password':'Change my password'}
+const dshort=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}):'';
+function capdraw(){const b=$('capbar');if(!CAP){b.hidden=true;return}b.hidden=false;const c=CAP,own=ME.role==='owner';
+  b.className='capbar'+(c.full?' full':c.slotsOpen===1?' near':'');
+  const head=c.paused?'⏸️ <b>New projects are paused.</b> New clients see that you\'re fully booked.'
+    :c.full?`🔴 <b>Fully booked:</b> ${c.taken} of ${c.max} project spots taken. Next spot opens <b>${dshort(c.earliestStart)}</b>.`
+    :`${c.slotsOpen===1?'🟠':'🟢'} <b>${c.slotsOpen} of ${c.max} project spot${c.max>1?'s':''} open.</b> ${c.taken} active project${c.taken===1?'':'s'}.`;
+  const sees=c.paused?'Website shows: not taking new projects right now (they can still send a brief to join the waitlist).':`Website shows new clients: earliest start <b>${dshort(c.earliestStart)}</b>, earliest delivery <b>${dshort(c.earliestDelivery)}</b>.`;
+  const due=(c.nextDue||[]).length?`<ul>${c.nextDue.map(x=>`<li>📦 <b>${esc(dshort(x.delivery))}</b> · ${esc(x.name)}${x.business?' · '+esc(x.business):''} <small>(${esc(x.status)})</small></li>`).join('')}</ul>`:'<small>No active projects. Set a 📦 delivery date on a client\'s card when you take on their project, and it counts here.</small>';
+  const st=c.settings||{};
+  b.innerHTML=`<div class="ct">${head}</div><small>${sees}</small>${due}${own?`<details><summary style="cursor:pointer;font-size:14px;color:#7A4E3A">⚙️ Capacity settings</summary><div class="capset"><label>Projects at the same time<input type="number" id="cap-max" min="1" max="50" value="${esc(st.maxProjects||3)}"></label><label>Shortest delivery (working days)<input type="number" id="cap-days" min="1" max="90" value="${esc(st.minDays||7)}"></label><label class="ck"><input type="checkbox" id="cap-pause"${st.paused?' checked':''}> Pause new projects</label><button class="pri" id="cap-save">Save</button></div><small>Working days are Mon–Fri. A spot opens the working day after a project's delivery date. Mark projects <b>Delivered</b> when done.</small></details>`:''}`}
+$('capbar').addEventListener('click',async e=>{if(e.target.id!=='cap-save')return;try{const j=await api({body:{action:'capacity-save',settings:{maxProjects:$('cap-max').value,minDays:$('cap-days').value,paused:$('cap-pause').checked}}});note('Capacity saved ✓');load()}catch(err){note(err.message,1)}});
 const teamFor=r=>TEAM.filter(m=>(m.perms||[]).includes(r.type==='Payment'?'payments':'bookings'));
-function draw(){setTimeout(()=>{badges();try{tdraw();mdraw()}catch(e){}},0);
+function draw(){capdraw();setTimeout(()=>{badges();try{tdraw();mdraw()}catch(e){}},0);
   const now=Date.now(),c=t=>RECS.filter(r=>r.type===t).length;
   const up=RECS.filter(r=>r.start&&new Date(r.start)>now&&!/cancel|lost/i.test(r.status)).sort((a,b)=>a.start.localeCompare(b.start));
-  $('stats').innerHTML=[['Upcoming calls',up.length],['Bookings',c('Booking')],['Inquiries',c('Inquiry')],['Briefs',c('Project brief')],['Won',RECS.filter(r=>r.status==='Won').length]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('stats').innerHTML=[['Upcoming calls',up.length],['Bookings',c('Booking')],['Inquiries',c('Inquiry')],['Briefs',c('Project brief')],CAP?['Projects',CAP.taken+' / '+CAP.max]:['Won',RECS.filter(r=>r.status==='Won').length]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
   $('upcoming').innerHTML=up.length?up.slice(0,6).map(r=>`<div class="upc"><span class="t">${esc(fmt(r.start,'Asia/Manila'))}<small>Client: ${esc(fmt(r.start,r.data.client_time_zone||'UTC'))}</small></span><span><b>${esc(r.data.name)}</b> · ${esc(r.data.business||'')}<small>${esc(r.data.service||'')}</small></span><span class="row">${r.meetLink?`<a class="btn meet" href="${esc(r.meetLink)}" target="_blank" rel="noopener">🎥 Join call</a>`:`<button class="meet f-mkup" data-key="${esc(r.key)}">Create meeting link</button>`}</span></div>`).join(''):'<div class="empty">No upcoming calls yet.</div>';
   const q=$('q').value.trim().toLowerCase();
   const list=RECS.filter(r=>(FILTER==='all'||(FILTER==='mine'?(ME.role==='owner'?!r.assignee:r.assignee&&r.assignee.id===ME.id):r.type===FILTER))&&(!q||JSON.stringify(r.data).toLowerCase().includes(q)));
@@ -291,6 +309,8 @@ function meetBlock(r){
 function picksHtml(d){if(!d.selected_packages&&!d.portfolio_permission)return'';const ok=/^Yes/.test(d.picks_confirmed||'');
   const lines=String(d.selected_packages||'').split('\n').filter(Boolean).map(l=>/^\s+Note:/.test(l)?`<li class="pn">📝 ${esc(l.trim().replace(/^Note:\s*/,''))}</li>`:`<li>${esc(l)}</li>`).join('');
   return `<div class="picks">${lines?`<p><b>🛒 Picked on the website</b>${d.picks_confirmed?` <span class="chip ${ok?'ok':'warn'}">${ok?'✓ Confirmed':'Not confirmed'}</span>`:''}</p><ul>${lines}</ul>`:''}${d.estimated_total?`<p><b>Estimate:</b> ${esc(d.estimated_total)}</p>`:''}${d.budget?`<p><b>Budget:</b> ${esc(d.budget)}${d.timeline?' · <b>Timeline:</b> '+esc(d.timeline):''}</p>`:''}${d.portfolio_permission?`<p><b>Portfolio:</b> ${/^No/.test(d.portfolio_permission)?'🔒':'📸'} ${esc(d.portfolio_permission)}</p>`:''}${d.show_items?`<p><b>May show:</b> ${esc(d.show_items)}</p>`:''}</div>`}
+function capWarn(r){const c=r.capacity;if(!c||!(c.tooSoon||c.full))return '';
+  return `<div class="capwarn">⏳ <b>${c.tooSoon?`Wants it by ${esc(dshort(c.wanted))}`:'Sent while you were fully booked'}</b>${c.earliestDelivery?` · your earliest delivery then was <b>${esc(dshort(c.earliestDelivery))}</b>`:' · new projects were paused'}. The website already told them. Confirm the real date with them before accepting.</div>`}
 function card(r){
   const d=r.data||{},cls=r.type==='Project brief'?'brief':r.type;
   const when=r.start?`📅 ${esc(fmt(r.start,'Asia/Manila'))}`:`Received ${esc(new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}`;
@@ -302,10 +322,11 @@ function card(r){
   const scope=sf.length?`<div class="scope"><b>⚠️ Heads up: may be outside your services</b><ul>${sf.map(x=>`<li>${x.emoji} <b>${esc(x.name)}</b> <small>(${esc(x.label)})</small>${x.warn?' <b class="warn">Against platform rules. Don\'t accept.</b>':''}<br><small>They wrote: "${esc(x.quote)}"</small><br>👉 ${esc(x.todo)}</li>`).join('')}</ul><small>Templates: <a href="https://claude.ai/artifact/8E7kS9BtnXJKM1bE4d7Pgp" target="_blank" rel="noopener">Client Delivery Kit</a>. Not sure? Paste their message to Claude.</small></div>`:'';
   const meetRow=r.type==='Payment'?'':`<tr><td>🎥 Meeting link</td><td>${r.meetLink?`<a href="${esc(r.meetLink)}" target="_blank" rel="noopener"><b>${esc(r.meetLink.replace(/^https:\/\//,''))}</b></a>${r.start?'':' <span style="color:#6E625A">(room, no time set)</span>'}`:`<span style="color:#6E625A">${r.meetError?'⚠️ '+esc(r.meetError):'No link yet'}</span>`}</td></tr>`;
   const incBtn=r.type==='Payment'?(r.incomeKey?'<span class="chip ok">💰 Recorded in income</span>':'<button class="pri f-inc">💰 Record as income</button>'):'';
-  return `<article class="card${isNew(r)?' unread':''}" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${isNew(r)?'<span class="rdot" aria-label="New"></span>':''}${sf.length?'⚠️ ':''}${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}${d.portfolio_permission?` <span title="Portfolio permission: ${esc(d.portfolio_permission)}">${/^No/.test(d.portfolio_permission)?'🔒':/without/.test(d.portfolio_permission)?'📸 no name':'📸'}</span>`:''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${r.assignee?`<span class="chip asg" title="Assigned">👤 ${esc(r.assignee.name)}</span> `:''}${esc(r.status)}</span></div>
-  <div class="cb" hidden><div>${scope}${picksHtml(d)}<div class="row" style="margin-bottom:8px">${incBtn} ${links} ${rem} ${files}</div><table class="kv">${meetRow}${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
+  return `<article class="card${isNew(r)?' unread':''}" data-key="${esc(r.key)}"><div class="ch" tabindex="0" role="button" aria-expanded="false"><span class="badge ${cls}">${esc(r.type)}</span><span class="who"><b>${isNew(r)?'<span class="rdot" aria-label="New"></span>':''}${sf.length?'⚠️ ':''}${esc(d.name)}</b>${d.business?' · '+esc(d.business):''}${d.portfolio_permission?` <span title="Portfolio permission: ${esc(d.portfolio_permission)}">${/^No/.test(d.portfolio_permission)?'🔒':/without/.test(d.portfolio_permission)?'📸 no name':'📸'}</span>`:''}<small>${esc(d.email)} · ${when}</small></span><span class="st">${r.delivery&&!/deliver|lost|cancel/i.test(r.status)?`<span class="chip" title="Delivery date">📦 ${esc(dshort(r.delivery))}</span> `:''}${r.assignee?`<span class="chip asg" title="Assigned">👤 ${esc(r.assignee.name)}</span> `:''}${esc(r.status)}</span></div>
+  <div class="cb" hidden><div>${capWarn(r)}${scope}${picksHtml(d)}<div class="row" style="margin-bottom:8px">${incBtn} ${links} ${rem} ${files}</div><table class="kv">${meetRow}${rows}</table>${r.emailLog?`<p style="font-size:12px;color:#6E625A;margin:8px 0 0">Emails: ${esc(r.emailLog.join(' · '))}</p>`:''}</div>
   <div class="side">${meetBlock(r)}<label>Status<select class="f-status">${STATUSES.map(s=>`<option${s===r.status?' selected':''}>${s}</option>`).join('')}</select></label>
   ${teamFor(r).length||r.assignee?`<label>Assigned to<select class="f-assign"><option value="">${ME.role==='owner'?'Me (owner)':'The owner'}</option>${teamFor(r).map(m=>`<option value="${esc(m.id)}"${r.assignee&&r.assignee.id===m.id?' selected':''}>${esc(m.name)}${m.id===ME.id?' (me)':''}</option>`).join('')}</select><small style="font-size:11px">They get an email${r.gcalEventId?' and a calendar invite with the Meet link':''}.</small></label>`:''}
+  ${r.type==='Payment'||r.type==='Portfolio permission'?'':`<label>📦 Delivery date (counts toward your capacity)<input type="date" class="f-deliv" value="${esc(r.delivery||'')}"><small style="font-size:11px">${r.delivery?'Set the status to Delivered when it\'s done.':(r.data&&(r.data.deadline||r.data.timeline))?'They asked: '+esc(r.data.deadline||r.data.timeline):'Set it when you take on the project.'}</small></label>`}
   <label>Next follow-up<input type="date" class="f-follow" value="${esc(r.followUp||'')}"></label>
   <label>Notes<textarea class="f-notes" rows="4" placeholder="Private notes">${esc(r.notes||'')}</textarea></label>
   <div class="row"><button class="pri f-save">Save</button><a class="btn" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Re: your '+(r.type||'inquiry').toLowerCase())}">Email</a>${d.phone?`<a class="btn" href="https://wa.me/${esc(String(d.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">WhatsApp</a>`:''}${payBtn(r)}${ME.role==='owner'?'<button class="f-del">Delete</button>':''}</div></div></div></article>`;
@@ -314,7 +335,7 @@ $('list').addEventListener('click',async e=>{
   const c=e.target.closest('.card');if(!c)return;const key=c.dataset.key;
   if(e.target.closest('.f-inc')){const r=RECS.find(x=>x.key===key),d=r.data||{};const raw=String(d.amount||'');const cur=/\$|usd/i.test(raw)?'USD':'PHP';const num=raw.replace(/[^0-9.]/g,'');iopen({client:d.name||'',description:d.what_for||d.project||'Payment',amount:num,currency:cur,php:cur==='PHP'?num:'',method:/maya/i.test(d.payment_method)?'Maya':/remitly/i.test(d.payment_method)?'Remitly':/gcash/i.test(d.payment_method)?'GCash':'Other',reference:d.reference||'',date:(r.createdAt||'').slice(0,10),sourceKey:key});return}
   if(e.target.closest('.ch')){const b=c.querySelector('.cb');b.hidden=!b.hidden;c.querySelector('.ch').setAttribute('aria-expanded',!b.hidden);if(!b.hidden&&markSeen(key)){c.classList.remove('unread');const d=c.querySelector('.rdot');if(d)d.remove();badges()}return}
-  if(e.target.closest('.f-save')){try{const j=await api({body:{action:'update',key,status:c.querySelector('.f-status').value,notes:c.querySelector('.f-notes').value,followUp:c.querySelector('.f-follow').value,...(c.querySelector('.f-assign')?{assignedTo:c.querySelector('.f-assign').value}:{})}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');draw()}catch(err){note(err.message,1)}}
+  if(e.target.closest('.f-save')){try{const j=await api({body:{action:'update',key,status:c.querySelector('.f-status').value,notes:c.querySelector('.f-notes').value,followUp:c.querySelector('.f-follow').value,...(c.querySelector('.f-assign')?{assignedTo:c.querySelector('.f-assign').value}:{}),...(c.querySelector('.f-deliv')?{delivery:c.querySelector('.f-deliv').value}:{})}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');load();return;RECS=RECS.map(r=>r.key===key?j.rec:r);note('Saved ✓');draw()}catch(err){note(err.message,1)}}
   if(e.target.closest('.f-copy')){try{await navigator.clipboard.writeText(e.target.dataset.link);note('Meet link copied ✓')}catch(err){note(e.target.dataset.link)}return}
   if(e.target.closest('.f-room')){const b=e.target;b.disabled=true;b.textContent='Creating…';try{const j=await api({body:{action:'make-room',key}});RECS=RECS.map(r=>r.key===key?j.rec:r);note('Meeting link created ✓');draw()}catch(err){note(err.message,1);b.disabled=false;b.textContent='Try again'}return}
   if(e.target.closest('.f-meet')){const w=c.querySelector('.f-when');let start='';if(w){if(!w.value){note('Pick a date and time first',1);return}start=new Date(w.value+':00+08:00').toISOString()}

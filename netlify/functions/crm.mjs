@@ -3,6 +3,7 @@
 import { changeAdminPassword, requestPasswordReset, resetPasswordWithToken } from "../lib/auth.mjs";
 import { actorFor, can, permForRecord, logActivity, listActivity, listTeam, publicMember, staffLogin, acceptInvite, staffChangePassword, saveMember, resendInvite, removeMember, logoutStaff, assignable, PERMS } from "../lib/team.mjs";
 import { crmStore, sendMail, OWNER, bookingEmails, roomLink } from "../lib/core.mjs";
+import { getSettings as capSettings, saveSettings as capSave, computeCapacity } from "../lib/capacity.mjs";
 import { googleStatus, authUrl, disconnect, createMeet, cancelMeet, createSpace, addGuest } from "../lib/google.mjs";
 import crypto from "node:crypto";
 import { getStore } from "@netlify/blobs";
@@ -89,7 +90,8 @@ export default async (req) => {
         : { status: 400, error: "Unknown action" };
       return Response.json(r.ok ? r : { error: r.error }, { status: r.ok ? 200 : r.status });
     }
-    if (["test-email", "google-connect", "google-disconnect"].includes(body.action) && !owner) return NO();
+    if (["test-email", "google-connect", "google-disconnect", "capacity-save"].includes(body.action) && !owner) return NO();
+    if (body.action === "capacity-save") { const c = await capSave(body.settings || {}, store); await logActivity(me, `set capacity: ${c.maxProjects} projects at once, ${c.minDays} working days minimum${c.paused ? ", paused new projects" : ""}`, "", store); return Response.json({ ok: true, settings: c }); }
     if (/^(receipt-|income-|expense-)/.test(body.action || "") && !can(me, "payments")) return NO();
     if (body.action === "test-email") {
       await sendMail({ to: OWNER.email(), subject: "✅ Test email from your website CRM", html: "<p>Your website can send emails. Bookings, reminders and inquiries will arrive here.</p>" });
@@ -183,7 +185,8 @@ export default async (req) => {
     if (!rec) return Response.json({ error: "Not found" }, { status: 404 });
     if (!can(me, permForRecord(rec))) return NO();
     if (body.action === "update") {
-      const was = { status: rec.status, notes: rec.notes || "", followUp: rec.followUp || "", assignee: rec.assignee?.id || "" };
+      const was = { status: rec.status, notes: rec.notes || "", followUp: rec.followUp || "", assignee: rec.assignee?.id || "", delivery: rec.delivery || "" };
+      if (typeof body.delivery === "string") { if (body.delivery && !/^\d{4}-\d{2}-\d{2}$/.test(body.delivery)) return Response.json({ error: "Pick a valid delivery date." }, { status: 400 }); rec.delivery = body.delivery; }
       // Assign to a team member (or back to the owner with "")
       if (typeof body.assignedTo === "string" && body.assignedTo !== was.assignee) {
         if (body.assignedTo) {
@@ -213,6 +216,7 @@ export default async (req) => {
       if (rec.status !== was.status) did.push(`status → ${rec.status}`);
       if ((rec.assignee?.id || "") !== was.assignee) did.push(rec.assignee ? `assigned to ${rec.assignee.name}` : "unassigned");
       if ((rec.notes || "") !== was.notes) did.push("notes");
+      if ((rec.delivery || "") !== was.delivery) did.push(rec.delivery ? `delivery date ${rec.delivery}` : "delivery date cleared");
       if ((rec.followUp || "") !== was.followUp) did.push(rec.followUp ? `follow-up ${rec.followUp}` : "follow-up cleared");
       if (did.length) await logActivity(me, `updated ${who(rec)} (${rec.type}): ${did.join(", ")}`, body.key, store);
       return Response.json({ ok: true, rec });
@@ -254,13 +258,13 @@ export default async (req) => {
   }
 
   const { blobs } = await store.list();
-  const recs = [], income = [], expenses = [];
+  const recs = [], income = [], expenses = [], allRecs = [];
   for (const b of blobs) {
     if (b.key.startsWith("settings/")) continue;
     const r = await store.get(b.key, { type: "json" });
     if (!r) continue;
     if (b.key.startsWith("income/") || b.key.startsWith("expense/")) { if (can(me, "payments")) (b.key.startsWith("income/") ? income : expenses).push(r); }
-    else if (can(me, permForRecord(r))) recs.push(r);
+    else { allRecs.push(r); if (can(me, permForRecord(r))) recs.push(r); }
   }
   recs.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
   income.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.createdAt || "").localeCompare(a.createdAt || ""));
@@ -310,7 +314,9 @@ export default async (req) => {
   }
   // Who's logged in, and who records can be assigned to (names only for team members)
   const team = (await listTeam(store)).filter((m) => m.active !== false && m.pwHash || owner && m.active !== false).map((m) => ({ id: m.id, name: m.name, perms: m.perms }));
-  return Response.json({ records: recs, income, expenses, me: { role: me.role, id: me.id, name: me.name, perms: me.perms }, team }, { headers: { "Cache-Control": "no-store" } });
+  const capacity = { ...computeCapacity(allRecs, await capSettings(store)), settings: owner ? await capSettings(store) : undefined };
+  if (!owner) capacity.nextDue = capacity.nextDue.filter((x) => recs.some((r) => r.key === x.key));
+  return Response.json({ records: recs, income, expenses, capacity, me: { role: me.role, id: me.id, name: me.name, perms: me.perms }, team }, { headers: { "Cache-Control": "no-store" } });
 };
 
 export const config = { path: "/api/crm" };

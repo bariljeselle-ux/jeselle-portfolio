@@ -330,6 +330,8 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
     rec.start = start.toISOString();
   }
   if (type !== "Payment" && type !== "Portfolio permission") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
+  // Capacity: can she take this on, and by the date they asked? (shown in the CRM card)
+  if (type === "Project brief" || type === "Inquiry" || type === "Booking") { try { const c = await import("./capacity.mjs"); rec.capacity = c.checkRequest(data, await c.loadCapacity(store || crmStore())); rec.capacity.at = c.phDay(); } catch (e) { console.log("capacity:", e.message); } }
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
@@ -361,7 +363,7 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
       : type === "Portfolio permission" ? (data.portfolio_permission || "") + (data.business ? " · " + data.business : "")
       : type === "Project brief" ? (data.service || "New project brief") + (data.estimated_total ? " · " + data.estimated_total : "")
       : String(data.message || data.service || "New message").slice(0, 120);
-    await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}`, body, url: "/admin.html#" + key, tag: key, perm: type === "Payment" ? "payments" : "bookings" }, store);
+    await sendPush({ title: `${icon} New ${type.toLowerCase()}: ${who}${rec.scopeFlags?.length ? " ⚠️" : ""}${rec.capacity?.tooSoon ? " ⏳" : ""}`, body, url: "/admin.html#" + key, tag: key, perm: type === "Payment" ? "payments" : "bookings" }, store);
   } catch {}
   return { ok: true, key, results };
 }

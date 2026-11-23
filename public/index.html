@@ -948,6 +948,17 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <div><span class="tzl">My time · Philippines</span><span class="tzv" id="tz-me">--</span><span class="tzn">GMT+8</span></div>
 </div>
 <p class="hv" style="text-align:center;margin:-16px 0 0">Open for calls Mon – Fri · 10:00 AM – 3:00 PM Philippine time<span class="hy2"></span></p>
+<p id="capnote" role="status" hidden style="max-width:640px;margin:-20px auto 0;padding:12px 16px;border-radius:8px;text-align:center;font-size:15px;line-height:1.55;color:#231E1B"></p>
+<script>
+/* Project availability: only shown when nearly or fully booked */
+(function(){fetch('/api/capacity').then(function(r){return r.json()}).then(function(c){if(!c||c.error||(!c.full&&c.slotsOpen!==1))return;
+var el=document.getElementById('capnote'),fmt=function(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric'})};
+el.style.background=c.full?'#FCEAE6':'#FBF3E4';
+el.textContent=c.paused?"⏸️ I'm not taking new projects right now. You can still book a call or send a brief to join my waitlist."
+ :c.full?"🔴 I'm fully booked for new projects until "+fmt(c.earliestStart)+". You can still book a call now to reserve the next spot (earliest delivery "+fmt(c.earliestDelivery)+")."
+ :"🟠 Only 1 project spot left right now. Earliest delivery for a new project: "+fmt(c.earliestDelivery)+".";
+el.hidden=false}).catch(function(){})})();
+</script>
 <div class="bk">
 <div class="bkcal">
 <div class="bkhead"><button type="button" class="bknav" id="bk-prev" aria-label="Previous month">‹</button><p id="bk-month" aria-live="polite"></p><button type="button" class="bknav" id="bk-next" aria-label="Next month">›</button></div>
