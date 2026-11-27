@@ -231,3 +231,7 @@ SEO audit $75–$145, Reels editing $12–$25, website update and extra website 
 
 == Services & Rates on one page (Nov 27, 2026) ==
 /services now shows services, how it works, rates and FAQ. /rates redirects to /services#rates. Menu item is "Services & Rates".
+
+== Cleanup (Nov 27, 2026) ==
+Removed repeats: package cards at the top of Services (website packages live in Rates, open by default), the website card's long feature list,
+the second tools list, the Tagline card (tagline is in the hero), repeated experience lines in About, and FAQ questions the page already answers.
