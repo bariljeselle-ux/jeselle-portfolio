@@ -119,6 +119,16 @@ section#services{padding-bottom:48px!important}
 .wkshot:hover,.wkshot:focus-visible{transform:translateY(-6px);box-shadow:0 28px 56px rgba(35,30,27,.16)}
 .wkshot img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
 .wkshot:hover img{transform:scale(1.025)}
+.wkstage{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;background:#1b2a6b}
+.wkstage img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;object-position:top;opacity:0;transform:scale(1.04);transition:opacity 1.1s ease,transform 4.6s ease-out}
+.wkstage img.on{opacity:1;transform:scale(1)}
+.wkshot:hover .wkstage img.on{transform:scale(1.02)}
+.wkslides{position:relative}
+.wkdots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px;padding:5px 8px;border-radius:99px;background:rgba(20,24,50,.45);backdrop-filter:blur(4px)}
+.wkdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
+.wkdots i.on{width:16px;border-radius:3px;background:#fff}
+.wkpath{color:#7A4E3A}
+@media (prefers-reduced-motion:reduce){.wkstage img{transition:none;transform:none!important}}
 .wkbar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#F3EEE8;border-bottom:1px solid #E2D9CF}
 .wkbar i{width:9px;height:9px;border-radius:50%;background:#D9CCBF}
 .wkbar em{font-style:normal;font-size:12px;color:#6E625A;margin-left:10px;background:#fff;border-radius:99px;padding:2px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -892,9 +902,15 @@ el.hidden=false}).catch(function(){})})();
 </div>
 
 <article class="wkfeat">
-<a class="wkshot" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
-<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com</em></span>
-<img src="images/work-travel-destinacia.webp?v=2" width="1280" height="800" alt="Homepage of the Travel Destinacia website: a navy page with the headline 'You're Destined to Travel! The world with us', a circle of destination photos and buttons to reserve a trip or get a free quote." loading="lazy">
+<a class="wkshot wkslides" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
+<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com<span class="wkpath"></span></em></span>
+<span class="wkstage">
+<img class="on" data-path="" src="images/work-td-home.webp" width="1280" height="800" alt="Travel Destinacia website pages: the homepage with the headline 'You're Destined to Travel!', followed by the packages, services and trip videos pages." loading="lazy">
+<img data-path="/#packages" src="images/work-td-packages.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#services" src="images/work-td-services.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#videos" src="images/work-td-videos.webp" width="1280" height="800" alt="" loading="lazy">
+</span>
+<span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>
 </a>
 <div class="wkinfo">
 <p class="wkkind"><span class="wkreal">Client project</span> Travel agency · Antipolo, Philippines</p>
@@ -1341,6 +1357,16 @@ sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel()
  else{var end2=sm.offsetHeight+(parseFloat(getComputedStyle(d).paddingTop)||0)+(parseFloat(getComputedStyle(d).borderTopWidth)||0)*2+'px';d.style.overflow='hidden';busy=d.animate({height:[start,end2]},{duration:300,easing:'cubic-bezier(.4,0,.2,1)'});busy.onfinish=function(){d.open=false;};}
  busy.onfinish=busy.onfinish||null;var b=busy;b.addEventListener('finish',function(){d.style.overflow='';busy=null;});b.addEventListener('cancel',function(){d.style.overflow='';});
 });});})();
+</script>
+<script>
+// Works: Travel Destinacia thumbnail plays through its pages
+(function(){var box=document.querySelector('.wkslides');if(!box)return;var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),i=0,t=null;
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+function go(n){imgs[i].classList.remove('on');dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i].classList.add('on');path.textContent=imgs[i].dataset.path||''}
+function start(){if(!t)t=setInterval(function(){go(i+1)},3200)}function stop(){clearInterval(t);t=null}
+imgs.forEach(function(im){im.loading='eager'});
+if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?start():stop()})}).observe(box)}else start();
+document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});})();
 </script>
 <script src="/guard.js" defer></script>
 </body>
