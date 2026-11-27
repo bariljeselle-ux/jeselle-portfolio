@@ -10,5 +10,7 @@
   "kv_namespaces": [{ "binding": "FILES" }],
   "triggers": { "crons": ["*/15 * * * *", "0 1 * * *", "0 1 1 * *"] },
   "vars": { "SITE_URL": "https://jeselleva.com", "GMAIL_USER": "bariljeselle@gmail.com" },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Preview links for draft branches (look only: no database, so forms and the admin don't save in a preview)
+  "previews": { "vars": { "SITE_URL": "https://jeselleva.com", "GMAIL_USER": "bariljeselle@gmail.com" } }
 }
