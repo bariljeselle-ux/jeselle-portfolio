@@ -36,7 +36,17 @@ html[data-page="home"] section[data-pg]:not([data-pg="home"]),html[data-page="wo
 .fcl-mini{margin:0!important}.fcl-mini a{color:#7A4E3A;font-weight:500}
 @media(max-width:600px){.fcl{padding:20px 18px}.fcl-h{font-size:25px}.fcl-b .cbtn{flex:1;text-align:center}}
 .svcfrom{margin:0;font-size:15px;line-height:1.6;color:#4A413B}.svcfrom b{font-weight:600;color:#231E1B}.svcfrom a{color:#7A4E3A;font-weight:500}
-.wpk{cursor:pointer;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background-color .22s ease;will-change:transform}.wpk:hover{transform:translateY(-6px);box-shadow:0 16px 30px rgba(35,30,27,.13);border-color:#7A4E3A}.wpk:active{transform:translateY(-2px) scale(.985)}.wpk.tap{animation:wpktap .35s ease}@keyframes wpktap{0%{transform:scale(1)}40%{transform:scale(.97)}100%{transform:translateY(-6px)}}.wpk:has(.pickbtn[aria-pressed="true"]){border:2px solid #3F7A5A;background:#fff;box-shadow:0 12px 26px rgba(63,122,90,.15)}.wpk .pickbtn[aria-pressed="true"]{background:#3F7A5A;border-color:#3F7A5A;color:#fff}@media(hover:none){.wpk:hover{transform:none;box-shadow:none}}
+.wpk{cursor:pointer;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background-color .22s ease;will-change:transform}.wpk:hover{transform:translateY(-6px);box-shadow:0 16px 30px rgba(35,30,27,.13);border-color:#7A4E3A}.wpk:active{transform:translateY(-2px) scale(.985)}.wpk.tap{animation:wpktap .35s ease}
+.wpk:has(.wpkmore[open]){transform:translateY(-4px);box-shadow:0 14px 30px rgba(35,30,27,.10)}
+.wpkmore summary span,.wfull>summary span{transition:transform .35s cubic-bezier(.34,1.56,.64,1),background .25s,color .25s!important}
+.wpkmore[open] summary span,.wfull[open]>summary span{background:#7A4E3A;color:#fff}
+.wpkmore summary:hover span,.wfull>summary:hover span{transform:scale(1.12)}
+.wpkmore[open] summary:hover span,.wfull[open]>summary:hover span{transform:rotate(45deg) scale(1.12)}
+.wpkmore[open] li{animation:wpkli .4s cubic-bezier(.2,.8,.2,1) both}
+.wpkmore[open] li:nth-child(2){animation-delay:.04s}.wpkmore[open] li:nth-child(3){animation-delay:.08s}.wpkmore[open] li:nth-child(4){animation-delay:.12s}.wpkmore[open] li:nth-child(5){animation-delay:.16s}.wpkmore[open] li:nth-child(6){animation-delay:.2s}.wpkmore[open] li:nth-child(n+7){animation-delay:.24s}
+@keyframes wpkli{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.wpk,.wpkmore[open] li{animation:none!important;transition:none!important}.wpk:has(.wpkmore[open]){transform:none}}
+@keyframes wpktap{0%{transform:scale(1)}40%{transform:scale(.97)}100%{transform:translateY(-6px)}}.wpk:has(.pickbtn[aria-pressed="true"]){border:2px solid #3F7A5A;background:#fff;box-shadow:0 12px 26px rgba(63,122,90,.15)}.wpk .pickbtn[aria-pressed="true"]{background:#3F7A5A;border-color:#3F7A5A;color:#fff}@media(hover:none){.wpk:hover{transform:none;box-shadow:none}}
 .wpkmore{margin-top:4px;border-top:1px solid #E2D9CF;padding-top:8px}
 .wpkmore summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#7A4E3A;min-height:36px}
 .wpkmore summary::-webkit-details-marker{display:none}
@@ -103,6 +113,40 @@ section#services{padding-bottom:48px!important}
 .wkey{margin:0;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#7A4E3A}
 .wkh{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(40px,8vw,64px);line-height:1.05}
 .wklead{margin:0;font-weight:300;font-size:18px;line-height:1.7;color:#4A413B}
+.wkhead{max-width:680px;margin:0 auto 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.wksec h2{font-family:'Cormorant Garamond',serif;font-weight:500;margin:0;line-height:1.1;color:#231E1B}
+.wkshot{display:block;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #E2D9CF;box-shadow:0 18px 40px rgba(35,30,27,.10);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
+.wkshot:hover,.wkshot:focus-visible{transform:translateY(-6px);box-shadow:0 28px 56px rgba(35,30,27,.16)}
+.wkshot img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.wkshot:hover img{transform:scale(1.025)}
+.wkbar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#F3EEE8;border-bottom:1px solid #E2D9CF}
+.wkbar i{width:9px;height:9px;border-radius:50%;background:#D9CCBF}
+.wkbar em{font-style:normal;font-size:12px;color:#6E625A;margin-left:10px;background:#fff;border-radius:99px;padding:2px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wkfeat{display:grid;grid-template-columns:1.35fr 1fr;gap:56px;align-items:center;margin-bottom:96px}
+.wkinfo{display:flex;flex-direction:column;gap:16px}
+.wkinfo h2{font-size:clamp(32px,3.6vw,44px)}
+.wkinfo>p{margin:0;font-weight:300;font-size:17px;line-height:1.7;color:#4A413B}
+.wkkind{margin:0;font-size:14px;color:#6E625A;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.wkreal,.wksample{font-size:12px;font-weight:500;letter-spacing:.06em;padding:4px 11px;border-radius:99px}
+.wkreal{background:#7A4E3A;color:#fff}
+.wksample{background:#F3EEE8;color:#7A4E3A;border:1px solid #E2D9CF}
+.wkfeats{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px;color:#3A322D}
+.wkfeats li{padding-left:22px;position:relative}
+.wkfeats li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:50%;border:1.5px solid #7A4E3A}
+.wkfeat .wkbtns{justify-content:flex-start;margin-top:6px}
+.wkpair{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-bottom:96px}
+.wkcard{display:flex;flex-direction:column;gap:12px}
+.wkcard .wkshot{margin-bottom:10px}
+.wkcard h2{font-size:32px}
+.wkcard>p:not(.wkkind){margin:0;font-weight:300;font-size:16px;line-height:1.7;color:#4A413B;max-width:34em}
+.wklink{align-self:flex-start;color:#7A4E3A;font-weight:500;text-decoration:none;border-bottom:1px solid #7A4E3A;padding-bottom:2px;margin-top:4px}
+.wklink:hover{color:#231E1B;border-color:#231E1B}
+.wkcta{text-align:center;border-top:1px solid #E2D9CF;padding-top:64px;max-width:640px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
+.wkcta-h{margin:0;font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,40px);line-height:1.15}
+.wkcta>p:not(.wkcta-h){margin:0;font-weight:300;color:#4A413B;font-size:17px}
+@media (max-width:900px){.wkfeat,.wkpair{grid-template-columns:1fr;gap:32px}.wkfeat,.wkpair{margin-bottom:64px}.wkhead{margin-bottom:40px}}
+@media (max-width:600px){.wkfeat .wkbtns .cbtn{width:100%;text-align:center}.wkcard h2{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.wkshot,.wkshot img{transition:none}.wkshot:hover,.wkshot:hover img{transform:none}}
 .wkbtns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px}
 @media(max-width:480px){.wksec{padding:72px 20px 88px}.wkbtns{flex-direction:column;width:100%}.wkbtns .cbtn{text-align:center}}
 </style>
@@ -838,12 +882,59 @@ el.hidden=false}).catch(function(){})})();
 </section>
 
 <section data-pg="works" id="works" class="wksec">
-<div class="wkin">
-<img src="images/logo-mark.svg" width="72" height="72" alt="">
+<div class="wkhead">
 <p class="wkey" data-edit="works-1">Creations &amp; Works</p>
-<h1 class="wkh" data-edit="works-2">New work, <span style="font-style: italic; color: #7A4E3A">coming soon</span></h1>
-<p class="wklead" data-edit="works-3">I'm putting together a fresh collection of websites, graphic designs and CRM systems I've made. In the meantime, I'm happy to show you examples on a free call.</p>
-<div class="wkbtns"><a href="/book" class="cbtn solid">Book a free call</a><a href="/services" class="cbtn ghost2">See my services</a></div>
+<h1 class="wkh" data-edit="works-2">Websites I've built</h1>
+<p class="wklead" data-edit="works-3">One real client website, plus two sample projects that show how the same system looks for very different businesses. Tap any project to open it.</p>
+</div>
+
+<article class="wkfeat">
+<a class="wkshot" href="https://travel-destinacia.netlify.app/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
+<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>travel-destinacia.netlify.app</em></span>
+<img src="images/work-travel-destinacia.webp" width="1280" height="800" alt="Homepage of the Travel Destinacia website: a mountain lake photo with the headline 'Your next adventure starts in Antipolo' and buttons to reserve a trip." loading="lazy">
+</a>
+<div class="wkinfo">
+<p class="wkkind"><span class="wkreal">Client project</span> Travel agency · Antipolo, Philippines</p>
+<h2>Travel Destinacia Travel &amp; Tours</h2>
+<p>A booking website for a local travel agency, so travelers can watch real trip videos, compare packages and reserve seats online instead of waiting on Messenger.</p>
+<ul class="wkfeats">
+<li>Online trip reservations with payment details</li>
+<li>Free-quote and inquiry forms</li>
+<li>Trip video gallery and featured packages</li>
+<li>Live clocks for each destination</li>
+<li>Owner dashboard with an inquiries pipeline and analytics</li>
+</ul>
+<div class="wkbtns"><a href="https://travel-destinacia.netlify.app/" target="_blank" rel="noopener" class="cbtn solid">Visit the Travel Destinacia website</a></div>
+</div>
+</article>
+
+<div class="wkpair">
+<article class="wkcard">
+<a class="wkshot" href="/demos/lamesa-cafe/" aria-label="Open the Lamesa Café sample website">
+<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>Lamesa Café</em></span>
+<img src="images/work-lamesa-cafe.webp" width="1280" height="800" alt="Homepage of the Lamesa Café sample website: a dark green page with a chalkboard menu showing coffee and merienda prices in pesos." loading="lazy">
+</a>
+<p class="wkkind"><span class="wksample">Sample project</span> Café · Cebu</p>
+<h2>Lamesa Café</h2>
+<p>A neighborhood café with a menu board, catering trays you can add to a request, table bookings and the owner's dashboard.</p>
+<a href="/demos/lamesa-cafe/" class="wklink">Open the café sample</a>
+</article>
+<article class="wkcard">
+<a class="wkshot" href="/demos/tidy-wren/" aria-label="Open the Tidy Wren Cleaning sample website">
+<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>Tidy Wren Cleaning</em></span>
+<img src="images/work-tidy-wren.webp" width="1280" height="800" alt="Homepage of the Tidy Wren Cleaning sample website: a bright blue page with an instant quote calculator showing a price in Australian dollars." loading="lazy">
+</a>
+<p class="wkkind"><span class="wksample">Sample project</span> Home cleaning · Brisbane, Australia</p>
+<h2>Tidy Wren Cleaning</h2>
+<p>A cleaning business for Australian customers, with an instant quote calculator, booking in the visitor's own time zone and the owner's dashboard.</p>
+<a href="/demos/tidy-wren/" class="wklink">Open the cleaning sample</a>
+</article>
+</div>
+
+<div class="wkcta">
+<p class="wkcta-h">Want one like these for your business?</p>
+<p>Every website comes with the same booking, inquiry, payment and dashboard system, styled in your own brand.</p>
+<div class="wkbtns"><a href="/book" class="cbtn solid">Book a free call</a><a href="/services" class="cbtn ghost2">See packages and prices</a></div>
 </div>
 </section>
 
@@ -1235,8 +1326,19 @@ vids.forEach(v=>{
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e45219f3a34a40e4881a484a89f193f9"}'></script>
 <dialog class="cmpdlg" id="cmpdlg" aria-labelledby="cmph"><div class="cmpbox"><div class="cmptop"><h3 id="cmph">Compare website packages</h3><button type="button" class="cmpx" aria-label="Close">×</button></div><p class="cmpsub">Every website (Starter and up) has the same built-in booking, payment and CRM system. The difference is the number of pages, how much SEO I do, and the extras.</p><div class="cmpscroll"><table class="cmp"><thead><tr><th></th><th>Landing page</th><th>Starter</th><th class="cpop">Business<small>Most popular</small></th><th>Premium</th></tr></thead><tbody><tr><th scope="row">Best for</th><td>For an ad or promo</td><td>New or small businesses</td><td class="cpop">Growing businesses</td><td>Busy businesses with staff</td></tr><tr><th scope="row">Price</th><td><span data-php="from ₱12,000">from $400</span></td><td><span data-php="₱36,000">$1,150</span></td><td class="cpop"><span data-php="₱45,000">$1,500</span></td><td><span data-php="₱57,000">$1,900</span></td></tr><tr><th scope="row">Pages</th><td>1</td><td>Up to 3</td><td class="cpop">Up to 5</td><td>Up to 7</td></tr><tr><th scope="row">Contact or sign-up form</th><td><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Online booking with Meet links and reminders</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Payment page with proof upload</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Private CRM with phone alerts</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Reviews, income records, edit section</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">SEO basics and Google indexing</th><td>Standard and up</td><td><span class="cy" aria-label="Included">✓</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Keyword research</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cn" aria-label="Not included">–</span></td><td class="cpop">10 keywords</td><td>20 keywords</td></tr><tr><th scope="row">Google Business Profile setup</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cn" aria-label="Not included">–</span></td><td class="cpop"><span class="cy" aria-label="Included">✓</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Blog with 2 starter articles</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cn" aria-label="Not included">–</span></td><td class="cpop"><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Speed optimization</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cn" aria-label="Not included">–</span></td><td class="cpop"><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Team logins for staff</th><td><span class="cn" aria-label="Not included">–</span></td><td><span class="cn" aria-label="Not included">–</span></td><td class="cpop"><span class="cn" aria-label="Not included">–</span></td><td><span class="cy" aria-label="Included">✓</span></td></tr><tr><th scope="row">Revision rounds</th><td>2</td><td>2</td><td class="cpop">3</td><td>3</td></tr><tr><th scope="row">Free small fixes after launch</th><td>Premium: 30 days</td><td>14 days</td><td class="cpop">30 days</td><td>60 days</td></tr><tr><th scope="row">Usually ready in</th><td>About 1 week</td><td>About 2 weeks</td><td class="cpop">About 3 weeks</td><td>About 4 weeks</td></tr></tbody></table></div><p class="cmpsub" style="margin-top:12px">Need more pages? Add extra pages for <b data-php="₱3,000">$70</b> each. Not sure? <a href="/book">Book a free call</a> and I'll recommend one.</p></div></dialog>
 <script>(function(){var d=document.getElementById("cmpdlg");if(!d)return;document.addEventListener("click",function(e){if(e.target.closest(".cmpopen")){if(d.showModal)d.showModal();else d.setAttribute("open","")}else if(e.target.closest(".cmpx")||e.target===d){d.close?d.close():d.removeAttribute("open")}})})();</script>
-<script>(function(){document.addEventListener("click",function(e){var c=e.target.closest&&e.target.closest(".wpk");if(!c)return;c.classList.remove("tap");void c.offsetWidth;c.classList.add("tap");if(e.target.closest("button,a,summary,details"))return;var d=c.querySelector("details.wpkmore");if(d)d.open=!d.open})})();</script>
+<script>(function(){document.addEventListener("click",function(e){var c=e.target.closest&&e.target.closest(".wpk");if(!c)return;c.classList.remove("tap");void c.offsetWidth;c.classList.add("tap");if(e.target.closest("button,a,summary,details"))return;var d=c.querySelector("details.wpkmore>summary");if(d)d.click()})})();</script>
 <script defer src="/consent.js"></script>
+<script>
+// Smooth open/close for "What's included" and "See full details"
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!Element.prototype.animate)return;
+document.querySelectorAll('details.wpkmore,details.wfull').forEach(function(d){var sm=d.querySelector(':scope>summary'),busy=null;
+sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel();
+ var start=d.offsetHeight+'px';
+ if(!d.open){d.open=true;var end=d.offsetHeight+'px';d.style.overflow='hidden';busy=d.animate({height:[start,end]},{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});}
+ else{var end2=sm.offsetHeight+(parseFloat(getComputedStyle(d).paddingTop)||0)+(parseFloat(getComputedStyle(d).borderTopWidth)||0)*2+'px';d.style.overflow='hidden';busy=d.animate({height:[start,end2]},{duration:300,easing:'cubic-bezier(.4,0,.2,1)'});busy.onfinish=function(){d.open=false;};}
+ busy.onfinish=busy.onfinish||null;var b=busy;b.addEventListener('finish',function(){d.style.overflow='';busy=null;});b.addEventListener('cancel',function(){d.style.overflow='';});
+});});})();
+</script>
 <script src="/guard.js" defer></script>
 </body>
 </html>

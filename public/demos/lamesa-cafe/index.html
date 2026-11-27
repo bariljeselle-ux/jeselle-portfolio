@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lamesa Café · Sample website by JB</title>
+<meta name="description" content="A sample café website by JB: menu, catering packages, table bookings and an owner dashboard. Lamesa Café is a made-up business.">
+<meta name="robots" content="noindex">
+<link rel="preload" href="/demos/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Young Serif';src:url(/demos/fonts/young-serif-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Work Sans';src:url(/demos/fonts/work-sans-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Work Sans';src:url(/demos/fonts/work-sans-latin-600-normal.woff2) format('woff2');font-weight:600;font-display:swap}
+:root{--leaf:#1E4632;--leaf2:#2C5E45;--mango:#F0B429;--ube:#5B3F8C;--mist:#EEF3EC;--paper:#fff;--ink:#1E4632;--muted:#56695E}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;font:400 17px/1.65 'Work Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+h1,h2,h3{font-family:'Young Serif',Georgia,serif;font-weight:400;line-height:1.1;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--mango);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.sample{background:var(--ube);color:#fff;font-size:14px;text-align:center;padding:8px 16px}
+.sample a{color:#fff;font-weight:600}
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);transition:box-shadow .2s}
+header.top.scrolled{box-shadow:0 1px 0 #DCE6DA}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
+.logo{white-space:nowrap;font-family:'Young Serif',serif;font-size:24px;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo svg{flex:none}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:15px}
+.nav ul a{text-decoration:none}
+.nav ul a:hover{text-decoration:underline;text-underline-offset:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--leaf);background:var(--leaf);color:#fff;font:600 15px 'Work Sans',sans-serif;padding:12px 22px;border-radius:999px;text-decoration:none;cursor:pointer}
+.btn.line{background:transparent;color:var(--leaf)}
+.btn.mango{background:var(--mango);border-color:var(--mango);color:var(--leaf)}
+.traybtn{position:relative}
+.traybtn span{position:absolute;top:-6px;right:-6px;background:var(--mango);color:var(--leaf);font-size:12px;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+/* hero: the chalk menu board */
+.hero{background:var(--leaf);color:#fff;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding-top:72px;padding-bottom:84px}
+.hero h1{font-size:clamp(40px,5.2vw,64px);letter-spacing:-.01em}
+.hero p{font-size:19px;max-width:30em;color:#D6E4D9;margin:22px 0 30px}
+.hero .btn{border-color:#fff}
+.hero .btn.line{color:#fff}
+.hero .acts{display:flex;flex-wrap:wrap;gap:12px}
+.hero .hours{margin-top:30px;font-size:15px;color:#BBD0C1}
+.board{background:#173828;border:10px solid #8A5A34;border-radius:6px;padding:30px 32px 26px;box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 0 60px rgba(0,0,0,.35);transform:rotate(1.2deg);position:relative}
+.board::before{content:"";position:absolute;inset:-10px;border-radius:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08);pointer-events:none}
+.board h2{font-size:30px;color:var(--mango);margin-bottom:4px}
+.board .sub{font-size:14px;color:#9FB9A8;margin:0 0 18px}
+.board ul{list-style:none;margin:0;padding:0}
+.board li{display:flex;align-items:baseline;gap:10px;padding:7px 0;font-size:17px}
+.board li i{flex:1;border-bottom:2px dotted rgba(255,255,255,.28);transform:translateY(-4px)}
+.board li b{font-family:'Young Serif',serif;font-weight:400;color:#fff}
+.board li small{display:block;color:#9FB9A8;font-size:13px}
+.board .chalk{margin-top:18px;font-family:'Young Serif',serif;color:#F6D98A;font-size:18px}
+section{padding:96px 0}
+.head{max-width:640px;margin-bottom:44px}
+.head h2{font-size:clamp(34px,4.4vw,52px)}
+.head p{color:var(--muted);margin:14px 0 0;font-size:18px}
+/* menu */
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
+.menu h3{font-size:24px;padding-bottom:12px;border-bottom:3px solid var(--leaf);margin-bottom:8px}
+.menu ul{list-style:none;margin:0;padding:0}
+.menu li{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:12px 0;border-bottom:1px solid #DCE6DA}
+.menu li span{font-weight:600}
+.menu li b{font-weight:600}
+.menu li small{grid-column:1/-1;color:var(--muted);font-size:15px}
+/* catering */
+#catering{background:var(--mist)}
+.trays{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.tray{background:#fff;border-radius:18px;padding:30px 28px;display:flex;flex-direction:column;gap:14px;border:1px solid #DCE6DA}
+.tray.main{background:var(--leaf);color:#fff;border-color:var(--leaf);transform:translateY(-10px)}
+.tray h3{font-size:26px}
+.tray .pr{font-family:'Young Serif',serif;font-size:34px}
+.tray .pr small{font:400 15px 'Work Sans',sans-serif;opacity:.75}
+.tray ul{margin:0;padding-left:20px;flex:1}
+.tray li{margin:4px 0}
+.tray .btn{width:100%}
+.tray.main .btn{background:var(--mango);border-color:var(--mango);color:var(--leaf)}
+.add[aria-pressed="true"]{background:var(--mango);border-color:var(--mango);color:var(--leaf)}
+.tray.main .add[aria-pressed="true"]{background:#fff;border-color:#fff}
+.tag{align-self:flex-start;background:var(--mango);color:var(--leaf);font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px}
+/* booking */
+.bookgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+.panel{background:#fff;border:1px solid #DCE6DA;border-radius:18px;padding:30px}
+.panel h3{font-size:24px;margin-bottom:6px}
+.tz{color:var(--muted);font-size:15px;margin:0 0 18px}
+.sday{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #EEF3EC}
+.sday p{margin:0;font-weight:600;font-size:15px}
+.sday div{display:flex;flex-wrap:wrap;gap:8px}
+.slot{border:1.5px solid #C9D8CC;background:#fff;color:var(--ink);border-radius:10px;padding:8px 12px;font:600 14px 'Work Sans',sans-serif;cursor:pointer;text-align:left}
+.slot small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.slot[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.slot[aria-pressed="true"] small{color:#C9DACD}
+.chosen{margin:16px 0 0;font-size:15px}
+.chosen b{color:var(--leaf2)}
+form label{display:block;font-size:14px;font-weight:600;margin:0 0 14px}
+input,select,textarea{display:block;width:100%;margin-top:6px;font:400 16px 'Work Sans',sans-serif;padding:12px 14px;border:1.5px solid #C9D8CC;border-radius:10px;color:var(--ink);background:#fff}
+textarea{min-height:90px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.req{background:var(--mist);border-radius:12px;padding:14px 16px;margin:0 0 16px}
+.req p{margin:0 0 6px;font-size:14px;font-weight:600}
+.req ul{list-style:none;margin:0;padding:0;font-size:15px}
+.req li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:4px 0}
+.req li.empty{display:block;color:var(--muted)}
+.req li button{border:0;background:none;color:var(--ube);font:600 13px 'Work Sans',sans-serif;cursor:pointer;text-decoration:underline}
+.req .tot{display:flex;justify-content:space-between;border-top:1px solid #C9D8CC;margin-top:6px;padding-top:6px;font-weight:600}
+.done{outline:none}
+.done h3{color:var(--leaf)}
+.done table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+.done th{text-align:left;padding:6px 10px 6px 0;color:var(--muted);font-weight:400;text-transform:capitalize;vertical-align:top;width:34%}
+.done td{padding:6px 0}
+.done .note{background:#F6F0FF;color:var(--ube);border-radius:10px;padding:12px 14px;font-size:14px}
+#tray.bump{animation:bump .35s}
+@keyframes bump{50%{transform:scale(1.02)}}
+/* reviews */
+#reviews{background:var(--leaf);color:#fff}
+#reviews .head p{color:#BBD0C1}
+.revs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.rev{border-top:3px solid var(--mango);padding-top:18px}
+.rev p{font-family:'Young Serif',serif;font-size:21px;line-height:1.4;margin:0 0 12px}
+.rev span{color:#BBD0C1;font-size:15px}
+.stars{color:var(--mango);letter-spacing:2px}
+/* owner dashboard */
+.dash{border:1px solid #DCE6DA;border-radius:18px;overflow:hidden;background:#fff}
+.dbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--mist);padding:14px 20px}
+.dbar b{font-family:'Young Serif',serif;font-weight:400;font-size:20px}
+[role="tablist"]{display:flex;gap:6px;flex-wrap:wrap}
+[role="tab"]{border:0;background:transparent;font:600 14px 'Work Sans',sans-serif;color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;position:relative}
+[role="tab"][aria-selected="true"]{background:var(--leaf);color:#fff}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#D33B3B;margin-left:6px;vertical-align:middle}
+.dpanel{padding:8px 20px 20px;overflow-x:auto}
+.dpanel table{width:100%;border-collapse:collapse;font-size:15px;min-width:560px}
+.dpanel th{text-align:left;color:var(--muted);font-weight:600;font-size:13px;padding:12px 10px 8px 0;border-bottom:1px solid #DCE6DA}
+.dpanel td{padding:12px 10px 12px 0;border-bottom:1px solid #EEF3EC}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--mist)}
+.pill.new{background:#FFF1CC;color:#7A5300}
+.pill.ok{background:#DDEFE3;color:#1E4632}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0 4px}
+.kpis div{background:var(--mist);border-radius:12px;padding:14px 16px}
+.kpis b{display:block;font-family:'Young Serif',serif;font-weight:400;font-size:26px}
+.kpis span{font-size:13px;color:var(--muted)}
+/* visit + footer */
+.visit{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.visit dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 24px}
+.visit dt{font-weight:600}
+.visit dd{margin:0;color:var(--muted)}
+.faq details{border-bottom:1px solid #DCE6DA;padding:16px 0}
+.faq summary{font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::after{content:"+";font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--muted)}
+footer{background:#163424;color:#BBD0C1;padding:40px 0;font-size:15px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+footer a{color:#fff}
+@media (max-width:900px){
+ .nav ul{display:none}
+ .hero .wrap,.bookgrid,.visit{grid-template-columns:1fr}
+ .hero .wrap{gap:44px;padding-top:48px;padding-bottom:64px}
+ .board{transform:none}
+ .menu,.trays,.revs{grid-template-columns:1fr}
+ .menu{gap:36px}
+ .tray.main{transform:none}
+ section{padding:68px 0}
+ .kpis{grid-template-columns:1fr 1fr 1fr}
+}
+@media (max-width:520px){
+ .wrap{padding:0 18px}
+ .two{grid-template-columns:1fr}
+ .sday{grid-template-columns:1fr}
+ .board{padding:24px 20px;border-width:8px}
+ .panel{padding:22px 18px}
+ .kpis{grid-template-columns:1fr}
+ .nav .btn.line{display:none}
+ .logo{font-size:20px}
+ .nav .btn{padding:10px 16px;font-size:14px;white-space:nowrap}
+}
+</style>
+</head>
+<body data-site="lamesa" data-cur="₱" data-tz="Asia/Manila" data-utc="8">
+<div class="sample">Sample website by JB for a made-up café. <a href="/works">Back to JB's Works</a></div>
+<header class="top"><div class="wrap nav">
+ <a class="logo" href="#top"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="#1E4632"/><path d="M9 15h14v3a7 7 0 0 1-14 0z" fill="#F0B429"/><path d="M23 16h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#F0B429" stroke-width="2"/><path d="M13 8c0 2 2 2 2 4M17 8c0 2 2 2 2 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>Lamesa Café</a>
+ <ul><li><a href="#menu">Menu</a></li><li><a href="#catering">Catering</a></li><li><a href="#book">Book a table</a></li><li><a href="#visit">Visit</a></li></ul>
+ <a class="btn traybtn" href="#book">Book a table<span id="pickcount" hidden>0</span></a>
+</div></header>
+
+<main id="top">
+<section class="hero" style="padding:0"><div class="wrap">
+ <div>
+  <h1>Slow coffee and lola's merienda, in the heart of Bogo.</h1>
+  <p>Single-origin brews from Cebu's highlands, ensaymada baked every morning and a long table for your barkada. Book a table or order trays for your next gathering.</p>
+  <div class="acts"><a class="btn mango" href="#book">Book a table</a><a class="btn line" href="#catering">See catering trays</a></div>
+  <p class="hours">Tuesday to Sunday, 7 AM – 9 PM</p>
+ </div>
+ <div class="board" aria-label="Today's menu board">
+  <h2>Today's board</h2>
+  <p class="sub">Written fresh every morning</p>
+  <ul>
+   <li>Barako pour-over <i></i><b>₱140</b></li>
+   <li>Calamansi cold brew <i></i><b>₱160</b></li>
+   <li>Tablea hot chocolate <i></i><b>₱150</b></li>
+   <li>Ube ensaymada <i></i><b>₱95</b></li>
+   <li>Longganisa pandesal <i></i><b>₱120</b></li>
+   <li>Mango float slice <i></i><b>₱130</b></li>
+  </ul>
+  <p class="chalk">Try the barako with our ube ensaymada ✦</p>
+ </div>
+</div></section>
+
+<section id="menu"><div class="wrap">
+ <div class="head"><h2>The menu</h2><p>Small, seasonal and made in our kitchen. Prices include VAT.</p></div>
+ <div class="menu">
+  <div><h3>Coffee</h3><ul>
+   <li><span>Barako pour-over</span><b>₱140</b><small>Bold, chocolatey Batangas barako, brewed by hand</small></li>
+   <li><span>Café latte</span><b>₱150</b><small>Cebu highland espresso with steamed milk</small></li>
+   <li><span>Calamansi cold brew</span><b>₱160</b><small>18-hour cold brew with a squeeze of calamansi</small></li>
+   <li><span>Sea salt muscovado latte</span><b>₱175</b><small>Our most-ordered drink</small></li>
+  </ul></div>
+  <div><h3>Not coffee</h3><ul>
+   <li><span>Tablea hot chocolate</span><b>₱150</b><small>Thick, stone-ground cacao from Argao</small></li>
+   <li><span>Ube milk</span><b>₱140</b><small>Real ube halaya, fresh milk, served cold</small></li>
+   <li><span>Lemongrass iced tea</span><b>₱110</b><small>Brewed daily, lightly sweet</small></li>
+   <li><span>Mango shake</span><b>₱150</b><small>Guimaras mangoes, no syrup</small></li>
+  </ul></div>
+  <div><h3>Merienda</h3><ul>
+   <li><span>Ube ensaymada</span><b>₱95</b><small>Baked every morning, sells out by 3 PM</small></li>
+   <li><span>Longganisa pandesal</span><b>₱120</b><small>Bogo-style longganisa, egg, garlic mayo</small></li>
+   <li><span>Bibingka slice</span><b>₱90</b><small>With salted egg and fresh coconut</small></li>
+   <li><span>Mango float slice</span><b>₱130</b><small>Layers of graham, cream and ripe mango</small></li>
+  </ul></div>
+ </div>
+</div></section>
+
+<section id="catering"><div class="wrap">
+ <div class="head"><h2>Trays for your gatherings</h2><p>Birthdays, office meetings, church events. Add the trays you want, then send your request with your date. We confirm within the day.</p></div>
+ <div class="trays">
+  <div class="tray"><h3>Barkada tray</h3><p class="pr" style="margin:0">₱1,800 <small>· 6–8 people</small></p><ul><li>12 ube ensaymada</li><li>12 longganisa pandesal</li><li>2 liters of iced tea</li></ul><button type="button" class="btn line add" data-add="barkada" data-name="Barkada tray" data-price="1800">Add to my request</button></div>
+  <div class="tray main"><span class="tag">Most ordered</span><h3>Office merienda box</h3><p class="pr" style="margin:0">₱2,500 <small>· 10 people</small></p><ul><li>10 individual boxes: pastry, sandwich and drink</li><li>Labeled for each person</li><li>Free delivery within Bogo City</li></ul><button type="button" class="btn add" data-add="office" data-name="Office merienda box" data-price="2500">Add to my request</button></div>
+  <div class="tray"><h3>Party package</h3><p class="pr" style="margin:0">₱6,500 <small>· 25 people</small></p><ul><li>Pastries, pandesal and bibingka trays</li><li>Coffee and tablea station with server</li><li>Set-up and clean-up included</li></ul><button type="button" class="btn line add" data-add="party" data-name="Party package" data-price="6500">Add to my request</button></div>
+ </div>
+</div></section>
+
+<section id="book"><div class="wrap">
+ <div class="head"><h2>Book a table or send your order</h2><p>Pick a time, tell us how many are coming, and add any trays above. You'll get a confirmation by email and SMS.</p></div>
+ <div class="bookgrid">
+  <div class="panel">
+   <h3>Choose a time</h3>
+   <p class="tz" id="tznote">Times are shown in your local time.</p>
+   <div id="slots" data-hours="8,10,13,15,18" data-closed="1"></div>
+   <p class="chosen">Your table: <b id="slotchosen">no time picked yet</b></p>
+  </div>
+  <div class="panel" id="tray">
+   <form data-demo="#lamesa-done">
+    <div class="req"><p>Your request</p><ul id="picklist" data-empty="No trays added. That's fine if you're only booking a table."></ul><div class="tot"><span>Trays total</span><span id="picktotal">₱0</span></div></div>
+    <div class="two"><label>Your name<input name="name" required autocomplete="name"></label><label>Mobile number<input name="mobile" type="tel" required autocomplete="tel" placeholder="09XX XXX XXXX"></label></div>
+    <div class="two"><label>Email<input name="email" type="email" autocomplete="email"></label><label>How many people?<select name="guests"><option>2</option><option>3–4</option><option>5–8</option><option>9 or more</option></select></label></div>
+    <label>Anything we should know?<textarea name="notes" placeholder="Birthday, allergies, delivery address for trays…"></textarea></label>
+    <button class="btn" type="submit" style="width:100%">Send my booking</button>
+   </form>
+   <div class="done" id="lamesa-done" tabindex="-1" hidden>
+    <h3>Booking sent. Salamat!</h3>
+    <p style="margin:6px 0 0">Here's what the café receives:</p>
+    <table><tbody class="donerows"></tbody></table>
+    <p class="note">This is a sample site, so nothing was sent. On a real website, this lands in the owner's dashboard with a red-dot alert on their phone, and you get a confirmation email.</p>
+    <button type="button" class="btn line" data-again style="margin-top:14px">Make another booking</button>
+   </div>
+  </div>
+ </div>
+</div></section>
+
+<section id="reviews"><div class="wrap">
+ <div class="head"><h2>What guests say</h2><p>Sample reviews written for this demo. On a real website, guests leave stars and photos, and the owner approves them first.</p></div>
+ <div class="revs">
+  <div class="rev"><p class="stars" aria-label="5 stars">★★★★★</p><p>"The barako pour-over is the best I've had outside Batangas."</p><span>Sample guest, Bogo City</span></div>
+  <div class="rev"><p class="stars" aria-label="5 stars">★★★★★</p><p>"Ordered the office boxes for 12. Labeled, on time, still warm."</p><span>Sample guest, Medellin</span></div>
+  <div class="rev"><p class="stars" aria-label="4 stars">★★★★☆</p><p>"Come before 3 PM or the ube ensaymada is gone."</p><span>Sample guest, San Remigio</span></div>
+ </div>
+</div></section>
+
+<section id="owner"><div class="wrap">
+ <div class="head"><h2>Behind the counter: the owner's dashboard</h2><p>Every website I build comes with a private dashboard. Here's a preview with sample data.</p></div>
+ <div class="dash">
+  <div class="dbar"><b>Lamesa · Today</b>
+   <div role="tablist" aria-label="Dashboard">
+    <button role="tab" aria-selected="true" aria-controls="t-book" id="tb1">Bookings<span class="dot" aria-label="new"></span></button>
+    <button role="tab" aria-selected="false" aria-controls="t-cat" id="tb2">Catering</button>
+    <button role="tab" aria-selected="false" aria-controls="t-inc" id="tb3">Income</button>
+   </div>
+  </div>
+  <div class="dpanel" id="t-book" role="tabpanel" aria-labelledby="tb1"><table><thead><tr><th>Time</th><th>Name</th><th>Guests</th><th>Note</th><th>Status</th></tr></thead><tbody>
+   <tr><td>8:00 AM</td><td>Maricel R.</td><td>2</td><td>Window seat</td><td><span class="pill ok">Confirmed</span></td></tr>
+   <tr><td>1:00 PM</td><td>Jun A.</td><td>5–8</td><td>Birthday, bringing cake</td><td><span class="pill new">New</span></td></tr>
+   <tr><td>6:00 PM</td><td>Kristine L.</td><td>3–4</td><td>One guest is vegetarian</td><td><span class="pill ok">Confirmed</span></td></tr>
+  </tbody></table></div>
+  <div class="dpanel" id="t-cat" role="tabpanel" aria-labelledby="tb2" hidden><table><thead><tr><th>Date needed</th><th>Client</th><th>Order</th><th>Total</th><th>Status</th></tr></thead><tbody>
+   <tr><td>Sat, 10 AM</td><td>Sample office</td><td>Office merienda box ×2</td><td>₱5,000</td><td><span class="pill">Deposit paid</span></td></tr>
+   <tr><td>Sun, 3 PM</td><td>Parish youth group</td><td>Party package</td><td>₱6,500</td><td><span class="pill new">New</span></td></tr>
+  </tbody></table></div>
+  <div class="dpanel" id="t-inc" role="tabpanel" aria-labelledby="tb3" hidden>
+   <div class="kpis"><div><b>₱48,200</b><span>Catering income this month</span></div><div><b>₱12,750</b><span>Expenses with receipts</span></div><div><b>14</b><span>Trays delivered</span></div></div>
+  </div>
+ </div>
+</div></section>
+
+<section id="visit" style="background:var(--mist)"><div class="wrap visit">
+ <div><div class="head" style="margin-bottom:24px"><h2>Visit us</h2></div>
+  <dl><dt>Address</dt><dd>Sample address, Bogo City, Cebu</dd><dt>Hours</dt><dd>Tuesday to Sunday, 7 AM – 9 PM</dd><dt>Parking</dt><dd>Free, in front of the café</dd><dt>Wi-Fi</dt><dd>Yes, ask for the password at the counter</dd></dl>
+ </div>
+ <div class="faq">
+  <details><summary>Do you take walk-ins?</summary><p>Yes. Booking just keeps a table for you, especially on weekends.</p></details>
+  <details><summary>How early should I order trays?</summary><p>At least 2 days ahead for trays and 5 days for the party package.</p></details>
+  <details><summary>How do I pay for catering?</summary><p>50% deposit by GCash, Maya or bank transfer to confirm, and the rest on delivery.</p></details>
+  <details><summary>Do you deliver outside Bogo?</summary><p>Yes, to nearby towns for a small delivery fee. We'll quote it when we confirm.</p></details>
+ </div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span>Lamesa Café is a made-up business for this sample website.</span><span>Website by <a href="/">JB · jeselleva.com</a></span></div></footer>
+<script src="/demos/demo.js" defer></script>
+</body>
+</html>
