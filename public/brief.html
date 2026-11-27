@@ -184,7 +184,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <p class="tfsec">The project</p>
 <p class="tfn">10 → <span class="req">Required *</span></p>
 <h2 class="tft">Which services do you need?</h2><p class="tfh">Choose all that apply.</p><p class="tfh mypicks2" id="mypicks2" hidden></p>
-<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Graphic design"><span class="key">C</span>Graphic design (lead magnets, ads)</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">D</span>Website &amp; Graphics Launch Bundle</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">E</span>Not sure yet</label></div></div>
+<div class="tff"><div class="tfch"><label class="tfo"><input type="checkbox" name="service" value="Website design & development"><span class="key">A</span>Website design & development</label><label class="tfo"><input type="checkbox" name="service" value="SEO (Google visibility)"><span class="key">B</span>SEO (Google visibility)</label><label class="tfo"><input type="checkbox" name="service" value="Graphic design"><span class="key">C</span>Graphic design (lead magnets, ads)</label><label class="tfo"><input type="checkbox" name="service" value="Complete package"><span class="key">D</span>Website Creation &amp; Graphics Bundle</label><label class="tfo"><input type="checkbox" name="service" value="Not sure yet"><span class="key">E</span>Not sure yet</label></div></div>
 <div class="tfnav"><button type="button" class="btn tfok">OK ✓</button><span class="tfent">press <b>Enter ↵</b></span></div>
 </section>
 <section class="tfq" data-q="detail" hidden>
@@ -366,7 +366,7 @@ const DETAIL={
  'SEO (Google visibility)':'SEO: which keywords and location should you show up for on Google? Do you have a Google Business Profile?',
  'AI automation & CRM':'Automation & CRM: which tasks repeat every day (replying to inquiries, follow-ups, bookings, invoices)? How do you track clients now?',
  'Graphic design':'Graphic design: what do you need (lead magnet, ad creatives, posts, flyers, logo)? Do you have a logo, brand colors or examples you like?',
- 'Complete package':'Website & Graphics Launch Bundle: describe your online presence today and what you want it to look like after the project.',
+ 'Complete package':'Website Creation & Graphics Bundle: describe your online presence today and what you want it to look like after the project.',
  'Not sure yet':'Tell me what feels hard right now with your online presence, and I’ll suggest the right fit.'};
 function setDetail(){const sel=[...form.querySelectorAll('input[name=service]:checked')].map(i=>i.value);
  document.getElementById('tf-detail-h').innerHTML=(sel.length?sel:['Not sure yet']).map(v=>'• '+DETAIL[v]).join('<br>');}
