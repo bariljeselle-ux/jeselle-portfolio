@@ -1505,9 +1505,9 @@ vids.forEach(v=>{
 <script defer src="/consent.js"></script>
 <script>
 // Smooth open/close for "What's included" and "See full details"
-(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!Element.prototype.animate)return;
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!Element.prototype.animate){document.addEventListener('toggle',function(e){var d=e.target;if(d.matches&&d.matches('details.wpkmore')&&d.open)document.querySelectorAll('details.wpkmore[open]').forEach(function(o){if(o!==d)o.open=false})},true);return;}
 document.querySelectorAll('details.wpkmore,details.wfull').forEach(function(d){var sm=d.querySelector(':scope>summary'),busy=null;
-sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel();
+sm.addEventListener('click',function(e){e.preventDefault();if(!d.open&&d.classList.contains('wpkmore')){document.querySelectorAll('details.wpkmore[open]').forEach(function(o){if(o!==d)o.querySelector(':scope>summary').click()})}if(busy)busy.cancel();
  var start=d.offsetHeight+'px';
  if(!d.open){d.open=true;var end=d.offsetHeight+'px';d.style.overflow='hidden';busy=d.animate({height:[start,end]},{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});}
  else{var end2=sm.offsetHeight+(parseFloat(getComputedStyle(d).paddingTop)||0)+(parseFloat(getComputedStyle(d).borderTopWidth)||0)*2+'px';d.style.overflow='hidden';busy=d.animate({height:[start,end2]},{duration:300,easing:'cubic-bezier(.4,0,.2,1)'});busy.onfinish=function(){d.open=false;};}
