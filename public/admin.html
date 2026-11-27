@@ -124,6 +124,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .txt tr.done td{color:#8E847C}.txt .soon{color:#B5761A;font-weight:500}.txt .late{color:#8A2E1E;font-weight:500}
 .txnote{font-size:13px;color:#6E625A;margin:0}
 @media(max-width:700px){.txcmp{grid-template-columns:1fr}.txt .hm{display:none}}
+.isum.esum4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 </style>
 </head>
 <body>
@@ -244,8 +245,12 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </ol>
 <p class="ih">📘 Full step-by-step guide: <a href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">Bookkeeping Guide</a></p>
 </details>
+<details class="taxbox" id="govcalc"><summary>🏛️ SSS, PhilHealth &amp; Pag-IBIG calculator (employee / employer share)</summary><div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px;font-size:14px">
+<div class="txset"><label>Monthly salary (₱) <input type="number" id="gc-sal" min="0" step="100" value="20000" style="width:130px;min-height:36px"></label><label><input type="radio" name="gc-who" value="staff" checked> For my staff</label><label><input type="radio" name="gc-who" value="me"> For me (self-employed)</label></div>
+<div id="gc-out"></div>
+<p class="txnote">2026 rates: SSS 15% of the Monthly Salary Credit (₱5,000–₱35,000), employee 5% and employer 10%, plus the employer-only EC (₱10, or ₱30 from ₱15,000 MSC). PhilHealth 5% of basic salary (₱10,000–₱100,000), split 50/50. Pag-IBIG 2% each on salary up to ₱10,000 (employee 1% if ₱1,500 or less). As self-employed, you pay both shares yourself. Rates can change, so check sss.gov.ph, philhealth.gov.ph and pagibigfund.gov.ph.</p></div></details>
 <div class="tools" style="margin-bottom:12px"><button class="pri" id="eadd">➕ Add expense</button><button id="ecsv">⬇️ Export expenses (CSV)</button></div>
-<div class="isum" id="esum"></div>
+<div class="isum esum4" id="esum"></div>
 <form class="iform" id="eform" hidden>
 <p style="margin:0 0 10px;font-weight:500" id="etitle">Add expense</p>
 <div class="g">
@@ -441,7 +446,7 @@ function edraw(){setTimeout(()=>{try{mdraw()}catch(e){}},0);
   const spent=list.filter(r=>!NOTEXP.has(r.category)).reduce((a,r)=>a+(Number(r.php)||0),0);const moved=list.filter(r=>NOTEXP.has(r.category)).reduce((a,r)=>a+(Number(r.php)||0),0);setTimeout(_txHook,0);
   const earned=INC.filter(r=>(r.date||'').startsWith(y)).reduce((a,r)=>a+(Number(r.php)||0),0);
   const profit=earned-spent;const noRcpt=list.filter(r=>!r.receipt).length;
-  $('esum').innerHTML=`<div><small>${esc(y)} expenses</small><b>${peso(spent)}</b><span style="font-size:13px;color:#6E625A">${list.length} item${list.length===1?'':'s'}${noRcpt?` · <span style="color:#B5761A">${noRcpt} without receipt</span>`:''}${moved?`<br>Not counted: ${peso(moved)} capital, loans &amp; withdrawals`:''}</span></div><div><small>${esc(y)} income</small><b>${peso(earned)}</b></div><div><small>${esc(y)} profit</small><b style="color:${profit<0?'#8A2E1E':'#2F6B3F'}">${peso(profit)}</b><span style="font-size:13px;color:#6E625A">income − expenses</span></div>`;
+  $('esum').innerHTML=`<div><small>${esc(y)} expenses</small><b>${peso(spent)}</b><span style="font-size:13px;color:#6E625A">${list.length} item${list.length===1?'':'s'}${noRcpt?` · <span style="color:#B5761A">${noRcpt} without receipt</span>`:''}${moved?`<br>Not counted: ${peso(moved)} capital, loans &amp; withdrawals`:''}</span></div><div><small>${esc(y)} income</small><b>${peso(earned)}</b></div><div><small>${esc(y)} profit</small><b style="color:${profit<0?'#8A2E1E':'#2F6B3F'}">${peso(profit)}</b><span style="font-size:13px;color:#6E625A">income − expenses</span></div>${netCard(y,profit)}`;
   $('elist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>What</th><th>Category</th><th>Paid with</th><th style="text-align:right">Amount</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.description)}</b>${r.vendor?`<br><small style="color:#6E625A">${esc(r.vendor)}</small>`:''}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.category)}</td><td>${esc(r.method)}<br><small style="color:${r.receipt?'#2F6B3F':'#B5761A'}">${r.receipt?'✓ Receipt kept':'No receipt yet'}</small>${(r.files||[]).length?`<br>${r.files.map(x=>`<button type="button" class="attv" data-id="${esc(x.id)}" title="Open ${esc(x.name)}">📎 ${esc(x.name)}</button>`).join(' ')}`:''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="e-edit">Edit</button> <button class="e-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total ${esc(y)}</td><td class="n">${peso(spent)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No expenses recorded for ${esc(y)} yet. When you pay for something for work (Canva Pro, domain, load, a course), tap <b>➕ Add expense</b>.</div>`;
 }
 function eopen(v={}){const f=$('eform');f.hidden=false;f.reset();$('etitle').textContent=v.key?'Edit expense':'Add expense';
@@ -649,6 +654,10 @@ $('lemail').addEventListener('keydown',e=>{if(e.key==='Enter')$('pw').focus()});
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 if(KEY)load();
 
+// Money left after ALL expenses and the estimated BIR tax (your option from the BIR taxes panel)
+function netCard(y,profit){if(!TAX||ME.role!=='owner')return '';const c=txCalc(y),tax=c.plan[txMode()].total,net=profit-tax;
+  return `<div style="border-color:#7A4E3A"><small>${esc(y)} take-home after tax</small><b style="color:${net<0?'#8A2E1E':'#2F6B3F'}">${peso(net)}</b><span style="font-size:13px;color:#6E625A">profit − estimated tax ${peso(tax)}</span></div>`}
+
 /* ---------- BIR taxes: deadlines + estimate ---------- */
 const NOTEXP=new Set(['Loan payment (principal)','Capital (money I put into the business)',"Owner's withdrawal (personal use)",'Income tax paid to BIR']);
 const OWNGOV=new Set(['My SSS contribution','My PhilHealth contribution','My Pag-IBIG contribution']);
@@ -674,7 +683,7 @@ function txList(y){const yy=Number(y),m=txMode(),c=txCalc(y),P=c.plan[m];
   const L=[{id:`${yy}-q1`,form:'1701Q',t:`Income tax, Q1 (Jan–Mar)`,due:txWork(yy,5,15),amt:P.q[0]},{id:`${yy}-q2`,form:'1701Q',t:`Income tax, Q2 (Apr–Jun)`,due:txWork(yy,8,15),amt:P.q[1]},{id:`${yy}-q3`,form:'1701Q',t:`Income tax, Q3 (Jul–Sep)`,due:txWork(yy,11,15),amt:P.q[2]},{id:`${yy}-annual`,form:'1701A',t:`Annual income tax for ${yy} (includes Q4)`,due:txWork(yy+1,4,15),amt:P.q[3]}];
   if(m!=='8%')[[1,4,25,yy],[2,7,25,yy],[3,10,25,yy],[4,1,25,yy+1]].forEach(([q,mo,d,yr])=>L.push({id:`${yy}-pt${q}`,form:'2551Q',t:`3% percentage tax, Q${q}`,due:txWork(yr,mo,d),amt:P.pt[q-1]}));
   return {L:L.sort((a,b)=>a.due.localeCompare(b.due)),c,m}}
-async function txload(){if(ME.role!=='owner'){$('taxbox').hidden=true;return}try{const j=await api({body:{action:'tax-get'}});TAX=j.tax;try{TAX.ded=localStorage.getItem('tx-ded')||'osd'}catch(e){TAX.ded='osd'}txdraw()}catch(e){$('taxin').innerHTML=`<p class="empty">${esc(e.message)}</p>`}}
+async function txload(){if(ME.role!=='owner'){$('taxbox').hidden=true;return}try{const j=await api({body:{action:'tax-get'}});TAX=j.tax;try{TAX.ded=localStorage.getItem('tx-ded')||'osd'}catch(e){TAX.ded='osd'}txdraw();try{edraw()}catch(x){}}catch(e){$('taxin').innerHTML=`<p class="empty">${esc(e.message)}</p>`}}
 function txdraw(){if(!TAX||!$('taxin'))return;const y=$('iyear').value||String(new Date().getFullYear());const {L,c,m}=txList(y);const td=today();
   const days=d=>Math.round((Date.parse(d)-Date.parse(td))/864e5);const nice=d=>new Date(d+'T12:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
   const nxt=L.find(x=>!TAX.filed[x.id]&&x.due>=td);
@@ -686,18 +695,37 @@ function txdraw(){if(!TAX||!$('taxin'))return;const y=$('iyear').value||String(n
    <label><input type="checkbox" id="tx-rem" ${TAX.remind?'checked':''} ${TAX.registered?'':'disabled'}> Email &amp; phone reminders</label></div>
   ${!TAX.registered?`<p class="txnote" style="color:#B5761A">Not registered yet: the deadlines below are a preview. Tick the box once you register (BIR Form 1901 at RDO 080), and reminders start 7 days, 1 day and on the day of each deadline.</p>`:''}
   ${nxt?`<div class="txnext"><b>Next: BIR Form ${nxt.form}</b>, ${esc(nxt.t)}<br>Due <b>${nice(nxt.due)}</b> · ${days(nxt.due)===0?'<b>today</b>':days(nxt.due)+' days left'} · estimated to pay <b>${peso(nxt.amt)}</b>${nxt.amt?'':' (file it even if you owe ₱0)'}</div>`:''}
-  <div><p style="margin:0 0 8px"><b>${esc(y)} so far:</b> income ${peso(c.gross)} · deductible expenses ${peso(c.deduct)} · your SSS/PhilHealth/Pag-IBIG ${peso(c.ownTot)}</p>
+  <div><p style="margin:0 0 8px"><b>${esc(y)} so far:</b> income ${peso(c.gross)} − expenses ${peso(c.deduct+c.ownTot)} − estimated tax ${peso(c.plan[m].total)} = <b style="color:${c.gross-c.deduct-c.ownTot-c.plan[m].total<0?'#8A2E1E':'#2F6B3F'}">take-home ${peso(c.gross-c.deduct-c.ownTot-c.plan[m].total)}</b></p>
   <div class="txcmp">${card('8%','8% option','8% of income above ₱250,000. Expenses don\'t lower it.')}${card('osd','Graduated + 40% OSD','Tax table on 60% of income, plus 3% percentage tax')}${card('item','Graduated + actual expenses','Tax table on income minus your expenses and contributions, plus 3% percentage tax')}</div></div>
   <table class="txt"><thead><tr><th>Due</th><th>Form</th><th class="hm">For</th><th class="r">Est. to pay</th><th>Filed</th></tr></thead><tbody>${L.map(x=>{const f=!!TAX.filed[x.id],dd=days(x.due);return `<tr class="${f?'done':''}"><td><span class="${!f&&dd<0?'late':!f&&dd<=7?'soon':''}">${nice(x.due)}</span>${!f&&dd<0?'<br><small class="late">Overdue</small>':''}</td><td><b>${x.form}</b></td><td class="hm">${esc(x.t)}</td><td class="r">${peso(x.amt)}</td><td><label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" class="tx-f" data-id="${x.id}" ${f?'checked':''} style="width:18px;height:18px;accent-color:#2F6B3F"> ${f?'Filed':''}</label></td></tr>`}).join('')}</tbody></table>
   <p class="txnote">How it's computed: from your <b>Income records</b> and <b>Business expenses</b> for ${esc(y)}. Capital, loan principal, owner's withdrawals and income tax paid are not expenses, so they're left out. Your own SSS, PhilHealth and Pag-IBIG count only with "actual expenses". Each quarter shows the tax on your total so far, minus what earlier quarters already paid. Pick the 8% option or OSD on your <b>first return of the year</b> (or on Form 1901 when you register); you can't switch mid-year. With staff, you also have monthly withholding tax and SSS/PhilHealth/Pag-IBIG remittances, so ask an accountant to set those up.</p>
   <p class="txnote">Deadlines on a weekend move to the next working day. Holidays and BIR extensions aren't included, so check <a href="https://www.bir.gov.ph" target="_blank" rel="noopener">bir.gov.ph</a> near each date. These are estimates to help you plan, not tax advice.</p>`;
-  const save=async(patch)=>{try{const j=await api({body:{action:'tax-save',tax:patch}});const ded=TAX.ded;TAX=j.tax;TAX.ded=ded;txdraw()}catch(e){note(e.message,true)}};
+  const save=async(patch)=>{try{const j=await api({body:{action:'tax-save',tax:patch}});const ded=TAX.ded;TAX=j.tax;TAX.ded=ded;txdraw();try{edraw()}catch(x){}}catch(e){note(e.message,true)}};
   $('tx-reg').addEventListener('change',e=>save({registered:e.target.checked,since:$('tx-since').value||today()}));
   $('tx-since').addEventListener('change',e=>save({since:e.target.value}));
   $('tx-rem').addEventListener('change',e=>save({remind:e.target.checked}));
   document.querySelectorAll('input[name=txr]').forEach(r=>r.addEventListener('change',()=>{const v=r.value;if(v==='8%')save({regime:'8%'});else{TAX.ded=v;try{localStorage.setItem('tx-ded',v)}catch(e){}save({regime:'graduated'})}}));
   document.querySelectorAll('.tx-f').forEach(cb=>cb.addEventListener('change',()=>save({filed:{[cb.dataset.id]:cb.checked}})));
 }
+
+/* ---------- SSS / PhilHealth / Pag-IBIG calculator ---------- */
+function govCalc(sal,me){sal=Math.max(0,Number(sal)||0);
+  const msc=Math.min(35000,Math.max(5000,Math.round(sal/500)*500));
+  const ph=Math.min(100000,Math.max(10000,sal))*.05,pgBase=Math.min(10000,sal);
+  const rows=[
+   ['SSS',msc*.05,msc*.10+(me?0:(msc>=15000?30:10)),`MSC ${peso(msc)}${me?'':' · employer pays EC '+peso(msc>=15000?30:10)}`],
+   ['PhilHealth',ph/2,ph/2,'5% of '+peso(Math.min(100000,Math.max(10000,sal)))],
+   ['Pag-IBIG',pgBase*(sal<=1500?.01:.02),pgBase*.02,'2% of '+peso(pgBase)]];
+  return rows.map(r=>[r[0],r2(r[1]),r2(r[2]),r[3]])}
+function gcdraw(){const me=document.querySelector('input[name=gc-who]:checked').value==='me',sal=$('gc-sal').value,rows=govCalc(sal,me);
+  const ee=rows.reduce((a,r)=>a+r[1],0),er=rows.reduce((a,r)=>a+r[2],0);
+  $('gc-out').innerHTML=`<table class="txt"><thead><tr><th>Monthly</th><th class="r">${me?'Employee part':'Employee share'}<br><small>${me?'(you pay)':'(deduct from salary)'}</small></th><th class="r">${me?'Employer part':'Employer share'}<br><small>${me?'(you pay)':'(you add on top)'}</small></th><th class="r">Total</th><th class="hm">Based on</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r[0]}</b></td><td class="r">${peso(r[1])}</td><td class="r">${peso(r[2])}</td><td class="r">${peso(r[1]+r[2])}</td><td class="hm"><small>${esc(r[3])}</small></td></tr>`).join('')}<tr><td><b>Total</b></td><td class="r"><b>${peso(ee)}</b></td><td class="r"><b>${peso(er)}</b></td><td class="r"><b>${peso(ee+er)}</b></td><td class="hm"></td></tr></tbody></table>
+  ${me?`<p style="margin:0">You pay <b>${peso(ee+er)}</b> a month in total. <button type="button" class="glink" id="gc-rec">Record my contributions as expenses</button></p>`
+      :`<p style="margin:0">Employee's take-home after these: <b>${peso(Math.max(0,Number(sal)-ee))}</b> (before withholding tax). Your monthly cost for this person: <b>${peso(Number(sal)+er)}</b>. <button type="button" class="glink" id="gc-rec">Record employer share as an expense</button></p>`}`;
+  $('gc-rec').addEventListener('click',()=>{if(me){eopen({category:'My SSS contribution',description:'SSS contribution',php:r2(rows[0][1]+rows[0][2])});note('SSS filled in. Add PhilHealth ('+peso(rows[1][1]+rows[1][2])+') and Pag-IBIG ('+peso(rows[2][1]+rows[2][2])+') the same way.')}
+    else eopen({category:'SSS, PhilHealth & Pag-IBIG: employer share (staff)',description:'Employer share, salary '+peso(sal),php:r2(er)})})}
+['input','change'].forEach(ev=>$('govcalc').addEventListener(ev,e=>{if(e.target.matches('#gc-sal,input[name=gc-who]'))gcdraw()}));
+$('govcalc').addEventListener('toggle',()=>{if($('govcalc').open)gcdraw()});
 
 /* ---------- Edit website ---------- */
 const SNAME={top:'Top of page (headline + intro)',portfolio:'Selected work',about:'About me',services:'Services (title only)',process:'How it works',rates:'Rates (title only)',materials:'Sample materials (title only)',experience:'Background',testimonials:'Reviews (title only)',faq:'FAQ (title only)',contact:'Contact',footer:'Footer'};
