@@ -217,6 +217,10 @@ Landing page $250–$400 (₱7,500–₱12,000). Websites: Starter 3 pages $850 
 Premium 7 pages $1,400 (₱44,000). Extra page $60 (₱2,500). Website Creation & Graphics Bundle $1,350 (₱41,500).
 
 == Founding clients + time zones (Nov 27, 2026) ==
-Founding client offer on /rates, /services, FAQ and terms: first 3 website clients get 30% off the package price (e.g. Business $770 / ₱23,800)
+Founding client offer on /rates, /services, FAQ and terms: first 3 website clients get 10% off the package price (e.g. Business $990 / ₱30,600)
 for an honest review + Works page permission. REMOVE the banner (.fcl, .fcl-mini), FAQ and terms lines once 3 spots are taken.
 Working hours now also show in the visitor's own time (correct for daylight saving), with an async note for US/UK visitors.
+
+== Logo & Brand Kit (Nov 27, 2026) ==
+"Brand Kit & Logo Refresh" is now "Logo & Brand Kit" (new logo from scratch or refresh). Offered inside the website package details
+("No logo or brand style yet?" add-on, Standard kit with a website $230 / ₱6,500), on /services, and as a choice in the brief and inquiry form.
