@@ -234,7 +234,7 @@ export function permissionEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `${yes ? "📸" : "🔒"} Portfolio permission: ${d.business || d.name}`,
     html: layout("Portfolio permission received", summary + detailsTable(d) +
-      p(yes ? "Next: send Claude 2–5 images of the work and say \"add to selected works\"." : "Don't show this project anywhere.") +
+      p(yes ? "Next: send Claude 2–5 images of the work and say \"add to my portfolio\"." : "Don't show this project anywhere.") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
 }
