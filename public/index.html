@@ -124,6 +124,8 @@ section#services{padding-bottom:48px!important}
 .wkstage img.on{opacity:1;transform:scale(1)}
 .wkshot:hover .wkstage img.on{transform:scale(1.02)}
 .wkslides{position:relative}
+.wkcap{position:absolute;left:14px;top:14px;z-index:2;font-size:12px;font-weight:500;letter-spacing:.02em;color:#fff;background:rgba(122,78,58,.92);padding:5px 12px;border-radius:99px;box-shadow:0 4px 12px rgba(0,0,0,.18);transition:opacity .35s}
+.wkcap.out{opacity:0}
 .wkdots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px;padding:5px 8px;border-radius:99px;background:rgba(20,24,50,.45);backdrop-filter:blur(4px)}
 .wkdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:width .4s,background .4s}
 .wkdots i.on{width:16px;border-radius:3px;background:#fff}
@@ -905,12 +907,17 @@ el.hidden=false}).catch(function(){})})();
 <a class="wkshot wkslides" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
 <span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com<span class="wkpath"></span></em></span>
 <span class="wkstage">
-<img class="on" data-path="" src="images/work-td-home.webp" width="1280" height="800" alt="Travel Destinacia website pages: the homepage with the headline 'You're Destined to Travel!', followed by the packages, services and trip videos pages." loading="lazy">
-<img data-path="/#packages" src="images/work-td-packages.webp" width="1280" height="800" alt="" loading="lazy">
-<img data-path="/#services" src="images/work-td-services.webp" width="1280" height="800" alt="" loading="lazy">
-<img data-path="/#videos" src="images/work-td-videos.webp" width="1280" height="800" alt="" loading="lazy">
+<img class="on" data-path="" data-cap="Homepage" src="images/work-td-home.webp" width="1280" height="800" alt="Travel Destinacia website, shown as a slideshow of 8 screens: homepage, tour packages, services, trip videos, online reservation, the Ask Desti chat helper, trip stories and FAQ." loading="lazy">
+<img data-path="/#packages" data-cap="Tour packages" src="images/work-td-packages.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#services" data-cap="Services" src="images/work-td-services.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#reels" data-cap="Trip videos" src="images/work-td-videos.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#checkout" data-cap="Online reservation" src="images/work-td-reserve.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="" data-cap="&quot;Ask Desti&quot; chat helper" src="images/work-td-desti.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#stories" data-cap="Real trip stories" src="images/work-td-trips.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#faq" data-cap="FAQ" src="images/work-td-faq.webp" width="1280" height="800" alt="" loading="lazy">
+<span class="wkcap">Homepage</span>
 </span>
-<span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>
+<span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </a>
 <div class="wkinfo">
 <p class="wkkind"><span class="wkreal">Client project</span> Travel agency · Antipolo, Philippines</p>
@@ -1360,10 +1367,10 @@ sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel()
 </script>
 <script>
 // Works: Travel Destinacia thumbnail plays through its pages
-(function(){var box=document.querySelector('.wkslides');if(!box)return;var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),i=0,t=null;
+(function(){var box=document.querySelector('.wkslides');if(!box)return;var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),cap=box.querySelector('.wkcap'),i=0,t=null;
 if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-function go(n){imgs[i].classList.remove('on');dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i].classList.add('on');path.textContent=imgs[i].dataset.path||''}
-function start(){if(!t)t=setInterval(function(){go(i+1)},3200)}function stop(){clearInterval(t);t=null}
+function go(n){imgs[i].classList.remove('on');dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i].classList.add('on');path.textContent=imgs[i].dataset.path||'';cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},350)}
+function start(){if(!t)t=setInterval(function(){go(i+1)},3000)}function stop(){clearInterval(t);t=null}
 imgs.forEach(function(im){im.loading='eager'});
 if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?start():stop()})}).observe(box)}else start();
 document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});})();
