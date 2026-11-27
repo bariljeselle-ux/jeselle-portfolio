@@ -74,7 +74,7 @@ async function serveUpload(url) {
 // which shows just that page's sections. Title/description/link are set here for Google.
 const PAGES = {
   "/works": { title: "Creations & Works | Jeselle Baril, jeselle.va", desc: "Websites, graphic designs and CRM systems made by Jeselle Baril, a Filipino virtual assistant in Cebu, Philippines.", noindex: true },
-  "/services": { title: "Website Design, SEO & Graphic Design Services | Jeselle Baril", desc: "Business websites (3 to 7 pages) with booking, payments and a private CRM, landing pages, SEO, CRM & AI automation and graphic design for small businesses, by Jeselle Baril in Cebu, Philippines." },
+  "/services": { title: "Website Creation & Development, SEO & Graphic Design | Jeselle Baril", desc: "Website creation and development (3 to 7 pages) with booking, payments and a private CRM, landing pages, SEO and graphic design for small businesses, by Jeselle Baril in Cebu, Philippines. One-time projects, no monthly fees." },
   "/rates": { title: "Website Packages & Rates | Jeselle Baril, Cebu VA", desc: "Website packages by page count, each with booking, payment page and private CRM: Starter (3 pages), Business (5) and Premium (7), with a price breakdown. Rates in USD and Philippine pesos." },
   "/book": { title: "Book a Free Call | Jeselle Baril", desc: "Book a free 15-minute Google Meet call with Jeselle Baril. Pick a time in your own time zone." },
   "/contact": { title: "Contact | Jeselle Baril, jeselle.va", desc: "Send an inquiry, email, call or message Jeselle Baril, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },

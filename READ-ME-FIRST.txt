@@ -205,3 +205,9 @@ Website packages: Landing page $200–$350 (₱6,000–₱10,000); Business Webs
 5 pages $950 (₱30,000), Premium up to 7 pages $1,200 (₱38,000), every one with the full business system (jeselleva.com is the model
 for every client site; only branding changes); extra page $50 (₱2,000), options for 1/2/3/5 extra pages on /rates. Price breakdown shown on /rates.
 Removed: Website + SEO Setup (now inside Business/Premium) and Website + SEO + Facebook Optimization.
+
+== One-time services only (Nov 27, 2026) ==
+Removed: CRM & AI Automation Setup, Custom Backend CRM (both already part of every website), all monthly services
+(SEO Management, Website Maintenance, Graphic Design on Demand) and hosting option "I host it for you" (needed a monthly fee).
+Dark box is now the Website & Graphics Launch Bundle: Business website (5 pages) + landing page + 10 social media templates,
+$1,150 / ₱36,000. After the free-fix period, website updates are $25 / ₱750 each. "Website Design" is now "Website Creation & Development".
