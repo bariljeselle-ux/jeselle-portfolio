@@ -279,5 +279,6 @@ Restored the Vision text that was removed by mistake during the Nov 27 cleanup.
   - The Travel Destinacia and jeselleva.com thumbnails are slideshows of screenshots (images/work-td-*, work-jv-*).
   - Replace the samples with real client projects as they come in (with the client's permission).
   - "What's included" and "See full details" now open and close with a smooth animation.
-  - "See full details" package list is an exact copy of the 4 package cards. If you change a card, change it there too.
+  - "See full details" follows the package the visitor taps (tabs for all 4). Its "What's included" lists copy the cards,
+    and each price breakdown adds up to that package's price. If you change a card or price, change it there too.
   - Services & Rates opens with a new intro listing the 3 services with starting prices.
