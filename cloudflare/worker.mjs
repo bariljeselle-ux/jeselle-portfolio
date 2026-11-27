@@ -74,12 +74,11 @@ async function serveUpload(url) {
 // which shows just that page's sections. Title/description/link are set here for Google.
 const PAGES = {
   "/works": { title: "Creations & Works | Jeselle Baril, jeselle.va", desc: "Websites, graphic designs and CRM systems made by Jeselle Baril, a Filipino virtual assistant in Cebu, Philippines.", noindex: true },
-  "/services": { title: "Website Creation & Development, SEO & Graphic Design | Jeselle Baril", desc: "Website creation and development (3 to 7 pages) with booking, payments and a private CRM, landing pages, SEO and graphic design for small businesses, by Jeselle Baril in Cebu, Philippines. One-time projects, no monthly fees." },
-  "/rates": { title: "Website Packages & Rates | Jeselle Baril, Cebu VA", desc: "Website packages by page count, each with booking, payment page and private CRM: Starter (3 pages), Business (5) and Premium (7), with a price breakdown. Rates in USD and Philippine pesos." },
+  "/services": { title: "Services & Rates: Websites, SEO & Graphic Design | Jeselle Baril", desc: "Website creation and development (3 to 7 pages) with built-in booking, payments and a private CRM, landing pages, SEO, logos and graphic design, with clear one-time prices in USD and pesos. By Jeselle Baril in Cebu, Philippines." },
   "/book": { title: "Book a Free Call | Jeselle Baril", desc: "Book a free 15-minute Google Meet call with Jeselle Baril. Pick a time in your own time zone." },
   "/contact": { title: "Contact | Jeselle Baril, jeselle.va", desc: "Send an inquiry, email, call or message Jeselle Baril, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },
 };
-const OLD_PATHS = { "/portfolio": "/works", "/portfolio.html": "/works", "/works.html": "/works" };
+const OLD_PATHS = { "/portfolio": "/works", "/portfolio.html": "/works", "/works.html": "/works", "/rates": "/services#rates", "/rates/": "/services#rates" };
 
 async function homePage(req, env, url) {
   const page = PAGES[url.pathname];
@@ -121,7 +120,7 @@ export default {
       console.log("error:", url.pathname, e.stack || e.message);
       return Response.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
-    if (OLD_PATHS[url.pathname]) return Response.redirect(new URL(OLD_PATHS[url.pathname] + url.search, url), 301);
+    if (OLD_PATHS[url.pathname]) { const [p, h] = OLD_PATHS[url.pathname].split("#"); return Response.redirect(new URL(p + url.search + (h ? "#" + h : ""), url), 301); }
     if (url.pathname.length > 1 && url.pathname.endsWith("/") && PAGES[url.pathname.slice(0, -1)]) return Response.redirect(new URL(url.pathname.slice(0, -1) + url.search, url), 301);
     if (url.pathname === "/" || url.pathname === "/index.html" || PAGES[url.pathname]) return await homePage(req, env, url);
     return env.ASSETS.fetch(req);

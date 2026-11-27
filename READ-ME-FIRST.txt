@@ -228,3 +228,6 @@ Working hours now also show in the visitor's own time (correct for daylight savi
 == Graphic design and small fees raised ~20% (Nov 27, 2026) ==
 Lead magnets $95–$240, ad creatives $145–$360, social graphics pack $70–$180, Logo & Brand Kit $180–$420 (with a website $280 / ₱8,000),
 SEO audit $75–$145, Reels editing $12–$25, website update and extra website revision round $30 / ₱900. Graphics revision stays $10 / ₱300.
+
+== Services & Rates on one page (Nov 27, 2026) ==
+/services now shows services, how it works, rates and FAQ. /rates redirects to /services#rates. Menu item is "Services & Rates".
