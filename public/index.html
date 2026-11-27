@@ -179,6 +179,50 @@ section#services{padding-bottom:48px!important}
 .wkscene:hover .wkword{transform:translateX(3%)}
 .wkscene:focus-visible{outline:3px solid #7A4E3A;outline-offset:4px}
 .wkcard .wkscene{margin-bottom:10px}
+/* Travel: flight path */
+.wkflight{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.wkflight .wkplane{filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.wk-td .wkdesk,.wk-td .wkphone{z-index:1}
+/* Café: wood-framed chalkboard, pinned photo */
+.wk-cafe{--bg:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.06),transparent 60%),#173828;border:12px solid #8A5A34;box-shadow:inset 0 0 70px rgba(0,0,0,.45),0 30px 60px -30px rgba(35,30,27,.45)}
+.wk-cafe::before{background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.3px);background-size:14px 14px;mask-image:none;-webkit-mask-image:none}
+.wk-cafe .wkdesk{left:8%;top:11%;width:66%;padding:10px 10px 34px;background:#fbf8f1;border-radius:3px;transform:rotate(-3deg);box-shadow:0 24px 40px -16px rgba(0,0,0,.7)}
+.wk-cafe .wkdesk::after{content:"";position:absolute;top:-10px;left:50%;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F7CF6A,#C98E12);box-shadow:0 3px 6px rgba(0,0,0,.45)}
+.wk-cafe .wkbar{display:none}
+.wk-cafe .wkstage{border-radius:2px}
+.wk-cafe .wkstage img{clip-path:inset(0 0 100% 0)}
+.wk-cafe .wkstage img.on,.wk-cafe .wkstage img.was{clip-path:inset(0 0 0 0)}
+.wkstack{position:absolute;left:10%;top:14%;width:66%;aspect-ratio:16/11.4;background:#efe9dc;border-radius:3px;transform:rotate(3.5deg);box-shadow:0 18px 30px -14px rgba(0,0,0,.6);z-index:0}
+.wk-cafe .wkdesk{z-index:1}
+.wk-cafe .wkphone{right:6%;left:auto;bottom:-9%;width:21%;transform:rotate(7deg);animation:none;z-index:2}
+.wkring{position:absolute;right:5%;top:8%;z-index:2;width:78px;height:78px;border-radius:50%;border:2px dashed rgba(240,180,41,.75);display:grid;place-items:center;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.05;color:#F6D98A;transform:rotate(-12deg)}
+.wk-cafe .wkword{color:#F6D98A;opacity:.10;font-family:'Cormorant Garamond',serif}
+.wk-cafe .wkcap{left:8%;bottom:7%;background:#F0B429;color:#1E4632;font-weight:600}
+.wk-cafe .wkcap::before{background:#1E4632;animation:none}
+.wk-cafe .wkdots{right:34%;bottom:7.5%}
+.wk-cafe:hover .wkdesk{transform:rotate(-1deg) translateY(-4px)}
+.wk-cafe:hover .wkstack{transform:rotate(5deg)}
+.wk-cafe .wkdesk,.wkstack{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+/* jeselleva.com: editorial grid, no tilt */
+.wk-jv{--rx:0deg!important;--ry:0deg!important;perspective:none;background:#F3ECE4;box-shadow:0 1px 0 #E2D9CF inset,0 30px 60px -34px rgba(35,30,27,.4)}
+.wk-jv::before{background-image:linear-gradient(rgba(122,78,58,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(122,78,58,.07) 1px,transparent 1px);background-size:28px 28px;mask-image:none;-webkit-mask-image:none}
+.wk-jv .wkword{display:none}
+.wk-jv .wkdesk{left:5%;top:7%;width:65%;transform:none;border-radius:12px;box-shadow:0 0 0 1px #E2D9CF,0 20px 40px -24px rgba(35,30,27,.45)}
+.wk-jv .wkstage img{clip-path:none;opacity:0;transform:scale(1.03);transition:opacity .9s ease,transform 3.5s ease-out}
+.wk-jv .wkstage img.on{opacity:1;transform:none}
+.wk-jv .wkstage img.was{opacity:0}
+.wk-jv .wkphone{left:auto;right:5%;top:7%;bottom:auto;width:21%;transform:none;animation:none;background:#231E1B;border-radius:20px;box-shadow:0 20px 40px -24px rgba(35,30,27,.6)}
+.wk-jv .wkcap{left:5%;right:auto;bottom:7%;top:auto;width:65%;padding:0;background:none;box-shadow:none;backdrop-filter:none;border-radius:0;font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.3vw,30px);font-weight:500;line-height:1.1;color:#231E1B;letter-spacing:-.01em}
+.wk-jv .wkcap::before{display:none}
+.wkcount{display:none}
+.wk-jv .wkcount{display:block;position:absolute;right:5%;bottom:7%;width:21%;text-align:right;font-size:12px;letter-spacing:.14em;color:#6E625A;z-index:3}
+.wk-jv .wkcount b{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,40px);font-weight:500;letter-spacing:0;color:#7A4E3A;display:block;line-height:1}
+.wk-jv .wkdots{display:none}
+.wk-jv .wkdesk{bottom:auto}
+.wk-jv:hover .wkdesk{box-shadow:0 0 0 1px #7A4E3A,0 26px 46px -24px rgba(35,30,27,.5)}
+@media (max-width:600px){.wk-cafe{border-width:8px}.wkring{width:58px;height:58px;font-size:11px}.wk-cafe .wkdesk{padding:6px 6px 20px}.wk-jv .wkdesk{width:70%}.wk-jv .wkphone{width:22%}.wk-jv .wkcap{width:70%;font-size:17px}.wk-jv .wkcount{width:22%}.wk-jv .wkcount b{font-size:24px}}
+@media (prefers-reduced-motion:reduce){.wkflight .wkplane{display:none}}
+
 @media (max-width:600px){.wkscene{aspect-ratio:4/3.4;border-radius:16px}.wkdesk{left:5%;top:8%;width:84%}.wkphone{width:26%;right:3%;border-radius:16px;padding:4px}.wkphone img{border-radius:12px}.wkscene .wkdots{display:none}.wkscene .wkcap{font-size:11.5px;bottom:5%}}
 @media (prefers-reduced-motion:reduce){.wkphone,.wkcap::before{animation:none!important}.wkdesk,.wkword{transition:none}.wkscene .wkstage img{transition:none}}
 .wkhead{max-width:680px;margin:0 auto 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
@@ -979,6 +1023,7 @@ el.hidden=false}).catch(function(){})})();
 
 <article class="wkfeat">
 <a class="wkscene wkslides wk-td" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
+<svg class="wkflight" viewBox="0 0 600 420" aria-hidden="true" preserveAspectRatio="none"><path id="wkfp" d="M-30 30 C 90 -10, 170 40, 250 22 S 420 -20, 640 70" fill="none" stroke="rgba(245,184,46,.8)" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/><g class="wkplane"><path d="M0-7 L4 0 L0 7 L2 0Z M-10 0 L10 0 M-3 -4 L3 0 L-3 4" fill="#F5B82E" stroke="#F5B82E" stroke-width="1.4" stroke-linejoin="round"/><animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath href="#wkfp"/></animateMotion></g></svg>
 <span class="wkword" aria-hidden="true">Travel</span>
 <span class="wkdesk"><span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com<span class="wkpath"></span></em></span>
 <span class="wkstage">
@@ -1013,6 +1058,7 @@ el.hidden=false}).catch(function(){})})();
 <div class="wkpair">
 <article class="wkcard">
 <a class="wkscene wkslides wk-cafe" href="/demos/lamesa-cafe/index.html" aria-label="Open the Lamesa Café sample website">
+<span class="wkstack" aria-hidden="true"></span><span class="wkring" aria-hidden="true">Sample<br>project</span>
 <span class="wkword" aria-hidden="true">Lamesa</span>
 <span class="wkdesk"><span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>lamesacafe.sample<span class="wkpath"></span></em></span>
 <span class="wkstage">
@@ -1044,6 +1090,7 @@ el.hidden=false}).catch(function(){})})();
 <img data-path="/brief.html" data-cap="Project brief with your picks" src="images/work-jv-brief.webp" width="1280" height="800" alt="" loading="lazy">
 </span></span>
 <span class="wkphone" aria-hidden="true"><img src="images/work-jv-phone.webp" width="390" height="844" alt="" loading="lazy"></span>
+<span class="wkcount" aria-hidden="true"><b>01</b> / 07</span>
 <span class="wkcap">Homepage</span>
 <span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </a>
@@ -1466,9 +1513,9 @@ sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel()
 // Works: project scenes play through their pages (wipe) and tilt toward the pointer
 (function(){var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelectorAll('.wkslides').forEach(function(box,bi){var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),cap=box.querySelector('.wkcap'),i=0,t=null,vis=false;
-if(!rm&&matchMedia('(hover:hover)').matches){box.addEventListener('pointermove',function(e){var r=box.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;box.style.setProperty('--ry',(x*10).toFixed(2)+'deg');box.style.setProperty('--rx',(-y*8).toFixed(2)+'deg')});box.addEventListener('pointerleave',function(){box.style.removeProperty('--ry');box.style.removeProperty('--rx')})}
+if(!rm&&box.classList.contains('wk-td')&&matchMedia('(hover:hover)').matches){box.addEventListener('pointermove',function(e){var r=box.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;box.style.setProperty('--ry',(x*10).toFixed(2)+'deg');box.style.setProperty('--rx',(-y*8).toFixed(2)+'deg')});box.addEventListener('pointerleave',function(){box.style.removeProperty('--ry');box.style.removeProperty('--rx')})}
 if(rm||imgs.length<2)return;
-function go(n){imgs.forEach(function(im){im.classList.remove('was')});imgs[i].classList.remove('on');imgs[i].classList.add('was');dots[i]&&dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i]&&dots[i].classList.add('on');if(path)path.textContent=imgs[i].dataset.path||'';cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},450)}
+function go(n){imgs.forEach(function(im){im.classList.remove('was')});imgs[i].classList.remove('on');imgs[i].classList.add('was');dots[i]&&dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i]&&dots[i].classList.add('on');if(path)path.textContent=imgs[i].dataset.path||'';var cn=box.querySelector('.wkcount b');if(cn)cn.textContent=String(i+1).padStart(2,'0');cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},450)}
 function start(){if(!t&&vis&&!document.hidden)t=setTimeout(function(){t=setInterval(function(){go(i+1)},3200)},bi*1100)}function stop(){clearTimeout(t);clearInterval(t);t=null}
 imgs.forEach(function(im){im.loading='eager'});
 if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){vis=e.isIntersecting;vis?start():stop()})},{threshold:.25}).observe(box)}else{vis=true;start()}
