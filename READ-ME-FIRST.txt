@@ -274,7 +274,8 @@ Restored the Vision text that was removed by mistake during the Nov 27 cleanup.
   - Terms: removed leftover monthly-service lines.
 
 2026-11-28 — Works page
-  - Works now shows: Travel Destinacia (real client, links to its live site) and two sample sites
-    at /demos/lamesa-cafe/index.html and /demos/tidy-wren/index.html (made-up businesses, clearly labeled, noindex).
+  - Works now shows: Travel Destinacia (real client, traveldestinacia.jeselleva.com), jeselleva.com itself
+    and one sample site at /demos/lamesa-cafe/index.html (made-up café, clearly labeled, noindex).
+  - The Travel Destinacia and jeselleva.com thumbnails are slideshows of screenshots (images/work-td-*, work-jv-*).
   - Replace the samples with real client projects as they come in (with the client's permission).
   - "What's included" and "See full details" now open and close with a smooth animation.

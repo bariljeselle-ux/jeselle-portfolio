@@ -900,7 +900,7 @@ el.hidden=false}).catch(function(){})})();
 <div class="wkhead">
 <p class="wkey" data-edit="works-1">Creations &amp; Works</p>
 <h1 class="wkh" data-edit="works-2">Websites I've built</h1>
-<p class="wklead" data-edit="works-3">One real client website, plus two sample projects that show how the same system looks for very different businesses. Tap any project to open it.</p>
+<p class="wklead" data-edit="works-3">A real client website, my own site and a sample café, each built on the same booking and dashboard system in its own brand. Tap any project to open it.</p>
 </div>
 
 <article class="wkfeat">
@@ -946,14 +946,24 @@ el.hidden=false}).catch(function(){})})();
 <a href="/demos/lamesa-cafe/index.html" class="wklink">Open the café sample</a>
 </article>
 <article class="wkcard">
-<a class="wkshot" href="/demos/tidy-wren/index.html" aria-label="Open the Tidy Wren Cleaning sample website">
-<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>Tidy Wren Cleaning</em></span>
-<img src="images/work-tidy-wren.webp" width="1280" height="800" alt="Homepage of the Tidy Wren Cleaning sample website: a bright blue page with an instant quote calculator showing a price in Australian dollars." loading="lazy">
+<a class="wkshot wkslides" href="/" aria-label="Open jeselleva.com home">
+<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>jeselleva.com<span class="wkpath"></span></em></span>
+<span class="wkstage">
+<img class="on" data-path="" data-cap="Homepage" src="images/work-jv-home.webp" width="1280" height="800" alt="jeselleva.com shown as a slideshow of 7 screens: homepage, website packages, what's included, compare packages, booking in your own time zone, logo and brand kit add-on, and the project brief with picked services." loading="lazy">
+<img data-path="/services" data-cap="Website packages" src="images/work-jv-packages.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/services" data-cap="&quot;What's included&quot; details" src="images/work-jv-incl.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/services" data-cap="Compare packages" src="images/work-jv-cmp.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/book" data-cap="Booking in your time zone" src="images/work-jv-book.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/services" data-cap="Logo & brand kit add-on" src="images/work-jv-brand.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/brief.html" data-cap="Project brief with your picks" src="images/work-jv-brief.webp" width="1280" height="800" alt="" loading="lazy">
+<span class="wkcap">Homepage</span>
+</span>
+<span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </a>
-<p class="wkkind"><span class="wksample">Sample project</span> Home cleaning · Brisbane, Australia</p>
-<h2>Tidy Wren Cleaning</h2>
-<p>A cleaning business for Australian customers, with an instant quote calculator, booking in the visitor's own time zone and the owner's dashboard.</p>
-<a href="/demos/tidy-wren/index.html" class="wklink">Open the cleaning sample</a>
+<p class="wkkind"><span class="wkreal">My own website</span> Website creator · Cebu, Philippines</p>
+<h2>jeselleva.com</h2>
+<p>The website you're on right now, and the model for every site I build: packages you can compare, online booking in each visitor's own time zone, a project brief that remembers what you picked, and a private dashboard behind it all.</p>
+<a href="/services" class="wklink">See the packages in action</a>
 </article>
 </div>
 
@@ -1366,14 +1376,14 @@ sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel()
 });});})();
 </script>
 <script>
-// Works: Travel Destinacia thumbnail plays through its pages
-(function(){var box=document.querySelector('.wkslides');if(!box)return;var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),cap=box.querySelector('.wkcap'),i=0,t=null;
-if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+// Works: project thumbnails play through their pages
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+document.querySelectorAll('.wkslides').forEach(function(box,bi){var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),cap=box.querySelector('.wkcap'),i=0,t=null,vis=false;
 function go(n){imgs[i].classList.remove('on');dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i].classList.add('on');path.textContent=imgs[i].dataset.path||'';cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},350)}
-function start(){if(!t)t=setInterval(function(){go(i+1)},3000)}function stop(){clearInterval(t);t=null}
+function start(){if(!t&&vis&&!document.hidden)t=setTimeout(function(){t=setInterval(function(){go(i+1)},3000)},bi*1500)}function stop(){clearTimeout(t);clearInterval(t);t=null}
 imgs.forEach(function(im){im.loading='eager'});
-if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?start():stop()})}).observe(box)}else start();
-document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});})();
+if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){vis=e.isIntersecting;vis?start():stop()})}).observe(box)}else{vis=true;start()}
+document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});});})();
 </script>
 <script src="/guard.js" defer></script>
 </body>
