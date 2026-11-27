@@ -75,9 +75,9 @@ async function serveUpload(url) {
 // which shows just that page's sections. Title/description/link are set here for Google.
 const PAGES = {
   "/works": { title: "Works: Websites Built by JB | Cebu, Philippines", desc: "Websites built by JB: a travel agency booking site in Antipolo, jeselleva.com itself and a sample café site, each with online booking and an owner dashboard." },
-  "/services": { title: "Services & Rates: Websites, SEO & Graphic Design | JB", desc: "Website creation and development (3 to 7 pages) with built-in booking, payments and a private CRM, landing pages, SEO, logos and graphic design, with clear one-time prices in USD and pesos. By JB in Cebu, Philippines." },
-  "/book": { title: "Book a Free Call | JB", desc: "Book a free 15-minute Google Meet call with JB. Pick a time in your own time zone." },
-  "/contact": { title: "Contact | JB, jeselle.va", desc: "Send an inquiry, email, call or message JB, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },
+  "/services": { title: "Website Design Packages & Prices (US$ & ₱) | Web Designer in Cebu | JB", desc: "Website creation and development (3 to 7 pages) with built-in booking, payments and a private CRM, landing pages, SEO, logos and graphic design, with clear one-time prices in USD and pesos. By JB in Cebu, Philippines." },
+  "/book": { title: "Book a Free Call with a Website Designer | JB", desc: "Book a free 15-minute Google Meet call with JB, a website designer in Cebu, Philippines. Pick a time in your own time zone, wherever you are." },
+  "/contact": { title: "Contact JB, Website Designer in Cebu, Philippines", desc: "Send an inquiry, email, call or message JB, a Filipino website designer and VA for small businesses in the Philippines and abroad: websites, SEO and graphic design." },
 };
 const OLD_PATHS = { "/portfolio": "/works", "/portfolio.html": "/works", "/works.html": "/works", "/rates": "/services#rates", "/rates/": "/services#rates" };
 
