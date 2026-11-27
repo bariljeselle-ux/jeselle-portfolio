@@ -149,6 +149,38 @@ section#services{padding-bottom:48px!important}
 @media (prefers-reduced-motion:reduce){.svhero .svh-l>*,.svh-row{animation:none}.svh-row::before,.svh-name,.svh-go{transition:none}}
 @media (max-width:900px){.svhero{grid-template-columns:1fr;gap:44px;padding:72px 24px 64px}.svh-facts{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px}}
 @media (max-width:760px){#services.svhero{padding-left:20px!important;padding-right:20px!important}.svh-row{grid-template-columns:1fr 28px;grid-template-areas:"name go" "from go" "desc desc";padding:22px 0}.svh-facts{font-size:13px}.svh-facts b{font-size:19px}}
+/* Works: project scenes (browser + phone on a branded backdrop) */
+.wkscene{--rx:4deg;--ry:-9deg;--bg:#EFE6DC;--ink:#231E1B;--glow:rgba(232,180,154,.55);position:relative;display:block;aspect-ratio:16/11.2;border-radius:22px;overflow:hidden;text-decoration:none;isolation:isolate;perspective:1600px;background:radial-gradient(120% 90% at 85% 10%,var(--glow),transparent 60%),radial-gradient(80% 70% at 0% 100%,rgba(255,255,255,.10),transparent 60%),var(--bg);box-shadow:0 30px 60px -30px rgba(35,30,27,.45)}
+.wkscene::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.2px);background-size:22px 22px;mask-image:linear-gradient(160deg,#000 10%,transparent 70%);-webkit-mask-image:linear-gradient(160deg,#000 10%,transparent 70%)}
+.wk-td{--bg:linear-gradient(150deg,#0f1b4d,#1d3b8f 60%,#24317a);--glow:rgba(245,184,46,.45)}
+.wk-td,.wk-cafe{color:#fff}
+.wk-cafe{--bg:linear-gradient(150deg,#163424,#1E4632 55%,#2C5E45);--glow:rgba(240,180,41,.40)}
+.wk-jv{--bg:linear-gradient(150deg,#F3ECE4,#E9DED2);--glow:rgba(122,78,58,.28)}
+.wk-jv::before{background-image:radial-gradient(rgba(122,78,58,.16) 1px,transparent 1.2px)}
+.wkword{position:absolute;left:-2%;bottom:-6%;z-index:-1;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:clamp(90px,15vw,210px);line-height:.8;letter-spacing:-.03em;color:currentColor;opacity:.07;white-space:nowrap;pointer-events:none;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.wk-jv .wkword{color:#7A4E3A;opacity:.09}
+.wkdesk{position:absolute;left:6%;top:9%;width:78%;display:block;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 2px 0 rgba(255,255,255,.4) inset,0 40px 70px -25px rgba(0,0,0,.55),0 12px 24px -12px rgba(0,0,0,.35);transform:rotateX(var(--rx)) rotateY(var(--ry));transform-origin:60% 50%;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.wkscene .wkbar{padding:7px 10px}
+.wkscene .wkbar em{font-size:11px}
+.wkscene .wkstage{aspect-ratio:16/10;background:#111}
+.wkscene .wkstage img{opacity:1;transform:none;clip-path:inset(0 100% 0 0);transition:clip-path 1s cubic-bezier(.77,0,.18,1);z-index:1}
+.wkscene .wkstage img.was{clip-path:inset(0 0 0 0);z-index:1}
+.wkscene .wkstage img.on{clip-path:inset(0 0 0 0);z-index:2}
+.wkphone{position:absolute;right:5%;bottom:-7%;width:22%;aspect-ratio:390/844;display:block;border-radius:22px;padding:5px;background:#16110f;box-shadow:0 30px 50px -18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08) inset;transform:translateZ(60px) rotate(4deg);animation:wkfloat 6s ease-in-out infinite}
+.wkphone::before{content:"";position:absolute;top:9px;left:50%;width:30%;height:5px;margin-left:-15%;border-radius:4px;background:#16110f;z-index:2}
+.wkphone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:17px}
+@keyframes wkfloat{0%,100%{transform:translateY(0) rotate(4deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+.wkscene .wkcap{left:6%;top:auto;bottom:6%;z-index:3;font-size:12.5px;padding:7px 14px;background:rgba(255,255,255,.92);color:#231E1B;backdrop-filter:blur(6px);box-shadow:0 10px 24px -10px rgba(0,0,0,.4)}
+.wkscene .wkcap::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#7A4E3A;margin-right:8px;vertical-align:middle;box-shadow:0 0 0 0 rgba(122,78,58,.6);animation:wkping 2s infinite}
+.wk-td .wkcap::before{background:#F5B82E}.wk-cafe .wkcap::before{background:#F0B429}
+@keyframes wkping{0%{box-shadow:0 0 0 0 rgba(122,78,58,.5)}70%{box-shadow:0 0 0 8px rgba(122,78,58,0)}100%{box-shadow:0 0 0 0 rgba(122,78,58,0)}}
+.wkscene .wkdots{left:auto;right:30%;bottom:6.5%;transform:none;z-index:3}
+.wkscene:hover,.wkscene:focus-visible{--rx:0deg;--ry:0deg}
+.wkscene:hover .wkword{transform:translateX(3%)}
+.wkscene:focus-visible{outline:3px solid #7A4E3A;outline-offset:4px}
+.wkcard .wkscene{margin-bottom:10px}
+@media (max-width:600px){.wkscene{aspect-ratio:4/3.4;border-radius:16px}.wkdesk{left:5%;top:8%;width:84%}.wkphone{width:26%;right:3%;border-radius:16px;padding:4px}.wkphone img{border-radius:12px}.wkscene .wkdots{display:none}.wkscene .wkcap{font-size:11.5px;bottom:5%}}
+@media (prefers-reduced-motion:reduce){.wkphone,.wkcap::before{animation:none!important}.wkdesk,.wkword{transition:none}.wkscene .wkstage img{transition:none}}
 .wkhead{max-width:680px;margin:0 auto 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
 .wksec h2{font-family:'Cormorant Garamond',serif;font-weight:500;margin:0;line-height:1.1;color:#231E1B}
 .wkshot{display:block;text-decoration:none;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #E2D9CF;box-shadow:0 18px 40px rgba(35,30,27,.10);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
@@ -946,10 +978,11 @@ el.hidden=false}).catch(function(){})})();
 </div>
 
 <article class="wkfeat">
-<a class="wkshot wkslides" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
-<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com<span class="wkpath"></span></em></span>
+<a class="wkscene wkslides wk-td" href="https://traveldestinacia.jeselleva.com/" target="_blank" rel="noopener" aria-label="Open the Travel Destinacia website (opens in a new tab)">
+<span class="wkword" aria-hidden="true">Travel</span>
+<span class="wkdesk"><span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>traveldestinacia.jeselleva.com<span class="wkpath"></span></em></span>
 <span class="wkstage">
-<img class="on" data-path="" data-cap="Homepage" src="images/work-td-home.webp" width="1280" height="800" alt="Travel Destinacia website, shown as a slideshow of 8 screens: homepage, tour packages, services, trip videos, online reservation, the Ask Desti chat helper, trip stories and FAQ." loading="lazy">
+<img class="on" data-path="" data-cap="Homepage" src="images/work-td-home.webp" width="1280" height="800" alt="Travel Destinacia website, shown as a slideshow of 8 screens: homepage, tour packages, services, trip videos, online reservation, the Ask Desti chat helper, trip stories and FAQ, with the mobile version beside it." loading="lazy">
 <img data-path="/#packages" data-cap="Tour packages" src="images/work-td-packages.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/#services" data-cap="Services" src="images/work-td-services.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/#reels" data-cap="Trip videos" src="images/work-td-videos.webp" width="1280" height="800" alt="" loading="lazy">
@@ -957,8 +990,9 @@ el.hidden=false}).catch(function(){})})();
 <img data-path="" data-cap="&quot;Ask Desti&quot; chat helper" src="images/work-td-desti.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/#stories" data-cap="Real trip stories" src="images/work-td-trips.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/#faq" data-cap="FAQ" src="images/work-td-faq.webp" width="1280" height="800" alt="" loading="lazy">
+</span></span>
+<span class="wkphone" aria-hidden="true"><img src="images/work-td-phone.webp" width="390" height="844" alt="" loading="lazy"></span>
 <span class="wkcap">Homepage</span>
-</span>
 <span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </a>
 <div class="wkinfo">
@@ -978,9 +1012,18 @@ el.hidden=false}).catch(function(){})})();
 
 <div class="wkpair">
 <article class="wkcard">
-<a class="wkshot" href="/demos/lamesa-cafe/index.html" aria-label="Open the Lamesa Café sample website">
-<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>Lamesa Café</em></span>
-<img src="images/work-lamesa-cafe.webp" width="1280" height="800" alt="Homepage of the Lamesa Café sample website: a dark green page with a chalkboard menu showing coffee and merienda prices in pesos." loading="lazy">
+<a class="wkscene wkslides wk-cafe" href="/demos/lamesa-cafe/index.html" aria-label="Open the Lamesa Café sample website">
+<span class="wkword" aria-hidden="true">Lamesa</span>
+<span class="wkdesk"><span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>lamesacafe.sample<span class="wkpath"></span></em></span>
+<span class="wkstage">
+<img class="on" data-path="" data-cap="Menu board homepage" src="images/work-cafe-home.webp" width="1280" height="800" alt="Lamesa Café sample website, shown as a slideshow: a chalkboard menu homepage, catering trays, table booking and the owner's dashboard, with the mobile version beside it." loading="lazy">
+<img data-path="/#catering" data-cap="Catering trays to request" src="images/work-cafe-catering.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#book" data-cap="Table booking" src="images/work-cafe-book.webp" width="1280" height="800" alt="" loading="lazy">
+<img data-path="/#owner" data-cap="Owner dashboard" src="images/work-cafe-dash.webp" width="1280" height="800" alt="" loading="lazy">
+</span></span>
+<span class="wkphone" aria-hidden="true"><img src="images/work-cafe-phone.webp" width="390" height="844" alt="" loading="lazy"></span>
+<span class="wkcap">Menu board homepage</span>
+<span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>
 </a>
 <p class="wkkind"><span class="wksample">Sample project</span> Café · Cebu</p>
 <h2>Lamesa Café</h2>
@@ -988,18 +1031,20 @@ el.hidden=false}).catch(function(){})})();
 <a href="/demos/lamesa-cafe/index.html" class="wklink">Open the café sample</a>
 </article>
 <article class="wkcard">
-<a class="wkshot wkslides" href="/" aria-label="Open jeselleva.com home">
-<span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>jeselleva.com<span class="wkpath"></span></em></span>
+<a class="wkscene wkslides wk-jv" href="/" aria-label="Open jeselleva.com home">
+<span class="wkword" aria-hidden="true">jeselle.va</span>
+<span class="wkdesk"><span class="wkbar" aria-hidden="true"><i></i><i></i><i></i><em>jeselleva.com<span class="wkpath"></span></em></span>
 <span class="wkstage">
-<img class="on" data-path="" data-cap="Homepage" src="images/work-jv-home.webp" width="1280" height="800" alt="jeselleva.com shown as a slideshow of 7 screens: homepage, website packages, what's included, compare packages, booking in your own time zone, logo and brand kit add-on, and the project brief with picked services." loading="lazy">
+<img class="on" data-path="" data-cap="Homepage" src="images/work-jv-home.webp" width="1280" height="800" alt="jeselleva.com shown as a slideshow of 7 screens: homepage, website packages, what's included, compare packages, booking in your own time zone, logo and brand kit add-on, and the project brief with picked services, with the mobile version beside it." loading="lazy">
 <img data-path="/services" data-cap="Website packages" src="images/work-jv-packages.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/services" data-cap="&quot;What's included&quot; details" src="images/work-jv-incl.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/services" data-cap="Compare packages" src="images/work-jv-cmp.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/book" data-cap="Booking in your time zone" src="images/work-jv-book.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/services" data-cap="Logo & brand kit add-on" src="images/work-jv-brand.webp" width="1280" height="800" alt="" loading="lazy">
 <img data-path="/brief.html" data-cap="Project brief with your picks" src="images/work-jv-brief.webp" width="1280" height="800" alt="" loading="lazy">
+</span></span>
+<span class="wkphone" aria-hidden="true"><img src="images/work-jv-phone.webp" width="390" height="844" alt="" loading="lazy"></span>
 <span class="wkcap">Homepage</span>
-</span>
 <span class="wkdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
 </a>
 <p class="wkkind"><span class="wkreal">My own website</span> Website creator · Cebu, Philippines</p>
@@ -1418,13 +1463,15 @@ sm.addEventListener('click',function(e){e.preventDefault();if(busy)busy.cancel()
 });});})();
 </script>
 <script>
-// Works: project thumbnails play through their pages
-(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+// Works: project scenes play through their pages (wipe) and tilt toward the pointer
+(function(){var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelectorAll('.wkslides').forEach(function(box,bi){var imgs=box.querySelectorAll('.wkstage img'),dots=box.querySelectorAll('.wkdots i'),path=box.querySelector('.wkpath'),cap=box.querySelector('.wkcap'),i=0,t=null,vis=false;
-function go(n){imgs[i].classList.remove('on');dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i].classList.add('on');path.textContent=imgs[i].dataset.path||'';cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},350)}
-function start(){if(!t&&vis&&!document.hidden)t=setTimeout(function(){t=setInterval(function(){go(i+1)},3000)},bi*1500)}function stop(){clearTimeout(t);clearInterval(t);t=null}
+if(!rm&&matchMedia('(hover:hover)').matches){box.addEventListener('pointermove',function(e){var r=box.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;box.style.setProperty('--ry',(x*10).toFixed(2)+'deg');box.style.setProperty('--rx',(-y*8).toFixed(2)+'deg')});box.addEventListener('pointerleave',function(){box.style.removeProperty('--ry');box.style.removeProperty('--rx')})}
+if(rm||imgs.length<2)return;
+function go(n){imgs.forEach(function(im){im.classList.remove('was')});imgs[i].classList.remove('on');imgs[i].classList.add('was');dots[i]&&dots[i].classList.remove('on');i=n%imgs.length;imgs[i].classList.add('on');dots[i]&&dots[i].classList.add('on');if(path)path.textContent=imgs[i].dataset.path||'';cap.classList.add('out');setTimeout(function(){cap.textContent=imgs[i].dataset.cap||'';cap.classList.remove('out')},450)}
+function start(){if(!t&&vis&&!document.hidden)t=setTimeout(function(){t=setInterval(function(){go(i+1)},3200)},bi*1100)}function stop(){clearTimeout(t);clearInterval(t);t=null}
 imgs.forEach(function(im){im.loading='eager'});
-if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){vis=e.isIntersecting;vis?start():stop()})}).observe(box)}else{vis=true;start()}
+if('IntersectionObserver'in window){new IntersectionObserver(function(es){es.forEach(function(e){vis=e.isIntersecting;vis?start():stop()})},{threshold:.25}).observe(box)}else{vis=true;start()}
 document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});});})();
 </script>
 <script src="/guard.js" defer></script>
