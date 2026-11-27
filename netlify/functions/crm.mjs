@@ -17,7 +17,15 @@ const who = (rec) => rec?.data?.name || rec?.data?.email || "a client";
 const csvCell = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
 
 // Expense entry: what you spent for your business, in pesos.
-export const EXPENSE_CATEGORIES = ["Electricity (work share)", "Internet & mobile load", "Devices & equipment", "Software & subscriptions", "Domain & hosting", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Repairs & maintenance", "Workspace rent (work share)", "Transportation & delivery", "Professional fees", "Government & registration fees", "Other"];
+export const EXPENSE_CATEGORIES = ["Electricity (work share)", "Internet & mobile load", "Devices & equipment", "Software & subscriptions", "Domain & hosting", "Courses & training", "Transfer & payment fees", "Advertising & promotion", "Office supplies", "Repairs & maintenance", "Workspace rent (work share)", "Transportation & delivery", "Professional fees", "Government & registration fees",
+  "Bank charges", "Loan interest",
+  // Staff (employer costs)
+  "Staff salaries & wages", "13th month pay (staff)", "SSS, PhilHealth & Pag-IBIG: employer share (staff)",
+  // Your own government contributions as a self-employed person
+  "My SSS contribution", "My PhilHealth contribution", "My Pag-IBIG contribution",
+  // Money movements that are NOT business expenses (recorded so the books are complete)
+  "Loan payment (principal)", "Capital (money I put into the business)", "Owner's withdrawal (personal use)", "Income tax paid to BIR",
+  "Other"];
 export function cleanExpense(e) {
   const s = (v, n) => String(v ?? "").trim().slice(0, n);
   const date = s(e.date, 10);
@@ -89,6 +97,13 @@ export default async (req) => {
         : body.action === "team-remove" ? await removeMember(me, String(body.id || ""), store)
         : { status: 400, error: "Unknown action" };
       return Response.json(r.ok ? r : { error: r.error }, { status: r.ok ? 200 : r.status });
+    }
+    // ----- BIR tax calendar (owner only) -----
+    if (body.action === "tax-get" || body.action === "tax-save") {
+      if (!owner) return NO();
+      const tax = await import("../lib/tax.mjs");
+      const t = body.action === "tax-save" ? await tax.saveTax(body.tax || {}, store) : await tax.getTax(store);
+      return Response.json({ ok: true, tax: t });
     }
     // ----- Edit website (owner only): homepage text and photo -----
     if (/^site-/.test(body.action || "")) {

@@ -107,7 +107,7 @@ export default {
   // Timed jobs (times are UTC: 01:00 UTC = 9 AM Philippine time)
   async scheduled(event, env, ctx) {
     bindEnv(env);
-    const job = event.cron === "*/15 * * * *" ? runReminders : event.cron === "0 1 * * *" ? runNudges : event.cron === "0 1 1 * *" ? () => Promise.allSettled([runMonthlyBackup(), runMonthlyCheckin()]).then((r) => r.map((x) => x.value || x.reason?.message)) : null;
+    const job = event.cron === "*/15 * * * *" ? runReminders : event.cron === "0 1 * * *" ? () => Promise.allSettled([runNudges(), import("../netlify/lib/tax.mjs").then((t) => t.runTaxReminders())]).then((r) => r.map((x) => x.value || x.reason?.message)) : event.cron === "0 1 1 * *" ? () => Promise.allSettled([runMonthlyBackup(), runMonthlyCheckin()]).then((r) => r.map((x) => x.value || x.reason?.message)) : null;
     if (job) ctx.waitUntil(job().then((r) => console.log(event.cron, JSON.stringify(r))).catch((e) => console.log(event.cron, "failed:", e.message)));
   },
 };

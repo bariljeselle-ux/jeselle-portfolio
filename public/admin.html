@@ -110,6 +110,20 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .sedit .sbar{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#F7F3EE;border-top:1px solid #E2D9CF;padding:12px 0;margin-top:14px;z-index:3}
 .sedit .shelp{font-size:14px;color:#4A413B;background:#EFE8DF;border-radius:6px;padding:12px 14px;margin:0 0 12px}
 @media (max-width:600px){.sedit .sbar button,.sedit .sbar .btn{flex:1 1 auto}}
+.taxbox{background:#fff;border:1px solid #E2D9CF;border-radius:6px;margin:0 0 14px}
+.taxbox>summary{cursor:pointer;padding:12px 16px;font-weight:500;font-size:16px}
+#taxin{padding:0 16px 16px;display:flex;flex-direction:column;gap:14px;font-size:14px}
+.txset{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;background:#F7F3EE;border-radius:6px;padding:12px 14px}
+.txset label{display:inline-flex;gap:8px;align-items:center;font-size:14px}.txset input[type=checkbox],.txset input[type=radio]{width:18px;height:18px;accent-color:#7A4E3A}
+.txcmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.txcmp>div{border:1px solid #E2D9CF;border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.txcmp>div.on{border-color:#7A4E3A;box-shadow:0 0 0 1px #7A4E3A inset}.txcmp b{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;line-height:1.1}
+.txcmp small{color:#6E625A}.txcmp .best{align-self:flex-start;background:#2F6B3F;color:#fff;border-radius:99px;font-size:11px;padding:2px 8px;letter-spacing:.04em}
+.txnext{border-left:4px solid #C9853A;background:#FBF3E4;border-radius:6px;padding:12px 14px}
+.txt{width:100%;border-collapse:collapse}.txt th,.txt td{text-align:left;padding:8px 6px;border-top:1px solid #EEE7DF;vertical-align:top}.txt th{font-weight:500;color:#6E625A;font-size:13px}.txt td.r,.txt th.r{text-align:right}
+.txt tr.done td{color:#8E847C}.txt .soon{color:#B5761A;font-weight:500}.txt .late{color:#8A2E1E;font-weight:500}
+.txnote{font-size:13px;color:#6E625A;margin:0}
+@media(max-width:700px){.txcmp{grid-template-columns:1fr}.txt .hm{display:none}}
 </style>
 </head>
 <body>
@@ -186,6 +200,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </details>
 <div class="tools" style="margin-bottom:12px"><label style="font-size:14px">Year <select id="iyear"></select></label><button class="pri" id="iadd">➕ Add payment received</button><button id="icsv">⬇️ Export for BIR (CSV)</button></div>
 <div class="isum" id="isum"></div>
+<details class="taxbox own" id="taxbox" open><summary>🧾 BIR taxes: deadlines &amp; how much to pay</summary><div id="taxin"><p class="empty">Loading…</p></div></details>
 <form class="iform" id="iform" hidden>
 <p style="margin:0 0 10px;font-weight:500" id="ititle">Add payment received</p>
 <div class="g">
@@ -235,7 +250,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <p style="margin:0 0 10px;font-weight:500" id="etitle">Add expense</p>
 <div class="g">
 <label>Date paid<input type="date" name="date" required></label>
-<label>Category<select name="category"><option value="Electricity (work share)">Electricity (work share)</option><option value="Internet &amp; mobile load">Internet &amp; mobile load</option><option value="Devices &amp; equipment">Devices &amp; equipment (laptop, phone, headset, ring light)</option><option value="Software &amp; subscriptions">Software &amp; subscriptions</option><option value="Domain &amp; hosting">Domain &amp; hosting</option><option value="Courses &amp; training">Courses &amp; training</option><option value="Transfer &amp; payment fees">Transfer &amp; payment fees</option><option value="Advertising &amp; promotion">Advertising &amp; promotion</option><option value="Office supplies">Office supplies</option><option value="Repairs &amp; maintenance">Repairs &amp; maintenance</option><option value="Workspace rent (work share)">Workspace rent (work share)</option><option value="Transportation &amp; delivery">Transportation &amp; delivery (for work only)</option><option value="Professional fees">Professional fees (accountant, notary)</option><option value="Government &amp; registration fees">Government &amp; registration fees</option><option value="Other">Other</option></select></label>
+<label>Category<select name="category"><optgroup label="Running costs (deductible)"><option value="Electricity (work share)">Electricity (work share)</option><option value="Internet &amp; mobile load">Internet &amp; mobile load</option><option value="Devices &amp; equipment">Devices &amp; equipment (laptop, phone, headset, ring light)</option><option value="Software &amp; subscriptions">Software &amp; subscriptions</option><option value="Domain &amp; hosting">Domain &amp; hosting</option><option value="Courses &amp; training">Courses &amp; training</option><option value="Transfer &amp; payment fees">Transfer &amp; payment fees</option><option value="Bank charges">Bank charges</option><option value="Advertising &amp; promotion">Advertising &amp; promotion</option><option value="Office supplies">Office supplies</option><option value="Repairs &amp; maintenance">Repairs &amp; maintenance</option><option value="Workspace rent (work share)">Workspace rent (work share)</option><option value="Transportation &amp; delivery">Transportation &amp; delivery (for work only)</option><option value="Professional fees">Professional fees (accountant, notary)</option><option value="Government &amp; registration fees">Permits, licenses &amp; business taxes</option></optgroup><optgroup label="Staff (deductible)"><option value="Staff salaries &amp; wages">Staff salaries &amp; wages</option><option value="13th month pay (staff)">13th month pay (staff)</option><option value="SSS, PhilHealth &amp; Pag-IBIG: employer share (staff)">SSS, PhilHealth &amp; Pag-IBIG: employer share (staff)</option></optgroup><optgroup label="My government contributions"><option value="My SSS contribution">My SSS contribution</option><option value="My PhilHealth contribution">My PhilHealth contribution</option><option value="My Pag-IBIG contribution">My Pag-IBIG contribution</option></optgroup><optgroup label="Loans & capital"><option value="Loan interest">Loan interest (deductible)</option><option value="Loan payment (principal)">Loan payment, principal (not an expense)</option><option value="Capital (money I put into the business)">Capital: money I put into the business (not an expense)</option><option value="Owner&#x27;s withdrawal (personal use)">Owner&#x27;s withdrawal for personal use (not an expense)</option><option value="Income tax paid to BIR">Income tax paid to BIR (not an expense)</option></optgroup><option value="Other">Other</option></select></label>
 <label>What for<input name="description" required maxlength="200" placeholder="e.g. Canva Pro, 1 month"></label>
 <label>Paid to<input name="vendor" maxlength="120" placeholder="e.g. Canva, Globe, Porkbun"></label>
 <label>Full bill (₱) <small style="color:#6E625A">optional</small><input name="bill" inputmode="decimal" placeholder="e.g. whole electric bill"></label>
@@ -287,7 +302,7 @@ const api=async(opts={})=>{const r=await fetch('/api/crm'+(opts.qs||''),{method:
 const note=(t,bad)=>{const m=$('amsg');m.hidden=false;m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';setTimeout(()=>m.hidden=true,4000)};
 
 async function load(){
-  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];ME=j.me||ME;TEAM=j.team||[];CAP=j.capacity||null;access();$('login').hidden=true;$('app').hidden=false;draw();if(can('payments')){idraw();edraw()}gload();if(can('reviews'))rload();if(ME.role==='owner')tload();try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
+  try{const j=await api();RECS=j.records||[];INC=j.income||[];EXP=j.expenses||[];ME=j.me||ME;TEAM=j.team||[];CAP=j.capacity||null;access();$('login').hidden=true;$('app').hidden=false;draw();if(can('payments')){idraw();edraw()}gload();if(can('reviews'))rload();if(ME.role==='owner'){tload();txload()}try{nstatus()}catch(e){}hashOpen();if(/^#(reviews|income|expenses)$/.test(location.hash))setTimeout(()=>$(location.hash.slice(1)).scrollIntoView(),300)}
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
 function access(){const own=ME.role==='owner';
@@ -397,9 +412,11 @@ function idraw(){
   const tot=list.reduce((a,r)=>a+(Number(r.php)||0),0);
   const ym=today().slice(0,7);const mon=INC.filter(r=>(r.date||'').startsWith(ym)).reduce((a,r)=>a+(Number(r.php)||0),0);
   const pct=Math.min(100,tot/TAXFREE*100);
+  setTimeout(_txHook,0);
   $('isum').innerHTML=`<div><small>This month</small><b>${peso(mon)}</b></div><div><small>${esc(y)} total</small><b>${peso(tot)}</b><span style="font-size:13px;color:#6E625A">${list.length} payment${list.length===1?'':'s'}</span></div><div><small>Tax-free limit (₱250,000/yr)</small><div class="ibar"><span style="width:${pct}%;${tot>TAXFREE?'background:#C9853A':''}"></span></div><span style="font-size:13px;color:#6E625A">${tot>TAXFREE?`Over by ${peso(tot-TAXFREE)}. With the 8% option, tax is about ${peso((tot-TAXFREE)*0.08)}.`:`${peso(TAXFREE-tot)} left before income tax applies`}</span></div>`;
   $('ilist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>Client</th><th>For</th><th>Via</th><th style="text-align:right">Charged</th><th style="text-align:right">Received</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.client)}</b>${r.invoice?`<br><small style="color:#6E625A">${esc(r.invoice)}</small>`:''}</td><td>${esc([r.service,r.description].filter(Boolean).join(' · '))}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.method)}${r.reference?`<br><small style="color:#6E625A">Ref ${esc(r.reference)}</small>`:''}${(r.files||[]).length?`<br>${r.files.map(x=>`<button type="button" class="attv" data-id="${esc(x.id)}" title="Open ${esc(x.name)}">📎 ${esc(x.name)}</button>`).join(' ')}`:''}</td><td class="n">${r.amount?esc(r.currency+' '+Number(r.amount).toLocaleString('en-US')):''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="i-edit">Edit</button> <button class="i-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="5">Total ${esc(y)}</td><td class="n">${peso(tot)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No payments recorded for ${esc(y)} yet. When a client pays, tap <b>➕ Add payment received</b>, or open their payment proof below and tap <b>Record as income</b>.</div>`;
 }
+function _txHook(){try{txdraw()}catch(e){}}
 function iopen(v={}){const f=$('iform');f.hidden=false;f.reset();$('ititle').textContent=v.key?'Edit payment':'Add payment received';
   const nextInv=()=>{const y=today().slice(0,4);const n=INC.map(r=>(String(r.invoice||'').match(new RegExp('^INV-'+y+'-(\\d+)$'))||[])[1]).filter(Boolean).map(Number);return 'INV-'+y+'-'+String((n.length?Math.max(...n):0)+1).padStart(3,'0')};
   const d={date:today(),currency:'PHP',method:'GCash',...(v.key?{}:{invoice:nextInv()}),...v};for(const[k,val]of Object.entries(d)){const el=f.elements[k];if(el&&val!=null)el.value=val}
@@ -421,10 +438,10 @@ let EXP=[];
 function edraw(){setTimeout(()=>{try{mdraw()}catch(e){}},0);
   const y=$('iyear').value||String(new Date().getFullYear());
   const list=EXP.filter(r=>(r.date||'').startsWith(y));
-  const spent=list.reduce((a,r)=>a+(Number(r.php)||0),0);
+  const spent=list.filter(r=>!NOTEXP.has(r.category)).reduce((a,r)=>a+(Number(r.php)||0),0);const moved=list.filter(r=>NOTEXP.has(r.category)).reduce((a,r)=>a+(Number(r.php)||0),0);setTimeout(_txHook,0);
   const earned=INC.filter(r=>(r.date||'').startsWith(y)).reduce((a,r)=>a+(Number(r.php)||0),0);
   const profit=earned-spent;const noRcpt=list.filter(r=>!r.receipt).length;
-  $('esum').innerHTML=`<div><small>${esc(y)} expenses</small><b>${peso(spent)}</b><span style="font-size:13px;color:#6E625A">${list.length} item${list.length===1?'':'s'}${noRcpt?` · <span style="color:#B5761A">${noRcpt} without receipt</span>`:''}</span></div><div><small>${esc(y)} income</small><b>${peso(earned)}</b></div><div><small>${esc(y)} profit</small><b style="color:${profit<0?'#8A2E1E':'#2F6B3F'}">${peso(profit)}</b><span style="font-size:13px;color:#6E625A">income − expenses</span></div>`;
+  $('esum').innerHTML=`<div><small>${esc(y)} expenses</small><b>${peso(spent)}</b><span style="font-size:13px;color:#6E625A">${list.length} item${list.length===1?'':'s'}${noRcpt?` · <span style="color:#B5761A">${noRcpt} without receipt</span>`:''}${moved?`<br>Not counted: ${peso(moved)} capital, loans &amp; withdrawals`:''}</span></div><div><small>${esc(y)} income</small><b>${peso(earned)}</b></div><div><small>${esc(y)} profit</small><b style="color:${profit<0?'#8A2E1E':'#2F6B3F'}">${peso(profit)}</b><span style="font-size:13px;color:#6E625A">income − expenses</span></div>`;
   $('elist').innerHTML=list.length?`<table class="itable"><thead><tr><th>Date</th><th>What</th><th>Category</th><th>Paid with</th><th style="text-align:right">Amount</th><th></th></tr></thead><tbody>${list.map(r=>`<tr data-key="${esc(r.key)}"><td>${esc(new Date(r.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</td><td><b>${esc(r.description)}</b>${r.vendor?`<br><small style="color:#6E625A">${esc(r.vendor)}</small>`:''}${r.notes?`<br><small style="color:#6E625A">${esc(r.notes)}</small>`:''}</td><td>${esc(r.category)}</td><td>${esc(r.method)}<br><small style="color:${r.receipt?'#2F6B3F':'#B5761A'}">${r.receipt?'✓ Receipt kept':'No receipt yet'}</small>${(r.files||[]).length?`<br>${r.files.map(x=>`<button type="button" class="attv" data-id="${esc(x.id)}" title="Open ${esc(x.name)}">📎 ${esc(x.name)}</button>`).join(' ')}`:''}</td><td class="n"><b>${peso(r.php)}</b></td><td class="n"><button class="e-edit">Edit</button> <button class="e-del warn">Delete</button></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Total ${esc(y)}</td><td class="n">${peso(spent)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No expenses recorded for ${esc(y)} yet. When you pay for something for work (Canva Pro, domain, load, a course), tap <b>➕ Add expense</b>.</div>`;
 }
 function eopen(v={}){const f=$('eform');f.hidden=false;f.reset();$('etitle').textContent=v.key?'Edit expense':'Add expense';
@@ -631,6 +648,56 @@ const login=async()=>{if(!TEAMLOGIN){KEY=$('pw').value;try{sessionStorage.setIte
 $('lemail').addEventListener('keydown',e=>{if(e.key==='Enter')$('pw').focus()});
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 if(KEY)load();
+
+/* ---------- BIR taxes: deadlines + estimate ---------- */
+const NOTEXP=new Set(['Loan payment (principal)','Capital (money I put into the business)',"Owner's withdrawal (personal use)",'Income tax paid to BIR']);
+const OWNGOV=new Set(['My SSS contribution','My PhilHealth contribution','My Pag-IBIG contribution']);
+let TAX=null;
+const txWork=(y,m,d)=>{const t=new Date(Date.UTC(y,m-1,d));while([0,6].includes(t.getUTCDay()))t.setUTCDate(t.getUTCDate()+1);return t.toISOString().slice(0,10)};
+const gradTax=x=>x<=250000?0:x<=400000?(x-250000)*.15:x<=800000?22500+(x-400000)*.2:x<=2000000?102500+(x-800000)*.25:x<=8000000?402500+(x-2000000)*.3:2202500+(x-8000000)*.35;
+const r2=n=>Math.round(n*100)/100;
+function txCalc(y){
+  const qOf=d=>Math.floor((Number(d.slice(5,7))-1)/3);
+  const inc=[0,0,0,0],ded=[0,0,0,0],own=[0,0,0,0];
+  INC.filter(r=>(r.date||'').startsWith(y)).forEach(r=>inc[qOf(r.date)]+=Number(r.php)||0);
+  EXP.filter(r=>(r.date||'').startsWith(y)&&!NOTEXP.has(r.category)).forEach(r=>{const q=qOf(r.date);if(OWNGOV.has(r.category))own[q]+=Number(r.php)||0;else ded[q]+=Number(r.php)||0});
+  const cum=a=>a.map((_,i)=>a.slice(0,i+1).reduce((x,v)=>x+v,0));
+  const ci=cum(inc),cd=cum(ded),co=cum(own);
+  const annualTax={ '8%':i=>Math.max(0,i-250000)*.08, osd:i=>gradTax(Math.max(0,i*.6)), item:(i,k)=>gradTax(Math.max(0,i-cd[k]-co[k])) };
+  const plan={};
+  for(const m of ['8%','osd','item']){let paid=0;const q=[0,1,2,3].map(k=>{const due=r2(Math.max(0,annualTax[m](ci[k],k)-paid));paid+=due;return due});
+    const pt=m==='8%'?[0,0,0,0]:inc.map(v=>r2(v*.03));plan[m]={q,pt,income:r2(q.reduce((a,b)=>a+b,0)),total:r2(q.reduce((a,b)=>a+b,0)+pt.reduce((a,b)=>a+b,0))}}
+  return {inc,ded,own,gross:ci[3],deduct:cd[3],ownTot:co[3],plan};
+}
+const txMode=()=>TAX.regime==='8%'?'8%':TAX.ded==='osd'?'osd':'item';
+function txList(y){const yy=Number(y),m=txMode(),c=txCalc(y),P=c.plan[m];
+  const L=[{id:`${yy}-q1`,form:'1701Q',t:`Income tax, Q1 (Jan–Mar)`,due:txWork(yy,5,15),amt:P.q[0]},{id:`${yy}-q2`,form:'1701Q',t:`Income tax, Q2 (Apr–Jun)`,due:txWork(yy,8,15),amt:P.q[1]},{id:`${yy}-q3`,form:'1701Q',t:`Income tax, Q3 (Jul–Sep)`,due:txWork(yy,11,15),amt:P.q[2]},{id:`${yy}-annual`,form:'1701A',t:`Annual income tax for ${yy} (includes Q4)`,due:txWork(yy+1,4,15),amt:P.q[3]}];
+  if(m!=='8%')[[1,4,25,yy],[2,7,25,yy],[3,10,25,yy],[4,1,25,yy+1]].forEach(([q,mo,d,yr])=>L.push({id:`${yy}-pt${q}`,form:'2551Q',t:`3% percentage tax, Q${q}`,due:txWork(yr,mo,d),amt:P.pt[q-1]}));
+  return {L:L.sort((a,b)=>a.due.localeCompare(b.due)),c,m}}
+async function txload(){if(ME.role!=='owner'){$('taxbox').hidden=true;return}try{const j=await api({body:{action:'tax-get'}});TAX=j.tax;try{TAX.ded=localStorage.getItem('tx-ded')||'osd'}catch(e){TAX.ded='osd'}txdraw()}catch(e){$('taxin').innerHTML=`<p class="empty">${esc(e.message)}</p>`}}
+function txdraw(){if(!TAX||!$('taxin'))return;const y=$('iyear').value||String(new Date().getFullYear());const {L,c,m}=txList(y);const td=today();
+  const days=d=>Math.round((Date.parse(d)-Date.parse(td))/864e5);const nice=d=>new Date(d+'T12:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const nxt=L.find(x=>!TAX.filed[x.id]&&x.due>=td);
+  const best=Object.entries(c.plan).sort((a,b)=>a[1].total-b[1].total)[0][0];
+  const card=(k,title,sub)=>`<div class="${k===m?'on':''}">${k===best&&c.gross>0?'<span class="best">LOWEST</span>':''}<small>${title}</small><b>${peso(c.plan[k].total)}</b><small>${sub}</small></div>`;
+  $('taxin').innerHTML=`
+  <div class="txset"><label><input type="checkbox" id="tx-reg" ${TAX.registered?'checked':''}> I'm registered with the BIR</label><label>since <input type="date" id="tx-since" value="${esc(TAX.since)}" style="min-height:36px"></label>
+   <label><input type="radio" name="txr" value="8%" ${m==='8%'?'checked':''}> 8% option</label><label><input type="radio" name="txr" value="osd" ${m==='osd'?'checked':''}> Graduated + 40% OSD</label><label><input type="radio" name="txr" value="item" ${m==='item'?'checked':''}> Graduated + actual expenses</label>
+   <label><input type="checkbox" id="tx-rem" ${TAX.remind?'checked':''} ${TAX.registered?'':'disabled'}> Email &amp; phone reminders</label></div>
+  ${!TAX.registered?`<p class="txnote" style="color:#B5761A">Not registered yet: the deadlines below are a preview. Tick the box once you register (BIR Form 1901 at RDO 080), and reminders start 7 days, 1 day and on the day of each deadline.</p>`:''}
+  ${nxt?`<div class="txnext"><b>Next: BIR Form ${nxt.form}</b>, ${esc(nxt.t)}<br>Due <b>${nice(nxt.due)}</b> · ${days(nxt.due)===0?'<b>today</b>':days(nxt.due)+' days left'} · estimated to pay <b>${peso(nxt.amt)}</b>${nxt.amt?'':' (file it even if you owe ₱0)'}</div>`:''}
+  <div><p style="margin:0 0 8px"><b>${esc(y)} so far:</b> income ${peso(c.gross)} · deductible expenses ${peso(c.deduct)} · your SSS/PhilHealth/Pag-IBIG ${peso(c.ownTot)}</p>
+  <div class="txcmp">${card('8%','8% option','8% of income above ₱250,000. Expenses don\'t lower it.')}${card('osd','Graduated + 40% OSD','Tax table on 60% of income, plus 3% percentage tax')}${card('item','Graduated + actual expenses','Tax table on income minus your expenses and contributions, plus 3% percentage tax')}</div></div>
+  <table class="txt"><thead><tr><th>Due</th><th>Form</th><th class="hm">For</th><th class="r">Est. to pay</th><th>Filed</th></tr></thead><tbody>${L.map(x=>{const f=!!TAX.filed[x.id],dd=days(x.due);return `<tr class="${f?'done':''}"><td><span class="${!f&&dd<0?'late':!f&&dd<=7?'soon':''}">${nice(x.due)}</span>${!f&&dd<0?'<br><small class="late">Overdue</small>':''}</td><td><b>${x.form}</b></td><td class="hm">${esc(x.t)}</td><td class="r">${peso(x.amt)}</td><td><label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" class="tx-f" data-id="${x.id}" ${f?'checked':''} style="width:18px;height:18px;accent-color:#2F6B3F"> ${f?'Filed':''}</label></td></tr>`}).join('')}</tbody></table>
+  <p class="txnote">How it's computed: from your <b>Income records</b> and <b>Business expenses</b> for ${esc(y)}. Capital, loan principal, owner's withdrawals and income tax paid are not expenses, so they're left out. Your own SSS, PhilHealth and Pag-IBIG count only with "actual expenses". Each quarter shows the tax on your total so far, minus what earlier quarters already paid. Pick the 8% option or OSD on your <b>first return of the year</b> (or on Form 1901 when you register); you can't switch mid-year. With staff, you also have monthly withholding tax and SSS/PhilHealth/Pag-IBIG remittances, so ask an accountant to set those up.</p>
+  <p class="txnote">Deadlines on a weekend move to the next working day. Holidays and BIR extensions aren't included, so check <a href="https://www.bir.gov.ph" target="_blank" rel="noopener">bir.gov.ph</a> near each date. These are estimates to help you plan, not tax advice.</p>`;
+  const save=async(patch)=>{try{const j=await api({body:{action:'tax-save',tax:patch}});const ded=TAX.ded;TAX=j.tax;TAX.ded=ded;txdraw()}catch(e){note(e.message,true)}};
+  $('tx-reg').addEventListener('change',e=>save({registered:e.target.checked,since:$('tx-since').value||today()}));
+  $('tx-since').addEventListener('change',e=>save({since:e.target.value}));
+  $('tx-rem').addEventListener('change',e=>save({remind:e.target.checked}));
+  document.querySelectorAll('input[name=txr]').forEach(r=>r.addEventListener('change',()=>{const v=r.value;if(v==='8%')save({regime:'8%'});else{TAX.ded=v;try{localStorage.setItem('tx-ded',v)}catch(e){}save({regime:'graduated'})}}));
+  document.querySelectorAll('.tx-f').forEach(cb=>cb.addEventListener('change',()=>save({filed:{[cb.dataset.id]:cb.checked}})));
+}
 
 /* ---------- Edit website ---------- */
 const SNAME={top:'Top of page (headline + intro)',portfolio:'Selected work',about:'About me',services:'Services (title only)',process:'How it works',rates:'Rates (title only)',materials:'Sample materials (title only)',experience:'Background',testimonials:'Reviews (title only)',faq:'FAQ (title only)',contact:'Contact',footer:'Footer'};

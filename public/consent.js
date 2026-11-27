@@ -16,7 +16,7 @@
     var lab = document.createElement('label');
     lab.className = 'pconsent';
     lab.innerHTML = '<input type="checkbox" name="privacy_consent" value="Yes, agreed to the Privacy Policy" id="' + id + '">' +
-      '<span>I agree that Jeselle Baril may use the details I share here to reply to me and provide her services, as explained in the ' +
+      '<span>I agree that <b>jeselle.va</b> may use the details I share here to reply to me and provide its services, as explained in the ' +
       '<a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. <b>Required</b>' +
       '<span class="perr" role="alert" hidden></span></span>';
     return lab;
