@@ -258,6 +258,11 @@ section#services{padding-bottom:48px!important}
 @keyframes wktick{to{transform:translateX(-50%)}}
 @media (max-width:600px){.wkring{width:52%;margin-left:-26%;--R:clamp(150px,44vw,240px)}.wkpile{width:70%}.wkstamp{width:54px;height:54px;font-size:10px}.wkdesk2{left:6%;right:6%;bottom:22%}}
 @media (prefers-reduced-motion:reduce){.wkring,.wkcard2{transition:none}.wkview img,.wktrack{animation:none}}
+.svhero{grid-template-columns:1fr!important;justify-items:center;text-align:center;padding:104px 28px 72px!important}
+.svhero .svh-l{align-items:center;max-width:760px}
+.svhero .svh-p{max-width:36em}
+.svhero .svh-facts{justify-content:center;grid-template-columns:repeat(3,auto);gap:8px 48px}
+@media (max-width:760px){.svhero{padding:72px 20px 48px!important}.svhero .svh-facts{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 14px}}
 .wkhead{max-width:680px;margin:0 auto 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
 .wksec h2{font-family:'Cormorant Garamond',serif;font-weight:500;margin:0;line-height:1.1;color:#231E1B}
 .wkshot{display:block;text-decoration:none;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #E2D9CF;box-shadow:0 18px 40px rgba(35,30,27,.10);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
@@ -774,13 +779,8 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <p class="svh-eye" data-edit="services-1">Services &amp; rates</p>
 <h1 class="svh-h" data-edit="services-2">Websites that take the bookings <em>for you</em></h1>
 <p class="svh-p" data-edit="services-3">One remote VA for the things that bring clients in: a website with its own booking and CRM system, SEO so people find it, and graphics that match. Every service is a one-time project, with no monthly fees.</p>
-<ul class="svh-facts"><li><b>Up to 7</b> pages per website</li><li><b>Booking &amp; CRM</b> built into every site</li><li><b>One price,</b> no subscriptions</li></ul>
+<ul class="svh-facts"><li><b>Up to 7</b> pages per website</li><li><b>Booking &amp; CRM</b> Starter package and up</li><li><b>One price,</b> no subscriptions</li></ul>
 </div>
-<nav class="svh-list" aria-label="Services on this page">
-<a href="#rates" class="svh-row"><span class="svh-name">Website creation</span><span class="svh-desc">Landing pages and websites of up to 7 pages, with booking, payments and a private dashboard</span><span class="svh-from">from <b data-php="₱12,000">$400</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-<a href="#svc-seo" class="svh-row"><span class="svh-name">SEO</span><span class="svh-desc">Keyword research, page titles and Google setup, so customers find you</span><span class="svh-from">from <b data-php="₱8,000">$250</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-<a href="#svc-design" class="svh-row"><span class="svh-name">Graphic design</span><span class="svh-desc">Logos and brand kits, social media graphics, ads and lead magnets</span><span class="svh-from">from <b data-php="₱350">$12</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-</nav>
 </section>
 
 <section data-pg="services" id="rates" style="background: #EFE8DF">
