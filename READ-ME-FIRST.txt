@@ -203,5 +203,5 @@ Menu items are now their own pages: / (Home: hero, About, Background, reviews), 
 page's sections, and cloudflare/worker.mjs gives each its own title/description for Google. Old /#book style links still work.
 Website packages: Landing page $200–$350 (₱6,000–₱10,000); Business Website Starter up to 3 pages $750 (₱24,000), Business up to
 5 pages $950 (₱30,000), Premium up to 7 pages $1,200 (₱38,000), every one with the full business system (jeselleva.com is the model
-for every client site; only branding changes); extra page $40 (₱1,500). Price breakdown shown on /rates.
+for every client site; only branding changes); extra page $50 (₱2,000), options for 1/2/3/5 extra pages on /rates. Price breakdown shown on /rates.
 Removed: Website + SEO Setup (now inside Business/Premium) and Website + SEO + Facebook Optimization.
