@@ -235,3 +235,7 @@ SEO audit $75–$145, Reels editing $12–$25, website update and extra website 
 == Cleanup (Nov 27, 2026) ==
 Removed repeats: package cards at the top of Services (website packages live in Rates, open by default), the website card's long feature list,
 the second tools list, the Tagline card (tagline is in the hero), repeated experience lines in About, and FAQ questions the page already answers.
+
+== Website package cards back, bundle removed (Nov 27, 2026) ==
+Services page opens with 4 website cards (Landing, Starter, Business, Premium), each with "What's included +" and "Add to my request"
+(same picks as the rates rows, so they stay in sync). The Website Creation & Graphics Bundle (dark box) is removed everywhere.
