@@ -298,11 +298,11 @@ details.wfull.flash>summary{animation:wfflash 1.1s ease}
 @media (max-width:760px){.wfpane{grid-template-columns:minmax(0,1fr)}.wftabs{width:100%;border-radius:14px}.wftabs button{flex:1;padding:8px 6px}}
 @media (prefers-reduced-motion:reduce){.wfpane{animation:none}}
 .svhero .svh-h{font-size:clamp(34px,4vw,44px);line-height:1.08}.svhero .svh-p{font-size:16px;line-height:1.7;max-width:600px}.svhero .svh-l{gap:14px}
-.svhero .svh-h em{color:inherit;font-style:italic}.svhero .svh-h{color:#231E1B;font-weight:500;letter-spacing:0}.svhero .svh-p{color:#4A413B;font-weight:300}
+.svhero .svh-h em{color:#7A4E3A;font-style:italic}.svhero .svh-h{color:#231E1B;font-weight:500;letter-spacing:0}.svhero .svh-p{color:#4A413B;font-weight:300}
 /* headline accents */
-.hw{position:relative;display:inline-block;font-style:italic;color:inherit;white-space:nowrap}
+.hw{position:relative;display:inline-block;font-style:italic;color:#7A4E3A;white-space:nowrap}
 .hw .hul{position:absolute;left:-2%;right:-2%;bottom:-.08em;width:104%;height:.32em;overflow:visible;pointer-events:none}
-.hw .hul path{stroke-dasharray:340;stroke-dashoffset:340;opacity:.85}
+.hw .hul path{stroke-dasharray:340;stroke-dashoffset:340;opacity:.9}
 .hw.drawn .hul path{animation:huldraw 1.1s cubic-bezier(.65,0,.25,1) forwards}
 @keyframes huldraw{to{stroke-dashoffset:0}}
 .rot .rotw{display:inline-block;position:relative;vertical-align:bottom;overflow:hidden;height:1.12em;line-height:1.12em;transition:width .7s cubic-bezier(.65,0,.25,1)}
@@ -825,7 +825,7 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <section data-pg="services" id="services" class="svhero">
 <div class="svh-l">
 <p class="svh-eye" data-edit="services-1">Services &amp; rates</p>
-<h1 class="svh-h" data-edit="services-2">Websites that take the bookings <em class="hw rot"><span class="sr">for you</span><span class="rotw" aria-hidden="true"><b class="on">for you</b><b>while you sleep</b><b>in every time zone</b><b>24/7</b></span><svg class="hul" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 C 60 4, 140 4, 200 10 S 270 16, 297 7" fill="none" stroke="#C9A27E" stroke-width="5" stroke-linecap="round"/></svg></em></h1>
+<h1 class="svh-h" data-edit="services-2">Websites that take the bookings <em class="hw rot"><span class="sr">for you</span><span class="rotw" aria-hidden="true"><b class="on">for you</b><b>while you sleep</b><b>in every time zone</b><b>24/7</b></span><svg class="hul" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 C 60 4, 140 4, 200 10 S 270 16, 297 7" fill="none" stroke="#E8B49A" stroke-width="5" stroke-linecap="round"/></svg></em></h1>
 <p class="svh-p" data-edit="services-3">One remote VA for the things that bring clients in: a website with its own booking and CRM system, SEO so people find it, and graphics that match. Every service is a one-time project, with no monthly fees.</p>
 <ul class="svh-facts"><li><b>Up to <span class="cnt" data-to="7">7</span></b> pages per website</li><li><b>Booking &amp; CRM</b> Starter package and up</li><li><b>One price,</b> no subscriptions</li></ul>
 </div>
@@ -835,7 +835,7 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <div style="max-width: 1180px; margin: 0 auto; padding: 104px 28px; display: flex; flex-direction: column; gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center">
 <p style="margin: 0; font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #7A4E3A" data-edit="rates-1">Packages &amp; rates</p>
-<h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px,4vw,44px); line-height: 1.08" data-edit="rates-2">Clear, <em class="hw">flexible<svg class="hul" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 C 60 4, 140 4, 200 10 S 270 16, 297 7" fill="none" stroke="#C9A27E" stroke-width="5" stroke-linecap="round"/></svg></em> pricing</h2>
+<h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px,4vw,44px); line-height: 1.08" data-edit="rates-2">Clear, <em class="hw">flexible<svg class="hul" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14 C 60 4, 140 4, 200 10 S 270 16, 297 7" fill="none" stroke="#E8B49A" stroke-width="5" stroke-linecap="round"/></svg></em> pricing</h2>
 <p style="margin: 0; font-size: 16px; font-weight: 300; line-height: 1.7; color: #4A413B; max-width: 600px"><span data-php="Starting rates in Philippine pesos for clients in the Philippines. Every service is a one-time project, with no monthly fees.">Starting rates in USD for clients abroad. Every service is a one-time project, with no monthly fees.</span> All rates are negotiable based on project requirements, complexity, deliverables and overall workload.</p>
 
 <div class="curwrap">Prices in <span class="curtoggle" role="group" aria-label="Currency"><button type="button" data-cur="USD">US $</button><button type="button" data-cur="PHP">PH ₱</button></span></div><ul class="trust"><li><span aria-hidden="true">📝</span> Written quote before you pay</li><li><span aria-hidden="true">💳</span> 50% deposit, 50% at launch</li><li><span aria-hidden="true">🔒</span> Pay safely by Wise, GCash or Maya</li><li><span aria-hidden="true">🏠</span> You own your website and domain</li><li><span aria-hidden="true">🛠️</span> Free fixes after launch</li><li><span aria-hidden="true">↩️</span> Refund for any work I can't deliver</li></ul></div>
