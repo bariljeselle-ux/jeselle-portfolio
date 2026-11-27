@@ -226,7 +226,7 @@ export function permissionEmails(rec) {
   const summary = box(`<b>Your choice:</b> ${yes ? "📸" : "🔒"} ${esc(d.portfolio_permission)}<br><b>Business:</b> ${esc(d.business || "")}${d.project ? `<br><b>Project:</b> ${esc(d.project)}` : ""}${d.show_items ? `<br><b>What may be shown:</b> ${esc(d.show_items)}` : ""}${d.business_link ? `<br><b>Link to show:</b> ${esc(d.business_link)}` : ""}${d.message ? `<br><b>Please leave out:</b> ${esc(d.message)}` : ""}${consent}`);
   return [{
     to: d.email, replyTo: OWNER.email(),
-    subject: `Portfolio permission confirmed – thank you, ${first}!`,
+    subject: `Works page permission confirmed – thank you, ${first}!`,
     html: layout(`Thank you, ${first}!`,
       p(yes ? "Thank you for letting me feature our work together. Here's what you chose:" : "Thank you for letting me know. I'll keep your project private. Here's what you chose:") + summary +
       p("You can change your answer anytime. Just reply to this email, and I'll update or remove it within 7 days. I never show private details like customer information, logins or the prices you charge.")),
@@ -234,7 +234,7 @@ export function permissionEmails(rec) {
     to: OWNER.email(), replyTo: d.email,
     subject: `${yes ? "📸" : "🔒"} Portfolio permission: ${d.business || d.name}`,
     html: layout("Portfolio permission received", summary + detailsTable(d) +
-      p(yes ? "Next: send Claude 2–5 images of the work and say \"add to my portfolio\"." : "Don't show this project anywhere.") +
+      p(yes ? "Next: send Claude 2–5 images of the work and say \"add to my Works page\"." : "Don't show this project anywhere.") +
       p(`<a href="${OWNER.site()}/admin.html" style="color:${COLORS.accent}">Open your CRM →</a>`)),
   }];
 }
@@ -249,7 +249,7 @@ export function inquiryEmails(rec) {
       p(`I received your message about <b>${esc(d.service || "your project")}</b> and will reply within 1 working day with next steps.`) +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
       (rec.meetLink ? roomBox(rec.meetLink) : "") +
-      btn(`${OWNER.site()}/#book`, "Book a free call") + btn(`${OWNER.site()}/brief.html`, "Fill in project brief") +
+      btn(`${OWNER.site()}/book`, "Book a free call") + btn(`${OWNER.site()}/brief.html`, "Fill in project brief") +
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">Your message</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,
@@ -283,7 +283,7 @@ export function briefEmails(rec) {
       (d.payment_method ? p(`<b>Payment:</b> after you accept the quote, I'll email you a private payment link for <b>${esc(d.payment_method)}</b>.`) : "") +
       (privateLinks.length ? box(`⚠️ <b>Your shared folder link is private.</b> Please open it, click <b>Share</b> → <b>General access</b> → <b>Anyone with the link</b> (Viewer), so I can see your files.`) : "") +
       (rec.meetLink ? roomBox(rec.meetLink) : "") +
-      p("Want to talk it through sooner? Pick a time and you'll get your call link right away.") + btn(`${OWNER.site()}/#book`, "Book a free call") +
+      p("Want to talk it through sooner? Pick a time and you'll get your call link right away.") + btn(`${OWNER.site()}/book`, "Book a free call") +
       `<p style="margin:16px 0 0;font-size:13px;color:${COLORS.muted}">A copy of your answers</p>` + detailsTable(d)),
   }, {
     to: OWNER.email(), replyTo: d.email,

@@ -70,7 +70,19 @@ async function serveUpload(url) {
 
 // Homepage with the owner's "Edit website" changes applied (text + photo).
 // ?original=1 shows the page as built, which the editor uses to list what can be changed.
+// Each menu item is its own page with its own address; they all use index.html,
+// which shows just that page's sections. Title/description/link are set here for Google.
+const PAGES = {
+  "/works": { title: "Creations & Works | Jeselle Baril, jeselle.va", desc: "Websites, graphic designs and CRM systems made by Jeselle Baril, a Filipino virtual assistant in Cebu, Philippines.", noindex: true },
+  "/services": { title: "Website Design, SEO & Graphic Design Services | Jeselle Baril", desc: "Business websites, landing pages, online stores, SEO, CRM & AI automation and graphic design for small businesses, by Jeselle Baril in Cebu, Philippines." },
+  "/rates": { title: "Website Packages & Rates | Jeselle Baril, Cebu VA", desc: "Clear website packages with page counts and features: landing page, business website, growth website and online store. Rates in USD and Philippine pesos." },
+  "/book": { title: "Book a Free Call | Jeselle Baril", desc: "Book a free 15-minute Google Meet call with Jeselle Baril. Pick a time in your own time zone." },
+  "/contact": { title: "Contact | Jeselle Baril, jeselle.va", desc: "Send an inquiry, email, call or message Jeselle Baril, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },
+};
+const OLD_PATHS = { "/portfolio": "/works", "/portfolio.html": "/works", "/works.html": "/works" };
+
 async function homePage(req, env, url) {
+  const page = PAGES[url.pathname];
   const h = new Headers(req.headers); h.delete("if-none-match"); h.delete("if-modified-since");
   const res = await env.ASSETS.fetch(new Request(new URL("/index.html", url), { method: "GET", headers: h }));
   if (!res.ok || url.searchParams.has("original")) return res;
@@ -79,8 +91,17 @@ async function homePage(req, env, url) {
   const text = c?.text || {}, img = c?.img || {};
   const out = new Response(res.body, res);
   out.headers.delete("etag"); out.headers.set("Cache-Control", "no-cache");
-  if (!Object.keys(text).length && !Object.keys(img).length) return out;
-  return new HTMLRewriter()
+  const rw = new HTMLRewriter();
+  if (page) {
+    const link = "https://jeselleva.com" + url.pathname;
+    rw.on("title", { element(el) { el.setInnerContent(page.title); } })
+      .on('meta[name="description"],meta[property="og:description"],meta[name="twitter:description"]', { element(el) { el.setAttribute("content", page.desc); } })
+      .on('meta[property="og:title"],meta[name="twitter:title"]', { element(el) { el.setAttribute("content", page.title); } })
+      .on('link[rel="canonical"],meta[property="og:url"]', { element(el) { el.setAttribute(el.tagName === "link" ? "href" : "content", link); } });
+    if (page.noindex) rw.on('meta[name="robots"]', { element(el) { el.setAttribute("content", "noindex"); } });
+  }
+  if (!Object.keys(text).length && !Object.keys(img).length) return page ? rw.transform(out) : out;
+  return rw
     .on("[data-edit]", { element(el) { const v = text[el.getAttribute("data-edit")]; if (v) el.setInnerContent(v, { html: true }); } })
     .on("[data-edit-img]", { element(el) { const v = img[el.getAttribute("data-edit-img")]; if (v) { el.setAttribute("src", v); el.removeAttribute("srcset"); } } })
     .transform(out);
@@ -100,7 +121,9 @@ export default {
       console.log("error:", url.pathname, e.stack || e.message);
       return Response.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
-    if (url.pathname === "/" || url.pathname === "/index.html") return await homePage(req, env, url);
+    if (OLD_PATHS[url.pathname]) return Response.redirect(new URL(OLD_PATHS[url.pathname] + url.search, url), 301);
+    if (url.pathname.length > 1 && url.pathname.endsWith("/") && PAGES[url.pathname.slice(0, -1)]) return Response.redirect(new URL(url.pathname.slice(0, -1) + url.search, url), 301);
+    if (url.pathname === "/" || url.pathname === "/index.html" || PAGES[url.pathname]) return await homePage(req, env, url);
     return env.ASSETS.fetch(req);
   },
 

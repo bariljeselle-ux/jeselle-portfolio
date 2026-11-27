@@ -728,7 +728,7 @@ function gcdraw(){const me=document.querySelector('input[name=gc-who]:checked').
 $('govcalc').addEventListener('toggle',()=>{if($('govcalc').open)gcdraw()});
 
 /* ---------- Edit website ---------- */
-const SNAME={top:'Top of page (headline + intro)',portfolio:'Selected work',about:'About me',services:'Services (title only)',process:'How it works',rates:'Rates (title only)',materials:'Sample materials (title only)',experience:'Background',testimonials:'Reviews (title only)',faq:'FAQ (title only)',contact:'Contact',footer:'Footer'};
+const SNAME={top:'Top of page (headline + intro)',works:'Works page',about:'About me',services:'Services (title only)',process:'How it works',rates:'Rates (title only)',materials:'Sample materials (title only)',experience:'Background',testimonials:'Reviews (title only)',faq:'FAQ (title only)',contact:'Contact',footer:'Footer'};
 const SLBL={h2:'Section title',h3:'Title',h4:'Small title',p:'Text',li:'List item',span:'Headline line'};
 let SITE=null,SORIG={},STAG={},SITAL={},SIMG0='',SDIRTY=false;
 function toMark(html){let s=String(html||'').replace(/\s*\n\s*/g,' ').replace(/<br\s*\/?>/gi,'\n').replace(/<span[^>]*font-style:\s*italic[^>]*>([\s\S]*?)<\/span>/gi,'*$1*').replace(/<\/?(b|strong)>/gi,'**').replace(/<\/?(i|em)>/gi,'*').replace(/<[^>]+>/g,'');const t=document.createElement('textarea');t.innerHTML=s;return t.value.split('\n').map(x=>x.trim()).join('\n').trim()}

@@ -196,3 +196,11 @@ NOW HOSTED ON CLOUDFLARE (free, no credits)
     BREVO_API_KEY    Brevo > SMTP & API > API Keys
     GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET   (only for Google Meet links)
   Uploaded files from forms are saved with each request; download links show in the CRM and alert emails.
+
+== Separate pages + website packages (Nov 27, 2026) ==
+Menu items are now their own pages: / (Home: hero, About, Background, reviews), /works (Creations & Works, was portfolio.html),
+/services (services + how it works), /rates (rates + FAQ), /book, /contact. All are index.html; the head script shows only that
+page's sections, and cloudflare/worker.mjs gives each its own title/description for Google. Old /#book style links still work.
+Website packages: Landing page $200–$350 (₱6,000–₱10,000); Business Website Starter up to 5 pages $650 (₱20,000), Business up to
+8 pages $950 (₱30,000), Premium up to 12 pages $1,350 (₱42,000), every one with the full business system; extra page $40 (₱1,500).
+Removed: Website + SEO Setup (now inside Business/Premium) and Website + SEO + Facebook Optimization.
