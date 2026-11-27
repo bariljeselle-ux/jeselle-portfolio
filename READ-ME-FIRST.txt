@@ -243,3 +243,7 @@ Services page opens with 4 website cards (Landing, Starter, Business, Premium), 
 == Website prices raised again (Nov 27, 2026) ==
 Landing $300–$450 (₱9,000–₱13,500). Starter 3 pages $950 (₱30,000), Business 5 pages $1,250 (₱38,000), Premium 7 pages $1,600 (₱49,000).
 Extra page $70 (₱3,000). Founding 10%: Business $1,125 (₱34,200). Breakdown on the rates adds up to $1,600 / ₱49,000. $/₱ switch above the website cards too.
+
+== SEO Setup + prices on service cards (Nov 27, 2026) ==
+New one-time "SEO Setup (for a website you already have)": Basic $250 / ₱8,000 (3 pages), Standard $350 / ₱11,000 (7 pages + GBP),
+Premium $450 / ₱14,000 (20 keywords, speed, report). SEO and Graphic Design cards now show "from" prices.
