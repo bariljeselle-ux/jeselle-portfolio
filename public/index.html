@@ -113,6 +113,33 @@ section#services{padding-bottom:48px!important}
 .wkey{margin:0;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#7A4E3A}
 .wkh{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(40px,8vw,64px);line-height:1.05}
 .wklead{margin:0;font-weight:300;font-size:18px;line-height:1.7;color:#4A413B}
+.svhero{max-width:1180px;margin:0 auto;padding:112px 28px 96px;display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:center}
+.svh-l{display:flex;flex-direction:column;gap:22px}
+.svh-eye{margin:0;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#7A4E3A}
+.svh-h{margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(42px,5.4vw,66px);line-height:1.02;letter-spacing:-.01em;color:#231E1B}
+.svh-h em{font-style:italic;color:#7A4E3A}
+.svh-p{margin:0;font-size:17px;font-weight:300;line-height:1.75;color:#4A413B;max-width:31em}
+.svh-facts{list-style:none;margin:6px 0 0;padding:18px 0 0;border-top:1px solid #E2D9CF;display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:8px 28px;font-size:14px;color:#6E625A}
+.svh-facts b{display:block;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#231E1B;line-height:1.2}
+.svh-list{display:flex;flex-direction:column;border-top:1px solid #231E1B}
+.svh-row{position:relative;display:grid;grid-template-columns:1fr auto 28px;grid-template-areas:"name from go" "desc desc go";gap:6px 18px;align-items:center;padding:26px 6px 26px 0;border-bottom:1px solid #E2D9CF;text-decoration:none;color:#231E1B;overflow:hidden}
+.svh-row::before{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:#7A4E3A;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.svh-name{grid-area:name;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(28px,3vw,38px);line-height:1.1;transition:transform .45s cubic-bezier(.2,.8,.2,1),color .3s}
+.svh-desc{grid-area:desc;font-size:15px;font-weight:300;line-height:1.6;color:#6E625A;max-width:34em}
+.svh-from{grid-area:from;font-size:14px;color:#6E625A;white-space:nowrap}
+.svh-from b{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#231E1B}
+.svh-go{grid-area:go;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#7A4E3A;border:1px solid #D9CCBF;transition:background .3s,color .3s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.svh-row:hover::before,.svh-row:focus-visible::before{width:100%}
+.svh-row:hover .svh-name,.svh-row:focus-visible .svh-name{transform:translateX(8px);color:#7A4E3A}
+.svh-row:hover .svh-go,.svh-row:focus-visible .svh-go{background:#7A4E3A;color:#fff;border-color:#7A4E3A;transform:rotate(90deg)}
+.svh-row:focus-visible{outline:2px solid #7A4E3A;outline-offset:4px}
+.svhero .svh-l>*,.svh-row{animation:svin .8s cubic-bezier(.2,.8,.2,1) both}
+.svh-l>:nth-child(2){animation-delay:.06s}.svh-l>:nth-child(3){animation-delay:.12s}.svh-l>:nth-child(4){animation-delay:.18s}
+.svh-row:nth-child(1){animation-delay:.2s}.svh-row:nth-child(2){animation-delay:.3s}.svh-row:nth-child(3){animation-delay:.4s}
+@keyframes svin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.svhero .svh-l>*,.svh-row{animation:none}.svh-row::before,.svh-name,.svh-go{transition:none}}
+@media (max-width:900px){.svhero{grid-template-columns:1fr;gap:44px;padding:72px 24px 64px}.svh-facts{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px}}
+@media (max-width:760px){#services.svhero{padding-left:20px!important;padding-right:20px!important}.svh-row{grid-template-columns:1fr 28px;grid-template-areas:"name go" "from go" "desc desc";padding:22px 0}.svh-facts{font-size:13px}.svh-facts b{font-size:19px}}
 .wkhead{max-width:680px;margin:0 auto 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
 .wksec h2{font-family:'Cormorant Garamond',serif;font-weight:500;margin:0;line-height:1.1;color:#231E1B}
 .wkshot{display:block;text-decoration:none;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #E2D9CF;box-shadow:0 18px 40px rgba(35,30,27,.10);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
@@ -624,19 +651,25 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <p class="mvbg"><b data-edit="experience-3">Background:</b> <span data-edit="experience-5">Content moderation &amp; customer experience, Alorica Philippines (2022–2025)</span> · <span data-edit="experience-9">Banking &amp; sales roles (2017–2022)</span> · <span data-edit="experience-12">BS Business Administration, Financial Management</span></p>
 </section>
 
-<section data-pg="services" id="services" style="max-width: 1180px; margin: 0 auto; padding: 104px 28px; display: flex; flex-direction: column; gap: 56px">
-<div style="display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center">
-<p style="margin: 0; font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #7A4E3A" data-edit="services-1">Services</p>
-<h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 50px; line-height: 1.08" data-edit="services-2">How I can help</h2>
-<p style="margin: 0; font-size: 16px; font-weight: 300; line-height: 1.7; color: #4A413B; max-width: 560px" data-edit="services-3">Hire one remote VA for connected services: websites with their own booking and CRM system, SEO and graphic design, so your website, Google visibility, ads and social media designs all work together. Every service is a one-time project.</p>
+<section data-pg="services" id="services" class="svhero">
+<div class="svh-l">
+<p class="svh-eye" data-edit="services-1">Services &amp; rates</p>
+<h1 class="svh-h" data-edit="services-2">Websites that take the bookings <em>for you</em></h1>
+<p class="svh-p" data-edit="services-3">One remote VA for the things that bring clients in: a website with its own booking and CRM system, SEO so people find it, and graphics that match. Every service is a one-time project, with no monthly fees.</p>
+<ul class="svh-facts"><li><b>Up to 7</b> pages per website</li><li><b>Booking &amp; CRM</b> built into every site</li><li><b>One price,</b> no subscriptions</li></ul>
 </div>
+<nav class="svh-list" aria-label="Services on this page">
+<a href="#rates" class="svh-row"><span class="svh-name">Website creation</span><span class="svh-desc">Landing pages and websites of up to 7 pages, with booking, payments and a private dashboard</span><span class="svh-from">from <b data-php="₱12,000">$400</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+<a href="#svc-seo" class="svh-row"><span class="svh-name">SEO</span><span class="svh-desc">Keyword research, page titles and Google setup, so customers find you</span><span class="svh-from">from <b data-php="₱8,000">$250</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+<a href="#svc-design" class="svh-row"><span class="svh-name">Graphic design</span><span class="svh-desc">Logos and brand kits, social media graphics, ads and lead magnets</span><span class="svh-from">from <b data-php="₱350">$12</b></span><span class="svh-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+</nav>
 </section>
 
 <section data-pg="services" id="rates" style="background: #EFE8DF">
 <div style="max-width: 1180px; margin: 0 auto; padding: 104px 28px; display: flex; flex-direction: column; gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center">
 <p style="margin: 0; font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #7A4E3A" data-edit="rates-1">Packages &amp; rates</p>
-<h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 50px; line-height: 1.08" data-edit="rates-2">Clear, <span style="font-style: italic">flexible</span> pricing</h2>
+<h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px,4vw,44px); line-height: 1.08" data-edit="rates-2">Clear, <span style="font-style: italic">flexible</span> pricing</h2>
 <p style="margin: 0; font-size: 16px; font-weight: 300; line-height: 1.7; color: #4A413B; max-width: 600px"><span data-php="Starting rates in Philippine pesos for clients in the Philippines. Every service is a one-time project, with no monthly fees.">Starting rates in USD for clients abroad. Every service is a one-time project, with no monthly fees.</span> All rates are negotiable based on project requirements, complexity, deliverables and overall workload.</p>
 
 <div class="curwrap">Prices in <span class="curtoggle" role="group" aria-label="Currency"><button type="button" data-cur="USD">US $</button><button type="button" data-cur="PHP">PH ₱</button></span></div><ul class="trust"><li><span aria-hidden="true">📝</span> Written quote before you pay</li><li><span aria-hidden="true">💳</span> 50% deposit, 50% at launch</li><li><span aria-hidden="true">🔒</span> Pay safely by Wise, GCash or Maya</li><li><span aria-hidden="true">🏠</span> You own your website and domain</li><li><span aria-hidden="true">🛠️</span> Free fixes after launch</li><li><span aria-hidden="true">↩️</span> Refund for any work I can't deliver</li></ul></div>
