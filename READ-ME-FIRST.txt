@@ -254,3 +254,7 @@ Founding 10%: Business $1,260 / ₱37,800. Cards' "What's included" lists every 
 
 == Website prices (Nov 27, 2026, 11:30 PM) ==
 Landing $400–$550 (₱12,000–₱16,500). Starter $1,150 (₱36,000), Business $1,500 (₱45,000), Premium $1,900 (₱57,000). Founding 10%: Business $1,350 / ₱40,500.
+
+== Domain options (Nov 28, 2026) ==
+Under the website cards: domain connection included; new domain bought in the client's name (.com about $11 / ₱650 a year,
+.ph about $45 / ₱2,600 a year, paid directly to Porkbun/Cloudflare); free pages.dev link to start; business email setup $25 / ₱800. FAQ added.
