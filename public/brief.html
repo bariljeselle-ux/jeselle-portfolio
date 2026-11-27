@@ -116,7 +116,7 @@ main{max-width:720px;margin:0 auto;padding:clamp(36px,8vh,90px) max(5vw,20px) 12
 <input type="hidden" name="selected_packages"><input type="hidden" name="estimated_total"><input type="hidden" name="picks_confirmed">
 <input type="hidden" name="type" value="Project brief">
 <input type="hidden" name="client_time_zone" id="tz">
-<p hidden><label>Leave empty <input name="bot-field"></label></p>
+<p hidden><label>Leave empty <input name="bot-field"></label></p><input type="hidden" name="_el">
 <section class="tfq" data-q="name">
 <p class="tfsec">About you</p>
 <p class="tfn">1 → <span class="req">Required *</span></p>
@@ -443,5 +443,6 @@ fetch('/api/capacity').then(function(r){return r.json()}).then(function(c){if(!c
 <a href="/" class="homefab" aria-label="Back to homepage" title="Back to homepage"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></a>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e45219f3a34a40e4881a484a89f193f9"}'></script>
 <script defer src="/consent.js"></script>
+<script src="/guard.js" defer></script>
 </body>
 </html>

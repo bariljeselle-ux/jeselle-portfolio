@@ -156,7 +156,7 @@ addEventListener('popstate',function(){var t=from(location.pathname,location.has
 <link rel="icon" type="image/svg+xml" href="/images/logo-mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap"></noscript>
 <style>
 .vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .faq{max-width:860px;width:100%;margin:0 auto;display:flex;flex-direction:column;border-top:1px solid #D6CABD}
@@ -209,7 +209,7 @@ img,video{max-width:100%}
 .xp{margin:4px 0 0;font-size:16px;font-weight:300;line-height:1.7;color:#3A322D}
 .ft{background:#231E1B;color:#CFC5BC;font-family:Jost,sans-serif}
 .ftin{max-width:1180px;margin:0 auto;padding:72px 28px 48px;display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:40px}
-.ft h4{margin:0 0 16px;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#D9B8A6}
+.ft h2.fth{font-family:inherit;line-height:1.4;margin:0 0 16px;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#D9B8A6}
 .ft ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
 .ft ul a{color:#EFE8DF;text-decoration:none;font-size:15px;font-weight:300;display:inline-block;padding:6px 0;transition:color .2s,transform .2s;overflow-wrap:anywhere}
 .ft ul a:hover{color:#E8C9B8;transform:translateX(4px)}
@@ -227,7 +227,7 @@ img,video{max-width:100%}
 .social a{width:44px;height:44px;border-radius:50%;border:1px solid #4A413B;display:grid;place-items:center;color:#EFE8DF;transition:background .2s,color .2s,transform .2s}
 @media(hover:hover){.social a:hover{transform:translateY(-3px)}}.social a[data-social=tiktok]{border-color:#4A413B}
 .ftbar{max-width:1180px;margin:0 auto;padding:22px 28px;border-top:1px solid #3A322D;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;font-size:13px;letter-spacing:.06em}
-.ftbar p{margin:0}
+.ftbar p{margin:0}.ftbar p:first-child a{color:#D9B8A6}
 .totop{color:#EFE8DF;text-decoration:none;padding:10px 0}.totop:hover{color:#E8C9B8}
 .ft a:focus-visible{outline:2px solid #E8C9B8;outline-offset:3px}
 @media(max-width:900px){.ftin{grid-template-columns:repeat(2,minmax(0,1fr))}.ftbrand{grid-column:1/-1}}
@@ -580,7 +580,7 @@ button[data-prev]:disabled,button[data-next]:disabled{opacity:.35;cursor:default
 <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 50px; line-height: 1.08" data-edit="rates-2">Clear, <span style="font-style: italic">flexible</span> pricing</h2>
 <p style="margin: 0; font-size: 16px; font-weight: 300; line-height: 1.7; color: #4A413B; max-width: 600px"><span data-php="Starting rates in Philippine pesos for clients in the Philippines. Every service is a one-time project, with no monthly fees.">Starting rates in USD for clients abroad. Every service is a one-time project, with no monthly fees.</span> All rates are negotiable based on project requirements, complexity, deliverables and overall workload.</p>
 
-<div class="curwrap">Prices in <span class="curtoggle" role="group" aria-label="Currency"><button type="button" data-cur="USD">US $</button><button type="button" data-cur="PHP">PH ₱</button></span></div><ul class="trust"><li><span aria-hidden="true">📝</span> Written quote before you pay</li><li><span aria-hidden="true">💳</span> 50% deposit, 50% at launch</li><li><span aria-hidden="true">🔒</span> Pay safely by Wise, GCash or Maya</li><li><span aria-hidden="true">🏠</span> You own your website and domain</li></ul></div>
+<div class="curwrap">Prices in <span class="curtoggle" role="group" aria-label="Currency"><button type="button" data-cur="USD">US $</button><button type="button" data-cur="PHP">PH ₱</button></span></div><ul class="trust"><li><span aria-hidden="true">📝</span> Written quote before you pay</li><li><span aria-hidden="true">💳</span> 50% deposit, 50% at launch</li><li><span aria-hidden="true">🔒</span> Pay safely by Wise, GCash or Maya</li><li><span aria-hidden="true">🏠</span> You own your website and domain</li><li><span aria-hidden="true">🛠️</span> Free fixes after launch</li><li><span aria-hidden="true">↩️</span> Refund for any work I can't deliver</li></ul></div>
 <div class="fcl"><p class="fcl-eye">Founding client offer</p><p class="fcl-h">10% off for my first 3 website clients</p><p class="fcl-p">I'm new to freelancing, so I'm building my portfolio. My first 3 clients get 10% off any website package (for example, the Business website for <b data-php="₱40,500">$1,350</b> instead of <span data-php="₱45,000">$1,500</span>), in exchange for an honest review and permission to show the finished website on my Works page. You can test everything your website will have right here on my own site: try the booking calendar or the inquiry form.</p><div class="fcl-b"><button type="button" class="pickbtn fclpick" data-pick="founding-client-10" data-label="Add the 10% founding discount to my request" data-svc="Founding client offer: 10% off my website package" data-brief="Website design &amp; development" data-m="0" data-ulo="0" data-uhi="0" data-plo="0" data-phi="0" data-note="10% off the website package, for an honest review and Works page permission">Add the 10% founding discount to my request</button><a href="/book" class="cbtn solid">Claim a founding spot</a><a href="/contact" class="cbtn ghost2">Ask a question</a></div></div>
 <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
 <div style="flex: 999 1 520px; min-width: 0">
@@ -721,7 +721,7 @@ el.hidden=false}).catch(function(){})})();
 <form id="bk-form" name="booking" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
 <input type="hidden" name="form-name" value="booking">
 <input type="hidden" name="type" value="Booking">
-<p hidden><label>Leave empty <input name="bot-field"></label></p>
+<p hidden><label>Leave empty <input name="bot-field"></label></p><input type="hidden" name="_el">
 <input type="hidden" name="date_time_philippines" id="f-ph">
 <input type="hidden" name="date_time_client" id="f-local">
 <input type="hidden" name="client_time_zone" id="f-tz">
@@ -816,7 +816,7 @@ el.hidden=false}).catch(function(){})})();
 <input type="hidden" name="form-name" value="inquiry">
 <input type="hidden" name="type" value="Inquiry">
 <input type="hidden" name="client_time_zone" id="inq-tz">
-<p hidden><label>Leave empty <input name="bot-field"></label></p>
+<p hidden><label>Leave empty <input name="bot-field"></label></p><input type="hidden" name="_el">
 <p class="inqh">Send a quick inquiry</p>
 <div class="inqrow"><label class="fl"><i class="flt">Name <b class="ast">*</b></i><input name="name" required autocomplete="name"></label><label class="fl"><i class="flt">Email <b class="ast">*</b></i><input name="email" type="email" required autocomplete="email"></label></div>
 <div class="inqrow"><label class="fl">Business / brand<input name="business" autocomplete="organization"></label><label class="fl">I'm interested in<select name="service"><option>Website creation &amp; development</option><option>SEO</option><option>Graphic design</option><option>Logo &amp; brand kit</option><option>Not sure yet</option></select></label></div>
@@ -859,8 +859,8 @@ el.hidden=false}).catch(function(){})})();
 <!-- EDIT LATER: put your social links here (an icon stays hidden while its link is #) -->
 <div class="social" data-socials><a href="https://www.instagram.com/jeselleva/" data-social="instagram" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a><a href="https://www.tiktok.com/@jbcreates.va" data-social="tiktok" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M16.6 3c.3 2.2 1.6 3.7 3.9 3.9v3.1c-1.4.1-2.7-.3-3.9-1.1v6.2c0 3.8-3.1 6-6.1 5.8-3.4-.2-5.6-3.2-5.1-6.4.4-2.6 2.8-4.7 5.9-4.4v3.2c-1.5-.4-3 .6-3 2.1 0 1.3 1.1 2.3 2.4 2.2 1.3 0 2.2-1.1 2.2-2.4V3z"/></svg></a><a href="https://www.facebook.com/profile.php?id=61596950876603" data-social="facebook" target="_blank" rel="noopener" aria-label="Facebook page" title="Facebook page"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21z"/></svg></a><a href="https://wa.me/639497437658?text=Hi%20Jeselle%2C%20I%20found%20you%20on%20your%20website%20and%20I%27d%20like%20to%20ask%20about%20your%20services." data-social="whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91A9.87 9.87 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.22-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48a.92.92 0 0 0-.66.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.29z"/></svg></a><!-- Discord server invite (set to never expire in Discord) --><a href="https://discord.gg/GcmNfsHrM" data-social="discord" target="_blank" rel="noopener" aria-label="Discord server: JB Creates VA" title="Join my Discord"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" fill="currentColor"><path d="M19.3 5.3A16.5 16.5 0 0 0 15.2 4l-.2.4c1.5.4 2.2.9 3 1.5a13.6 13.6 0 0 0-12 0c.8-.6 1.6-1.2 3-1.5L8.8 4a16.5 16.5 0 0 0-4.1 1.3C2.1 9.2 1.4 13 1.7 16.7a16.6 16.6 0 0 0 5 2.6l1.1-1.7c-.6-.2-1.2-.5-1.7-.9l.4-.3a11.8 11.8 0 0 0 11 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.7a16.5 16.5 0 0 0 5-2.6c.4-4.3-.7-8-3-11.4zM8.7 14.6c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg></a></div>
 </div>
-<nav aria-label="Footer: explore"><h4>Explore</h4><ul><li><a href="/">Home</a></li><li><a href="/works">Works</a></li><li><a href="/services">Services &amp; Rates</a></li><li><a href="/book">Book a call</a></li><li><a href="brief.html">Project brief</a></li><li><a href="/services#process">How it works</a></li><li><a href="reviews.html">Client reviews</a></li></ul></nav>
-<div><h4>Get in touch</h4><ul>
+<nav aria-label="Footer: explore"><h2 class="fth">Explore</h2><ul><li><a href="/">Home</a></li><li><a href="/works">Works</a></li><li><a href="/services">Services &amp; Rates</a></li><li><a href="/book">Book a call</a></li><li><a href="brief.html">Project brief</a></li><li><a href="/services#process">How it works</a></li><li><a href="reviews.html">Client reviews</a></li></ul></nav>
+<div><h2 class="fth">Get in touch</h2><ul>
 <li><a href="tel:+639497437658">+63 949 743 7658</a></li>
 <li><a href="mailto:bariljeselle@gmail.com">Email me</a></li>
 <li><a href="https://www.linkedin.com/in/jeselle-baril-328434444/" target="_blank" rel="noopener">LinkedIn</a></li>
@@ -870,7 +870,7 @@ el.hidden=false}).catch(function(){})})();
 <!-- EDIT LATER: replace # with your Facebook page link (it shows automatically once added) -->
 <li><a href="#" class="fb-link" target="_blank" rel="noopener">Facebook page</a></li>
 </ul></div>
-<div><h4>Based in</h4>
+<div><h2 class="fth">Based in</h2>
 <p class="ftaddr">Bogo City, Cebu, Philippines<br>Working with clients worldwide, remotely</p>
 <p class="ftaddr">Mon – Fri · 10:00 AM – 3:00 PM<br>Philippine time (GMT+8)</p><p class="ftaddr hy2"></p>
 </div>
@@ -1237,5 +1237,6 @@ vids.forEach(v=>{
 <script>(function(){var d=document.getElementById("cmpdlg");if(!d)return;document.addEventListener("click",function(e){if(e.target.closest(".cmpopen")){if(d.showModal)d.showModal();else d.setAttribute("open","")}else if(e.target.closest(".cmpx")||e.target===d){d.close?d.close():d.removeAttribute("open")}})})();</script>
 <script>(function(){document.addEventListener("click",function(e){var c=e.target.closest&&e.target.closest(".wpk");if(!c)return;c.classList.remove("tap");void c.offsetWidth;c.classList.add("tap");if(e.target.closest("button,a,summary,details"))return;var d=c.querySelector("details.wpkmore");if(d)d.open=!d.open})})();</script>
 <script defer src="/consent.js"></script>
+<script src="/guard.js" defer></script>
 </body>
 </html>

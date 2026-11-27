@@ -313,10 +313,26 @@ export function paymentEmails(rec) {
   }];
 }
 
+// ---------- spam check (a real person is never blocked: suspect messages are only set aside) ----------
+const LINK_FIELDS = /^(website|link|links|file_\d|social|facebook|instagram|portfolio|current_site)$/i;
+const SPAM_WORDS = /\b(casino|viagra|cialis|porn|escort service|online betting|forex signals?|crypto ?investment|bitcoin investment|loan offer)\b/i;
+export function spamReason(data, elapsed) {
+  if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < 3) return "Sent less than 3 seconds after the page opened";
+  const text = Object.entries(data).filter(([k]) => !LINK_FIELDS.test(k)).map(([, v]) => String(v || "")).join(" ");
+  const links = (text.match(/https?:\/\/|www\./gi) || []).length;
+  if (links > 3) return `Has ${links} links in the message`;
+  const word = text.match(SPAM_WORDS);
+  if (word) return `Contains "${word[0]}"`;
+  return "";
+}
+
 // ---------- main entry: a form was submitted ----------
 export async function handleSubmission(data, { store = crmStore() } = {}) {
   data = Object.fromEntries(Object.entries(data || {}).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v == null ? "" : typeof v === "object" ? (v.url || JSON.stringify(v)) : String(v)]));
   if (data["bot-field"]) return { skipped: "spam" };
+  // Spam check: very fast form fills, lots of links or common spam words are kept in the CRM as "Possible spam" (no emails, no alerts)
+  const elapsed = Number(data._el); delete data._el;
+  const spamWhy = spamReason(data, elapsed);
   if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) return { skipped: "no valid email" };
   const type = data.type || (data.start_utc ? "Booking" : "Inquiry");
   data.type = type;
@@ -333,9 +349,11 @@ export async function handleSubmission(data, { store = crmStore() } = {}) {
   if (type !== "Payment" && type !== "Portfolio permission") { try { rec.scopeFlags = scopeCheck(data); } catch { rec.scopeFlags = []; } }
   // Capacity: can she take this on, and by the date they asked? (shown in the CRM card)
   if (type === "Project brief" || type === "Inquiry" || type === "Booking") { try { const c = await import("./capacity.mjs"); rec.capacity = c.checkRequest(data, await c.loadCapacity(store || crmStore())); rec.capacity.at = c.phDay(); if (type === "Project brief" && rec.capacity.full) { rec.status = "Waitlist"; rec.statusAt = new Date().toISOString(); } } catch (e) { console.log("capacity:", e.message); } }
+  if (spamWhy) { rec.status = "Possible spam"; rec.spamReason = spamWhy; }
   // onlyIfNew = process each submission exactly once, even if two triggers fire
   const res = await store.setJSON(key, rec, { onlyIfNew: true });
   if (res && res.modified === false) return { skipped: "duplicate" };
+  if (spamWhy) return { ok: true, key, spam: true };
   if (type === "Booking") {
     try {
       const { createMeet } = await import("./google.mjs");
@@ -375,7 +393,7 @@ export async function runReminders({ store = crmStore(), now = new Date() } = {}
   const out = [];
   for (const b of blobs) {
     const rec = await store.get(b.key, { type: "json" });
-    if (b.key.startsWith("settings/") || !rec || !rec.start || /cancel|lost/i.test(rec.status || "")) continue;
+    if (b.key.startsWith("settings/") || !rec || !rec.start || /cancel|lost|spam/i.test(rec.status || "")) continue;
     const mins = (new Date(rec.start) - now) / 60000;
     if (mins <= 0) continue;
     let label = null;
@@ -396,7 +414,7 @@ const phDate = (d) => new Date(new Date(d).getTime() + 8 * 3600000).toISOString(
 export function nudgeList(recs, now = new Date()) {
   const today = phDate(now), out = [];
   for (const r of recs) {
-    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid|waitlist|deliver|progress/i.test(r.status || "")) continue;
+    if (!r || !r.type || r.type === "Portfolio permission" || /won|lost|cancel|paid|waitlist|deliver|progress|spam/i.test(r.status || "")) continue;
     const who = (r.data && (r.data.business || r.data.name)) || "A client";
     const since = new Date(r.statusAt || r.createdAt || now);
     if (r.followUp && r.followUp <= today) out.push({ key: r.key, kind: "follow", text: `Follow up with ${who}${r.followUp < today ? " (was due " + r.followUp + ")" : " today"}` });

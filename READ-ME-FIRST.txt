@@ -262,3 +262,13 @@ Under the website cards: domain connection included; new domain bought in the cl
 == Home: Mission, vision & goals (Nov 28, 2026) ==
 The long Background timeline is now one short line; its section shows Mission, Vision, Goals and Founded instead (moved out of About).
 Restored the Vision text that was removed by mistake during the Nov 27 cleanup.
+
+2026-11-28 — Site protection
+  - Spam guard: forms sent in under 3 seconds, with more than 3 links, or with obvious spam
+    words are saved in your CRM as "Possible spam" (no emails, no alerts). Check them now and
+    then; if one is a real person, reply yourself and change the status.
+  - Downtime alerts: every 15 minutes the site checks Home, Services, Book and Contact.
+    If they fail twice in a row you get an email; you get another when it's back.
+  - Accessibility fixes (footer link contrast, heading order, star-rating labels) and faster font loading.
+  - Trust badges: "Free fixes after launch" and "Refund for any work I can't deliver".
+  - Terms: removed leftover monthly-service lines.

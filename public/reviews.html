@@ -215,11 +215,11 @@ footer a{color:#7A4E3A}
 <p class="h">Your overall rating. Required.</p>
 <fieldset class="pick"><legend class="vh" style="position:absolute;left:-9999px">Overall rating</legend>
 <div class="bigstars" id="overall">
-<input type="radio" name="rating" id="r5" value="5"><label for="r5" title="Excellent" aria-label="5 stars, excellent"></label>
-<input type="radio" name="rating" id="r4" value="4"><label for="r4" title="Great" aria-label="4 stars, great"></label>
-<input type="radio" name="rating" id="r3" value="3"><label for="r3" title="Good" aria-label="3 stars, good"></label>
-<input type="radio" name="rating" id="r2" value="2"><label for="r2" title="Fair" aria-label="2 stars, fair"></label>
-<input type="radio" name="rating" id="r1" value="1"><label for="r1" title="Poor" aria-label="1 star, poor"></label>
+<input type="radio" name="rating" id="r5" value="5" aria-label="5 stars, excellent"><label for="r5" title="Excellent"></label>
+<input type="radio" name="rating" id="r4" value="4" aria-label="4 stars, great"><label for="r4" title="Great"></label>
+<input type="radio" name="rating" id="r3" value="3" aria-label="3 stars, good"><label for="r3" title="Good"></label>
+<input type="radio" name="rating" id="r2" value="2" aria-label="2 stars, fair"><label for="r2" title="Fair"></label>
+<input type="radio" name="rating" id="r1" value="1" aria-label="1 star, poor"><label for="r1" title="Poor"></label>
 </div></fieldset>
 <div class="mood" aria-live="polite"><span class="em" id="em">🤔</span><p id="moodt">Tap a star</p></div>
 </div>
@@ -306,7 +306,7 @@ const COLORS=['#7A4E3A','#8FA27C','#B07A5E','#5C6B4E','#9C6B53','#6E625A'];
 const starsHTML=(v,cls='')=>`<span class="stars ${cls}" role="img" aria-label="${v} out of 5 stars">${[1,2,3,4,5].map(i=>`<i class="${v>=i?'on':v>=i-.5?'half':''}"></i>`).join('')}</span>`;
 
 // ---- build survey inputs ----
-$('crits').innerHTML=CRIT.map(([k,l,h])=>`<div class="crow"><span class="lb">${l}<small>${h}</small></span><fieldset class="pick minis" aria-label="${l}">${[5,4,3,2,1].map(n=>`<input type="radio" name="s_${k}" id="s_${k}${n}" value="${n}"><label for="s_${k}${n}" aria-label="${l}: ${n} star${n>1?'s':''}"></label>`).join('')}</fieldset></div>`).join('');
+$('crits').innerHTML=CRIT.map(([k,l,h])=>`<div class="crow"><span class="lb">${l}<small>${h}</small></span><fieldset class="pick minis" aria-label="${l}">${[5,4,3,2,1].map(n=>`<input type="radio" name="s_${k}" id="s_${k}${n}" value="${n}" aria-label="${l}: ${n} star${n>1?'s':''}"><label for="s_${k}${n}"></label>`).join('')}</fieldset></div>`).join('');
 $('hl').innerHTML=TAGS.map((t,i)=>`<input type="checkbox" name="tags" id="t${i}" value="${t.replace(/^\S+\s/,'')}"><label for="t${i}">${t}</label>`).join('');
 $('overall').addEventListener('change',e=>{const v=e.target.value,[em,t]=MOOD[v];const x=$('em');x.textContent=em;x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop');$('moodt').textContent=t;$('err').hidden=true});
 document.querySelectorAll('.cnt').forEach(c=>{const t=document.querySelector(`[name=${c.dataset.for}]`);t.addEventListener('input',()=>c.textContent=t.value.length+' / 2000')});
