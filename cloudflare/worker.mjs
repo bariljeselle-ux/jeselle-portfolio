@@ -9,7 +9,7 @@ import googleCallback from "../netlify/functions/google-callback.mjs";
 import capacity from "../netlify/functions/capacity.mjs";
 import { handleSubmission, runReminders, runNudges, runMonthlyBackup, OWNER } from "../netlify/lib/core.mjs";
 import { runMonthlyCheckin } from "../netlify/lib/capacity.mjs";
-import { runUptime, checkPages } from "../netlify/lib/uptime.mjs";
+import { runUptime, checkPages, runDomainCheck } from "../netlify/lib/uptime.mjs";
 import { getContent, serveImage } from "../netlify/lib/site.mjs";
 
 const ROUTES = { "/api/booked": booked, "/api/crm": crm, "/api/reviews": reviews, "/api/submit": submit, "/api/google/callback": googleCallback, "/api/capacity": capacity,
@@ -107,14 +107,14 @@ async function homePage(req, env, url) {
     .transform(out);
 }
 
-export default {
+const worker = {
   async fetch(req, env, ctx) {
     bindEnv(env);
     const url = new URL(req.url);
     try {
       const handler = ROUTES[url.pathname];
       if (handler) return await handler(withIp(req), ctx);
-      if (url.pathname === "/api/uptime-test") return Response.json({ problems: await checkPages(url.origin) });
+      if (url.pathname === "/api/uptime-test") return Response.json({ problems: await checkPages(OWNER.site(), (u, i) => worker.fetch(new Request(u, i), env, ctx)) });
       if (url.pathname === "/api/upload") return await serveUpload(url);
       if (url.pathname === "/api/site-image") return await serveImage(url);
       if (req.method === "POST" && !url.pathname.startsWith("/api/")) return await formPost(req);
@@ -131,7 +131,8 @@ export default {
   // Timed jobs (times are UTC: 01:00 UTC = 9 AM Philippine time)
   async scheduled(event, env, ctx) {
     bindEnv(env);
-    const job = event.cron === "*/15 * * * *" ? () => Promise.allSettled([runReminders(), runUptime()]).then((r) => r.map((x) => x.value || x.reason?.message)) : event.cron === "0 1 * * *" ? () => Promise.allSettled([runNudges(), import("../netlify/lib/tax.mjs").then((t) => t.runTaxReminders())]).then((r) => r.map((x) => x.value || x.reason?.message)) : event.cron === "0 1 1 * *" ? () => Promise.allSettled([runMonthlyBackup(), runMonthlyCheckin()]).then((r) => r.map((x) => x.value || x.reason?.message)) : null;
+    const job = event.cron === "*/15 * * * *" ? () => Promise.allSettled([runReminders(), runUptime({ fetchFn: (u, init) => worker.fetch(new Request(u, init), env, ctx) })]).then((r) => r.map((x) => x.value || x.reason?.message)) : event.cron === "0 1 * * *" ? () => Promise.allSettled([runNudges(), runDomainCheck(), import("../netlify/lib/tax.mjs").then((t) => t.runTaxReminders())]).then((r) => r.map((x) => x.value || x.reason?.message)) : event.cron === "0 1 1 * *" ? () => Promise.allSettled([runMonthlyBackup(), runMonthlyCheckin()]).then((r) => r.map((x) => x.value || x.reason?.message)) : null;
     if (job) ctx.waitUntil(job().then((r) => console.log(event.cron, JSON.stringify(r))).catch((e) => console.log(event.cron, "failed:", e.message)));
   },
 };
+export default worker;
