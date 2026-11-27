@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import { scopeCheck, KIT_URL } from "./scope.mjs";
 
 export const OWNER = {
-  name: "Jeselle Baril",
+  name: "JB",
   title: "Digital Solutions & Creative Services",
   email: () => process.env.GMAIL_USER || "bariljeselle@gmail.com",
   tz: "Asia/Manila",
@@ -45,7 +45,7 @@ export function buildIcs({ uid, start, title, description, attendeeName, attende
   const end = new Date(start.getTime() + CALL_MINUTES * 60000);
   const fold = (s) => s.replace(/\r?\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
   return [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jeselle Baril//Bookings//EN", "CALSCALE:GREGORIAN", `METHOD:${method}`,
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//JB//Bookings//EN", "CALSCALE:GREGORIAN", `METHOD:${method}`,
     "BEGIN:VEVENT", `UID:${uid}@jeselleva`, `DTSTAMP:${icsDate(new Date())}`, `DTSTART:${icsDate(start)}`, `DTEND:${icsDate(end)}`,
     `SUMMARY:${fold(title)}`, `DESCRIPTION:${fold(description)}`,
     `ORGANIZER;CN=${fold(OWNER.name)}:mailto:${OWNER.email()}`,
@@ -108,7 +108,7 @@ const COLORS = { bg: "#F7F3EE", card: "#FFFFFF", ink: "#231E1B", muted: "#6E625A
 export function layout(title, bodyHtml) {
   return `<!doctype html><html><body style="margin:0;background:${COLORS.bg};font-family:Arial,Helvetica,sans-serif;color:${COLORS.ink}">
 <div style="max-width:600px;margin:0 auto;padding:24px 16px">
-<p style="margin:0 0 16px;font-family:Georgia,serif;font-size:22px;color:${COLORS.ink}">Jeselle Baril <span style="font-size:13px;color:${COLORS.muted};font-family:Arial,sans-serif">· ${OWNER.title}</span></p>
+<p style="margin:0 0 16px;font-family:Georgia,serif;font-size:22px;color:${COLORS.ink}">JB <span style="font-size:13px;color:${COLORS.muted};font-family:Arial,sans-serif">· ${OWNER.title}</span></p>
 <div style="background:${COLORS.card};border:1px solid ${COLORS.line};border-radius:8px;padding:24px">
 <h1 style="margin:0 0 14px;font-family:Georgia,serif;font-weight:normal;font-size:26px;line-height:1.2">${esc(title)}</h1>
 ${bodyHtml}
@@ -157,7 +157,7 @@ export function bookingEmails(rec) {
   const d = rec.data, start = new Date(rec.start || d.start_utc), tz = clientTz(rec);
   const first = (d.name || "there").split(" ")[0];
   const clientTime = fmt(start, tz), phTime = fmt(start, OWNER.tz);
-  const title = `Free call: ${d.name || "Client"} × Jeselle Baril`;
+  const title = `Free call: ${d.name || "Client"} × JB`;
   const details = `15-minute call about ${d.business || "your business"}.\nService: ${d.service || "-"}\nQuestions? Reply to the confirmation email.`;
   const meet = rec.meetLink || "";
   const ics = buildIcs({ uid: rec.id, start, title, description: details + (meet ? `\nJoin the ${callName(meet)}: ${meet}` : ""), attendeeName: d.name, attendeeEmail: d.email });
@@ -199,7 +199,7 @@ export function reminderEmails(rec, label) {
   const d = rec.data, start = new Date(rec.start || d.start_utc), tz = clientTz(rec);
   const first = (d.name || "there").split(" ")[0];
   const when = label === "24h" ? "tomorrow" : "in 1 hour";
-  const title = `Free call: ${d.name || "Client"} × Jeselle Baril`;
+  const title = `Free call: ${d.name || "Client"} × JB`;
   const client = {
     to: d.email, replyTo: OWNER.email(),
     subject: `Reminder: our call is ${when} – ${fmt(start, tz, false)}`,

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>CRM – Jeselle Baril</title>
+<title>CRM – JB</title>
 <meta name="theme-color" content="#F7F3EE">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <link rel="manifest" href="/admin.webmanifest">
@@ -149,7 +149,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 
 <div id="app" hidden>
 <header>
-<p class="brand">Client CRM <span>· Jeselle Baril</span> <span class="whoami" id="whoami"></span></p>
+<p class="brand">Client CRM <span>· JB</span> <span class="whoami" id="whoami"></span></p>
 <div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test" class="own">Send test email</button><button id="sitebtn" class="own">✏️ Edit website</button><button id="teambtn" class="own">👥 Team</button><a class="btn own" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn pay" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
 </header>
 <main>
@@ -340,7 +340,7 @@ function payBtn(r){const d=r.data||{};if(r.type==='Payment'||!can('payments'))re
   const m=String(d.payment_method||'').toLowerCase();const key=m.includes('wise')?'wise':m.includes('remitly')?'remitly':m.includes('maya')?'maya':m.includes('gcash')?'gcash':'';
   const link=location.origin+'/pay.html'+(key?'#'+key:'');const first=String(d.name||'').split(' ')[0];
   const body=`Hi ${first},\n\nThank you for accepting the quote! Here is your private payment page${key?' ('+d.payment_method+')':''}:\n${link}\n\nAmount: [amount]\n\nAfter paying, please upload your receipt on the same page so I can confirm it and start your project.\n\nThank you!\nJeselle`;
-  return `<a class="btn pri" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Your payment link – Jeselle Baril')}&body=${encodeURIComponent(body)}">Send payment link</a>`}
+  return `<a class="btn pri" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Your payment link – JB')}&body=${encodeURIComponent(body)}">Send payment link</a>`}
 const phLocal=iso=>{if(!iso)return'';const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(iso)).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`};
 function meetBlock(r){
   const join=r.meetLink?`<div class="row"><a class="btn meet" href="${esc(r.meetLink)}" target="_blank" rel="noopener">🎥 Join call</a><button class="f-copy" data-link="${esc(r.meetLink)}">Copy link</button></div>`:'';
@@ -501,7 +501,7 @@ function isNew(r){return !seenSet().has(r.key)}
 function markSeen(k){const S=seenSet();if(S.has(k))return false;S.add(k);saveSeen();return true}
 function badges(){const unread=RECS.filter(isNew);const by=t=>unread.filter(r=>r.type===t).length;
   document.querySelectorAll('#tabs button').forEach(b=>{const f=b.dataset.f;const n=f==='all'?unread.length:by(f);let t=b.querySelector('.tc');if(n){if(!t){t=document.createElement('span');t.className='tc';b.appendChild(t)}t.textContent=n}else if(t)t.remove()});
-  const n=unread.length;document.title=(n?'('+n+') ':'')+'CRM – Jeselle Baril';
+  const n=unread.length;document.title=(n?'('+n+') ':'')+'CRM – JB';
   try{if(navigator.setAppBadge){n?navigator.setAppBadge(n):navigator.clearAppBadge()}}catch(e){}
   const nb=$('newbar');nb.hidden=!n;if(n)$('newtxt').textContent='🔴 '+n+' new: '+['Booking','Inquiry','Project brief','Payment','Portfolio permission'].map(t=>[t,by(t)]).filter(x=>x[1]).map(([t,c])=>c+' '+({Booking:'booking','Inquiry':'inquir','Project brief':'brief','Payment':'payment','Portfolio permission':'permission'}[t])+(t==='Inquiry'?(c>1?'ies':'y'):(c>1?'s':''))).join(', ')}
 $('seeall').addEventListener('click',()=>{RECS.forEach(r=>seenSet().add(r.key));saveSeen();draw()});

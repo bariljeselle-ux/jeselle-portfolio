@@ -62,7 +62,7 @@ export async function createMeet(rec, store = crmStore()) {
   if (!token) return null;
   const d = rec.data, start = new Date(rec.start || d.start_utc), end = new Date(start.getTime() + CALL_MINUTES * 60000);
   const body = {
-    summary: `Free call: ${d.name || "Client"} × Jeselle Baril`,
+    summary: `Free call: ${d.name || "Client"} × JB`,
     description: `${CALL_MINUTES}-minute discovery call.\nBusiness: ${d.business || "-"}\nService: ${d.service || "-"}\nClient: ${d.name || ""} <${d.email}>\n\nBooked via ${OWNER.site()}`,
     start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() },
     attendees: [{ email: d.email, displayName: d.name || undefined }, ...(rec.assignee?.email ? [{ email: rec.assignee.email, displayName: rec.assignee.name || undefined }] : [])],

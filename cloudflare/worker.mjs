@@ -73,10 +73,10 @@ async function serveUpload(url) {
 // Each menu item is its own page with its own address; they all use index.html,
 // which shows just that page's sections. Title/description/link are set here for Google.
 const PAGES = {
-  "/works": { title: "Creations & Works | Jeselle Baril, jeselle.va", desc: "Websites, graphic designs and CRM systems made by Jeselle Baril, a Filipino virtual assistant in Cebu, Philippines.", noindex: true },
-  "/services": { title: "Services & Rates: Websites, SEO & Graphic Design | Jeselle Baril", desc: "Website creation and development (3 to 7 pages) with built-in booking, payments and a private CRM, landing pages, SEO, logos and graphic design, with clear one-time prices in USD and pesos. By Jeselle Baril in Cebu, Philippines." },
-  "/book": { title: "Book a Free Call | Jeselle Baril", desc: "Book a free 15-minute Google Meet call with Jeselle Baril. Pick a time in your own time zone." },
-  "/contact": { title: "Contact | Jeselle Baril, jeselle.va", desc: "Send an inquiry, email, call or message Jeselle Baril, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },
+  "/works": { title: "Creations & Works | JB, jeselle.va", desc: "Websites, graphic designs and CRM systems made by JB, a Filipino virtual assistant in Cebu, Philippines.", noindex: true },
+  "/services": { title: "Services & Rates: Websites, SEO & Graphic Design | JB", desc: "Website creation and development (3 to 7 pages) with built-in booking, payments and a private CRM, landing pages, SEO, logos and graphic design, with clear one-time prices in USD and pesos. By JB in Cebu, Philippines." },
+  "/book": { title: "Book a Free Call | JB", desc: "Book a free 15-minute Google Meet call with JB. Pick a time in your own time zone." },
+  "/contact": { title: "Contact | JB, jeselle.va", desc: "Send an inquiry, email, call or message JB, Filipino virtual assistant for websites, SEO, graphic design and CRM systems." },
 };
 const OLD_PATHS = { "/portfolio": "/works", "/portfolio.html": "/works", "/works.html": "/works", "/rates": "/services#rates", "/rates/": "/services#rates" };
 
