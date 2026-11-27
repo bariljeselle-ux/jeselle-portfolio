@@ -9,6 +9,7 @@ import googleCallback from "../netlify/functions/google-callback.mjs";
 import capacity from "../netlify/functions/capacity.mjs";
 import { handleSubmission, runReminders, runNudges, runMonthlyBackup, OWNER } from "../netlify/lib/core.mjs";
 import { runMonthlyCheckin } from "../netlify/lib/capacity.mjs";
+import { getContent, serveImage } from "../netlify/lib/site.mjs";
 
 const ROUTES = { "/api/booked": booked, "/api/crm": crm, "/api/reviews": reviews, "/api/submit": submit, "/api/google/callback": googleCallback, "/api/capacity": capacity,
   // Easy-to-share link to the JB Creates VA Facebook Page
@@ -67,6 +68,24 @@ async function serveUpload(url) {
   } });
 }
 
+// Homepage with the owner's "Edit website" changes applied (text + photo).
+// ?original=1 shows the page as built, which the editor uses to list what can be changed.
+async function homePage(req, env, url) {
+  const h = new Headers(req.headers); h.delete("if-none-match"); h.delete("if-modified-since");
+  const res = await env.ASSETS.fetch(new Request(new URL("/index.html", url), { method: "GET", headers: h }));
+  if (!res.ok || url.searchParams.has("original")) return res;
+  let c = null;
+  try { c = await getContent(); } catch (e) { console.log("site content:", e.message); }
+  const text = c?.text || {}, img = c?.img || {};
+  const out = new Response(res.body, res);
+  out.headers.delete("etag"); out.headers.set("Cache-Control", "no-cache");
+  if (!Object.keys(text).length && !Object.keys(img).length) return out;
+  return new HTMLRewriter()
+    .on("[data-edit]", { element(el) { const v = text[el.getAttribute("data-edit")]; if (v) el.setInnerContent(v, { html: true }); } })
+    .on("[data-edit-img]", { element(el) { const v = img[el.getAttribute("data-edit-img")]; if (v) { el.setAttribute("src", v); el.removeAttribute("srcset"); } } })
+    .transform(out);
+}
+
 export default {
   async fetch(req, env, ctx) {
     bindEnv(env);
@@ -75,12 +94,13 @@ export default {
       const handler = ROUTES[url.pathname];
       if (handler) return await handler(withIp(req), ctx);
       if (url.pathname === "/api/upload") return await serveUpload(url);
+      if (url.pathname === "/api/site-image") return await serveImage(url);
       if (req.method === "POST" && !url.pathname.startsWith("/api/")) return await formPost(req);
     } catch (e) {
       console.log("error:", url.pathname, e.stack || e.message);
       return Response.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
-    if (url.pathname === "/") return env.ASSETS.fetch(new Request(new URL("/index.html", url), req));
+    if (url.pathname === "/" || url.pathname === "/index.html") return await homePage(req, env, url);
     return env.ASSETS.fetch(req);
   },
 

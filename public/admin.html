@@ -96,6 +96,20 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 .capset{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:8px}.capset label{font-size:12px;color:#6E625A;display:flex;flex-direction:column;gap:4px}.capset input[type=number]{width:110px}
 .capset .ck{flex-direction:row;align-items:center;gap:6px;font-size:14px;color:#231E1B}.capset .ck input{width:18px;min-height:18px}
 .capwarn{background:#FBF3E4;border-left:3px solid #E0A526;padding:10px 12px;margin:0 0 10px;font-size:14px;border-radius:4px}
+.sedit .sg{background:#fff;border:1px solid #E2D9CF;border-radius:6px;margin-top:10px}
+.sedit .sg>summary{cursor:pointer;padding:12px 14px;font-weight:500;list-style-position:inside}
+.sedit .sg>summary small{color:#6E625A;font-weight:400}
+.sedit .sgb{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.sedit .sf label{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:#6E625A;margin-bottom:4px}
+.sedit .sf textarea{width:100%;font:15px/1.5 Jost,system-ui,sans-serif;padding:10px 12px;border:1px solid #C9BAAB;border-radius:4px;resize:vertical;background:#FDFBF8;color:#231E1B}
+.sedit .sf.ed textarea{border-color:#7A4E3A;background:#fff}
+.sedit .sf .tag{color:#2F6B3F;font-weight:500}
+.sedit .linkbtn{min-height:0;padding:0;border:0;background:none;color:#7A4E3A;text-decoration:underline;font-size:13px;letter-spacing:0}
+.sedit .sphoto{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:#fff;border:1px solid #E2D9CF;border-radius:6px;padding:14px}
+.sedit .sphoto img{width:96px;height:120px;object-fit:cover;border-radius:4px;border:1px solid #E2D9CF;background:#EBE2D8}
+.sedit .sbar{position:sticky;bottom:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#F7F3EE;border-top:1px solid #E2D9CF;padding:12px 0;margin-top:14px;z-index:3}
+.sedit .shelp{font-size:14px;color:#4A413B;background:#EFE8DF;border-radius:6px;padding:12px 14px;margin:0 0 12px}
+@media (max-width:600px){.sedit .sbar button,.sedit .sbar .btn{flex:1 1 auto}}
 </style>
 </head>
 <body>
@@ -121,7 +135,7 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 <div id="app" hidden>
 <header>
 <p class="brand">Client CRM <span>· Jeselle Baril</span> <span class="whoami" id="whoami"></span></p>
-<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test" class="own">Send test email</button><button id="teambtn" class="own">👥 Team</button><a class="btn own" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn pay" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
+<div class="hbtns"><button id="refresh">Refresh</button><button id="csv">Export CSV</button><button id="test" class="own">Send test email</button><button id="sitebtn" class="own">✏️ Edit website</button><button id="teambtn" class="own">👥 Team</button><a class="btn own" href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a><a class="btn pay" href="https://claude.ai/artifact/UrqzyzooXG86WUj1Hxw5MG" target="_blank" rel="noopener">📘 Bookkeeping guide</a><button id="cpw">Change password</button><button id="out">Log out</button></div>
 </header>
 <main>
 <form id="pwbox" hidden style="background:#fff;border:1px solid #E2D9CF;border-radius:8px;padding:20px;margin:0 0 18px;max-width:440px">
@@ -237,6 +251,14 @@ h2{margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-s
 </form>
 <div id="elist"></div>
 </section>
+<section id="siteedit" class="own sedit" hidden><h2>✏️ Edit website</h2>
+<p class="shelp">Change the text and photo on your homepage. Tap <b>Save changes</b> and they're live right away (free, no publishing needed).<br>
+Tips: put <b>*stars*</b> around words for the <i>italic style</i>, <b>**two stars**</b> for <b>bold</b>, and press Enter for a new line.<br>
+<b>Prices, packages, services, working hours and FAQ</b> show on several pages (terms, brief, emails), so message Claude to change those and they'll update everywhere at once.</p>
+<div class="sphoto"><img id="s-img" alt="Your homepage photo"><div style="display:flex;flex-direction:column;gap:8px"><b>Your homepage photo</b><div class="row" style="display:flex;flex-wrap:wrap;gap:8px"><label class="btn" for="s-file" style="cursor:pointer">📷 Change photo</label><input type="file" id="s-file" accept="image/jpeg,image/png,image/webp" hidden><button type="button" id="s-imgreset" hidden>↩ Use original photo</button></div><small style="color:#6E625A">Portrait (tall) photos look best. JPG or PNG.</small></div></div>
+<div id="s-groups"><div class="empty">Loading…</div></div>
+<div class="sbar"><span id="s-status" style="font-size:14px;color:#6E625A">No unsaved changes</span><span style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn" href="/" target="_blank" rel="noopener">👀 View homepage</a><button type="button" class="pri" id="s-save" disabled>Save changes</button></span></div>
+</section>
 <section id="team" class="own" hidden><h2>👥 Team accounts</h2>
 <p style="margin:0 0 12px;color:#6E625A;font-size:14px">Let helpers log in with <b>their own email and password</b>. They only see what you tick. You can turn someone off any time, and nobody ever needs your password.</p>
 <div class="list" id="tlist"></div>
@@ -269,7 +291,7 @@ async function load(){
   catch(e){$('login').hidden=false;$('app').hidden=true;const m=$('lmsg');m.hidden=!KEY;m.textContent=e.message}
 }
 function access(){const own=ME.role==='owner';
-  document.querySelectorAll('.own').forEach(x=>{if(x.id!=='team')x.hidden=!own});document.querySelectorAll('.pay').forEach(x=>x.hidden=!can('payments'));
+  document.querySelectorAll('.own').forEach(x=>{if(x.id!=='team'&&x.id!=='siteedit')x.hidden=!own});document.querySelectorAll('.pay').forEach(x=>x.hidden=!can('payments'));
   $('reviews').hidden=!can('reviews');if(!own)$('team').hidden=true;$('minetab').hidden=!TEAM.length&&own;$('minetab').textContent=own?'Not assigned':'Assigned to me';
   $('whoami').textContent=own?'':'· Logged in as '+ME.name;$('cpw').textContent=own?'Change password':'Change my password'}
 const dshort=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}):'';
@@ -609,6 +631,42 @@ const login=async()=>{if(!TEAMLOGIN){KEY=$('pw').value;try{sessionStorage.setIte
 $('lemail').addEventListener('keydown',e=>{if(e.key==='Enter')$('pw').focus()});
 $('go').addEventListener('click',login);$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 if(KEY)load();
+
+/* ---------- Edit website ---------- */
+const SNAME={top:'Top of page (headline + intro)',portfolio:'Selected work',about:'About me',services:'Services (title only)',process:'How it works',rates:'Rates (title only)',materials:'Sample materials (title only)',experience:'Background',testimonials:'Reviews (title only)',faq:'FAQ (title only)',contact:'Contact',footer:'Footer'};
+const SLBL={h2:'Section title',h3:'Title',h4:'Small title',p:'Text',li:'List item',span:'Headline line'};
+let SITE=null,SORIG={},STAG={},SITAL={},SIMG0='',SDIRTY=false;
+function toMark(html){let s=String(html||'').replace(/\s*\n\s*/g,' ').replace(/<br\s*\/?>/gi,'\n').replace(/<span[^>]*font-style:\s*italic[^>]*>([\s\S]*?)<\/span>/gi,'*$1*').replace(/<\/?(b|strong)>/gi,'**').replace(/<\/?(i|em)>/gi,'*').replace(/<[^>]+>/g,'');const t=document.createElement('textarea');t.innerHTML=s;return t.value.split('\n').map(x=>x.trim()).join('\n').trim()}
+function toHtml(txt,key){const it=SITAL[key]||['<i>','</i>'];return esc(txt.trim()).replace(/\*\*([\s\S]+?)\*\*/g,'<b>$1</b>').replace(/\*([^*\n][^*]*?)\*/g,it[0]+'$1'+it[1]).replace(/\r?\n/g,'<br>')}
+const scur=k=>SITE&&SITE.text[k]!=null?toMark(SITE.text[k]):toMark(SORIG[k]);
+async function sload(){$('s-groups').innerHTML='<div class="empty">Loading…</div>';
+  try{const [h,c]=await Promise.all([fetch('/?original=1',{cache:'no-store'}).then(r=>r.text()),api({body:{action:'site-get'}})]);SITE=c;
+    const d=new DOMParser().parseFromString(h,'text/html');SORIG={};STAG={};SITAL={};
+    d.querySelectorAll('[data-edit]').forEach(el=>{const k=el.dataset.edit;SORIG[k]=el.innerHTML;STAG[k]=el.tagName.toLowerCase();const m=el.innerHTML.match(/<span style="font-style: italic(; color: #[0-9A-Fa-f]{6})?">|<(i|em)>/);if(m)SITAL[k]=m[2]?['<'+m[2]+'>','</'+m[2]+'>']:[m[0],'</span>']});
+    const im=d.querySelector('[data-edit-img]');SIMG0=im?im.getAttribute('src'):'';sdraw()}
+  catch(e){$('s-groups').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+function sdraw(){const groups={};Object.keys(SORIG).forEach(k=>{const g=k.replace(/-\d+$/,'');(groups[g]=groups[g]||[]).push(k)});
+  $('s-groups').innerHTML=Object.entries(groups).map(([g,keys],i)=>{const n=keys.filter(k=>SITE.text[k]!=null).length;
+    return `<details class="sg"${i===0?' open':''}><summary>${esc(SNAME[g]||g)} <small>· ${keys.length} item${keys.length>1?'s':''}${n?` · ${n} edited`:''}</small></summary><div class="sgb">${keys.map(k=>{const v=scur(k),ed=SITE.text[k]!=null;
+      return `<div class="sf${ed?' ed':''}" data-k="${k}"><label for="sf-${k}"><span>${SLBL[STAG[k]]||'Text'}${ed?' · <span class="tag">Edited</span>':''}</span>${ed?`<button type="button" class="linkbtn s-undo">↩ Use original</button>`:''}</label><textarea id="sf-${k}" rows="${Math.min(8,Math.max(1,Math.ceil(v.length/60)+(v.split('\n').length-1)))}">${esc(v)}</textarea></div>`}).join('')}</div></details>`}).join('');
+  const src=SITE.img['top-4']||('/'+SIMG0.replace(/^\//,''));$('s-img').src=src;$('s-imgreset').hidden=!SITE.img['top-4'];sstat()}
+function schanges(){const ch={};document.querySelectorAll('#s-groups .sf').forEach(f=>{const k=f.dataset.k,v=f.querySelector('textarea').value;if(v.trim()===scur(k))return;ch[k]=v.trim()===toMark(SORIG[k])||!v.trim()?null:toHtml(v,k)});return ch}
+const snote=(t,bad)=>{const m=$('s-status');m.textContent=t;m.style.color=bad?'#8A2E1E':'#2F6B3F';clearTimeout(snote.t);snote.t=setTimeout(()=>{m.style.color='#6E625A';sstat()},5000)};
+function sstat(){const n=Object.keys(schanges()).length;SDIRTY=n>0;$('s-save').disabled=!n;$('s-status').style.color='#6E625A';$('s-status').textContent=n?`${n} unsaved change${n>1?'s':''}`:'No unsaved changes'}
+$('sitebtn').addEventListener('click',()=>{$('siteedit').hidden=false;$('siteedit').scrollIntoView({behavior:'smooth'});if(!SITE)sload()});
+$('s-groups').addEventListener('input',e=>{if(e.target.matches('textarea')){e.target.closest('.sf').classList.add('ed');sstat()}});
+$('s-groups').addEventListener('click',e=>{const b=e.target.closest('.s-undo');if(!b)return;const f=b.closest('.sf');f.querySelector('textarea').value=toMark(SORIG[f.dataset.k]);sstat();snote('Tap Save changes to put the original back')});
+$('s-save').addEventListener('click',async e=>{const b=e.target,ch=schanges();if(!Object.keys(ch).length)return;b.disabled=true;$('s-status').textContent='Saving…';
+  try{const j=await api({body:{action:'site-save',changes:ch}});SITE=j.content;const open=[...document.querySelectorAll('#s-groups details')].map(d=>d.open);sdraw();document.querySelectorAll('#s-groups details').forEach((d,i)=>d.open=!!open[i]);snote('Saved ✓ Your homepage is updated.')}
+  catch(err){snote(err.message,true);sstat()}});
+$('s-file').addEventListener('change',async e=>{const f0=e.target.files[0];e.target.value='';if(!f0)return;
+  if(!/^image\/(jpeg|png|webp)$/.test(f0.type)){snote('Please choose a JPG, PNG or WebP photo.',true);return}
+  snote('Uploading photo…');try{const f=await shrink(f0);if(f.size>5*1024*1024)throw new Error('That photo is over 5 MB. Please choose a smaller one.');
+    const j=await api({body:{action:'site-image',key:'top-4',type:f.type,data:b64(await f.arrayBuffer())}});SITE=j.content;$('s-img').src=SITE.img['top-4'];$('s-imgreset').hidden=false;snote('Photo changed ✓ It\'s live on your homepage.')}
+  catch(err){snote(err.message,true)}});
+$('s-imgreset').addEventListener('click',async e=>{const b=e.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to confirm';return}delete b.dataset.sure;b.textContent='↩ Use original photo';
+  try{const j=await api({body:{action:'site-image',key:'top-4',data:null}});SITE=j.content;$('s-img').src='/'+SIMG0.replace(/^\//,'');b.hidden=true;snote('Original photo is back ✓')}catch(err){snote(err.message,true)}});
+addEventListener('beforeunload',e=>{if(SDIRTY){e.preventDefault();e.returnValue=''}});
 }
 </script>
 </body>

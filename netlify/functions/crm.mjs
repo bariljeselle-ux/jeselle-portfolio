@@ -90,6 +90,15 @@ export default async (req) => {
         : { status: 400, error: "Unknown action" };
       return Response.json(r.ok ? r : { error: r.error }, { status: r.ok ? 200 : r.status });
     }
+    // ----- Edit website (owner only): homepage text and photo -----
+    if (/^site-/.test(body.action || "")) {
+      if (!owner) return NO();
+      const site = await import("../lib/site.mjs");
+      if (body.action === "site-get") return Response.json(await site.getContent());
+      if (body.action === "site-save") { const r = await site.saveText(body.changes); if (r.changed) await logActivity(me, `edited the website (${r.changed} change${r.changed === 1 ? "" : "s"})`, "", store); return Response.json(r); }
+      if (body.action === "site-image") { const r = await site.saveImage(body.key, body.type, body.data === null ? null : body.data); if (r.ok) await logActivity(me, body.data === null ? "put back the original website photo" : "changed the website photo", "", store); return Response.json(r.ok ? r : { error: r.error }, { status: r.ok ? 200 : r.status }); }
+      return Response.json({ error: "Unknown action" }, { status: 400 });
+    }
     if (["test-email", "google-connect", "google-disconnect", "capacity-save"].includes(body.action) && !owner) return NO();
     if (body.action === "capacity-save") { const c = await capSave(body.settings || {}, store); await logActivity(me, `set capacity: ${c.maxProjects} projects at once, ${c.minDays} working days minimum${c.paused ? ", paused new projects" : ""}`, "", store); return Response.json({ ok: true, settings: c }); }
     if (/^(receipt-|income-|expense-)/.test(body.action || "") && !can(me, "payments")) return NO();

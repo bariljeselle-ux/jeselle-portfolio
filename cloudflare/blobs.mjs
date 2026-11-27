@@ -18,7 +18,7 @@ function init() {
   return ready;
 }
 
-const FILE_STORES = new Set(["receipts", "review-photos", "uploads"]); // only these keep files in KV
+const FILE_STORES = new Set(["receipts", "review-photos", "uploads", "site-images"]); // only these keep files in KV
 class Store {
   constructor(name) { this.name = name; this.files = FILE_STORES.has(name); }
 
