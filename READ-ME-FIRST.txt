@@ -258,3 +258,7 @@ Landing $400–$550 (₱12,000–₱16,500). Starter $1,150 (₱36,000), Busines
 == Domain options (Nov 28, 2026) ==
 Under the website cards: domain connection included; new domain bought in the client's name (.com about $11 / ₱650 a year,
 .ph about $45 / ₱2,600 a year, paid directly to Porkbun/Cloudflare); free pages.dev link to start; business email setup $25 / ₱800. FAQ added.
+
+== Home: Mission, vision & goals (Nov 28, 2026) ==
+The long Background timeline is now one short line; its section shows Mission, Vision, Goals and Founded instead (moved out of About).
+Restored the Vision text that was removed by mistake during the Nov 27 cleanup.
